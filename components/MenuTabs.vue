@@ -1,7 +1,7 @@
 <template>
   <div 
     class="min-h-screen transition-all duration-300 ease-in-out" 
-    :style="{ backgroundColor, fontFamily, color: textColor, '--price-color': priceColor }"
+    :style="rootStyle"
   >
     <div class="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-5 py-8 sm:px-6">
       <!-- Barra superior con acciones -->
@@ -537,6 +537,14 @@ const hasSocialMedia = computed(() => {
 const fontId = computed(() => props.business?.fontFamily || 'inter')
 const isScriptFont = computed(() => fontId.value === 'dancing' || fontId.value === 'pacifico')
 const isPacifico = computed(() => fontId.value === 'pacifico')
+
+// Estilo del contenedor principal
+const rootStyle = computed(() => ({
+  backgroundColor: props.backgroundColor,
+  fontFamily: props.fontFamily,
+  color: props.textColor,
+  '--price-color': props.priceColor
+}))
 </script>
 
 <style scoped>
