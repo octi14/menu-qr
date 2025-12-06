@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FoodLand · Menús digitales para tu comercio
 
-## Getting Started
+**FoodLand** es una plataforma construida con **Nuxt.js 3** y Tailwind CSS para crear y gestionar menús digitales con códigos QR. Perfecta para restaurantes, bares, cervecerías y cualquier negocio gastronómico que quiera digitalizar su menú.
 
-First, run the development server:
+## 🚀 Tecnologías
+
+- **Nuxt.js 3** - Framework Vue.js
+- **Vue 3** - Framework JavaScript
+- **JavaScript** - Lenguaje principal
+- **Tailwind CSS** - Estilos
+- **MongoDB Atlas** - Base de datos
+- **QR Code** - Generación de códigos QR
+
+## 📋 Configuración inicial
+
+1. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
+
+2. **Configurar MongoDB Atlas:**
+   - Creá un archivo `.env` en la raíz del proyecto
+   - Agregá tu conexión a MongoDB:
+     ```env
+     MONGODB_URI=mongodb+srv://usuario:contraseña@cluster.mongodb.net/?retryWrites=true&w=majority
+     MONGODB_DB=qr-menu
+     ```
+   - Reemplazá `usuario` y `contraseña` con tus credenciales reales
+
+3. **Inicializar usuario admin (opcional):**
+   - Ejecutá el servidor: `npm run dev`
+   - Visitá `http://localhost:3000/setup` (si existe)
+   - O creá el usuario directamente en MongoDB
+
+## 🛠️ Comandos
 
 ```bash
+# Desarrollo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build para producción
+npm run build
+
+# Preview de producción
+npm run preview
+
+# Generar sitio estático
+npm run generate
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Luego abrí `http://localhost:3000` en tu navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Estructura del Proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+├── assets/          # CSS, imágenes, etc.
+├── components/      # Componentes Vue reutilizables
+├── composables/     # Composables (lógica reutilizable)
+├── layouts/         # Layouts de la aplicación
+├── pages/           # Rutas automáticas (file-based routing)
+├── server/          # API routes y lógica del servidor
+│   ├── api/         # Endpoints de la API
+│   └── utils/       # Utilidades del servidor
+├── types/           # Tipos TypeScript
+└── nuxt.config.ts   # Configuración de Nuxt
+```
 
-## Learn More
+## 🗺️ Rutas principales
 
-To learn more about Next.js, take a look at the following resources:
+- `/` · Landing page
+- `/login` · Iniciar sesión
+- `/select-business` · Seleccionar comercio
+- `/create-business` · Crear nuevo comercio
+- `/[slug]/menu` · Menú público (para QR)
+- `/[slug]/panel` · Panel de administración
+- `/billing` · Planes y facturación
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔌 API Routes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `GET /api/businesses` - Obtener todos los comercios
+- `GET /api/businesses?slug=xxx` - Obtener comercio por slug
+- `POST /api/businesses` - Crear/actualizar comercio
+- `PUT /api/businesses/[slug]` - Actualizar comercio
+- `POST /api/businesses/check-slug` - Verificar disponibilidad de slug
+- `POST /api/users/verify` - Verificar credenciales
 
-## Deploy on Vercel
+## 🚢 Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Vercel / Netlify
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Conectá tu repositorio
+2. El build se detecta automáticamente
+3. Agregá las variables de entorno (`MONGODB_URI`, `MONGODB_DB`)
+
+### Build manual
+
+```bash
+npm run build
+# Los archivos estarán en .output/
+```
+
+## 📝 Notas
+
+- Los menús son accesibles públicamente mediante QR codes
+- El panel de administración requiere autenticación
+- Los datos se guardan en MongoDB Atlas
+- Soporta múltiples comercios por usuario
+- Sistema de planes y límites de comercios
+

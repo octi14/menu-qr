@@ -3,24 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "nuxt dev --host 0.0.0.0",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "next": "16.0.5",
-    "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "@nuxtjs/tailwindcss": "^6.12.1",
+    "bcryptjs": "^3.0.3",
+    "html2canvas": "^1.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "jspdf": "^3.0.4",
+    "leaflet": "^1.9.4",
+    "mongodb": "^7.0.0",
+    "nuxt": "^3.13.0",
+    "qrcode": "^1.5.3",
+    "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.0.5",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@nuxt/devtools": "latest",
+    "tailwindcss": "^3.4.1"
   }
 }
