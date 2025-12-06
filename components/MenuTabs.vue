@@ -1,8 +1,5 @@
 <template>
-  <div 
-    class="min-h-screen transition-all duration-300 ease-in-out" 
-    :style="rootStyle"
-  >
+  <div class="min-h-screen transition-all duration-300 ease-in-out" :style="rootStyle">
     <div class="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-5 py-8 sm:px-6">
       <!-- Barra superior con acciones -->
       <div class="flex items-center justify-end gap-3 mb-4">
@@ -291,6 +288,7 @@
         >
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
+      </div>
       </div>
 
       <!-- Lista de ítems de la categoría activa -->
