@@ -1,5 +1,8 @@
 <template>
-  <div class="min-h-screen transition-all duration-300 ease-in-out" :style="{ backgroundColor, fontFamily, color: textColor, '--price-color': priceColor }">
+  <div 
+    class="min-h-screen transition-all duration-300 ease-in-out" 
+    :style="{ backgroundColor, fontFamily, color: textColor, '--price-color': priceColor }"
+  >
     <div class="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-5 py-8 sm:px-6">
       <!-- Barra superior con acciones -->
       <div class="flex items-center justify-end gap-3 mb-4">
