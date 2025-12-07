@@ -88,9 +88,48 @@ async function test() {
 test();
 ```
 
+## 7. Configuración para Vercel (Deploy en producción)
+
+Si estás desplegando en Vercel y no puedes conectarte a MongoDB:
+
+### Variables de entorno en Vercel
+
+1. Entrá a tu proyecto en Vercel
+2. Andá a **Settings** → **Environment Variables**
+3. Agregá estas variables:
+   - `MONGODB_URI`: Tu cadena de conexión completa
+   - `MONGODB_DB`: `qr-menu`
+   - `JWT_SECRET`: (si usás autenticación)
+4. Seleccioná **Production**, **Preview**, y **Development** para cada variable
+5. Hacé un **Redeploy** después de agregar las variables
+
+### Whitelist de IPs para Vercel
+
+Vercel usa IPs dinámicas, así que necesitás:
+
+1. En MongoDB Atlas, andá a **Network Access**
+2. Click en **Add IP Address**
+3. Click en **Allow Access from Anywhere** (agrega `0.0.0.0/0`)
+4. Esto permite conexiones desde cualquier IP (necesario para Vercel)
+
+**⚠️ Importante**: Aunque permitas acceso desde cualquier IP, tu base de datos sigue protegida por:
+- Usuario y contraseña
+- Firewall de MongoDB Atlas
+- Encriptación SSL/TLS
+
+### Verificar que funciona
+
+Después de configurar:
+1. Hacé un redeploy en Vercel
+2. Revisá los logs en Vercel (Deployments → Logs)
+3. Buscá errores relacionados con MongoDB
+
 ## Checklist rápido
 
-- [ ] IP agregada a la whitelist en Network Access
+- [ ] IP agregada a la whitelist en Network Access (0.0.0.0/0 para Vercel)
+- [ ] Variables de entorno configuradas en Vercel (MONGODB_URI, MONGODB_DB)
+- [ ] Variables configuradas para Production, Preview y Development
+- [ ] Aplicación redesplegada después de agregar variables
 - [ ] Usuario `octi14` existe en Database Access
 - [ ] Contraseña correcta (codificada si tiene caracteres especiales)
 - [ ] Cluster está activo (no pausado)
