@@ -26,3 +26,4 @@ Los iconos pueden generarse desde:
 Mientras se crean los iconos definitivos, el manifest.json seguirá funcionando pero los navegadores mostrarán un icono por defecto o un placeholder.
 
 
+

@@ -117,15 +117,43 @@ const businesses = ref([])
 const isLoading = ref(true)
 
 const getSectionsCount = (business) => {
-  if (!business.menu || !business.menu.sections) return 0
-  return business.menu.sections.length
+  // Verificar múltiples formatos posibles del menú
+  if (!business) return 0
+  
+  // Formato 1: business.menu.sections
+  if (business.menu?.sections && Array.isArray(business.menu.sections)) {
+    return business.menu.sections.filter(section => section && (section.items?.length > 0 || section.name)).length
+  }
+  
+  // Formato 2: business.sections (directo)
+  if (business.sections && Array.isArray(business.sections)) {
+    return business.sections.filter(section => section && (section.items?.length > 0 || section.name)).length
+  }
+  
+  return 0
 }
 
 const totalItems = (business) => {
-  if (!business.menu || !business.menu.sections) return 0
-  return business.menu.sections.reduce((acc, sec) => {
-    return acc + (sec.items?.length || 0)
-  }, 0)
+  // Verificar múltiples formatos posibles del menú
+  if (!business) return 0
+  
+  // Formato 1: business.menu.sections
+  if (business.menu?.sections && Array.isArray(business.menu.sections)) {
+    return business.menu.sections.reduce((acc, sec) => {
+      if (!sec || !sec.items) return acc
+      return acc + (Array.isArray(sec.items) ? sec.items.length : 0)
+    }, 0)
+  }
+  
+  // Formato 2: business.sections (directo)
+  if (business.sections && Array.isArray(business.sections)) {
+    return business.sections.reduce((acc, sec) => {
+      if (!sec || !sec.items) return acc
+      return acc + (Array.isArray(sec.items) ? sec.items.length : 0)
+    }, 0)
+  }
+  
+  return 0
 }
 
 const handleSelectBusiness = (slug) => {

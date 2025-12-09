@@ -359,17 +359,20 @@ const updateMarkers = () => {
       userMarker.openPopup()
     }
     
-    // Ajustar vista para incluir todos los marcadores
+    // Ajustar vista para incluir todos los marcadores cuando hay ubicación del usuario
     if (markers.length > 0) {
       const group = new window.L.FeatureGroup([...markers, userMarker])
       map.fitBounds(group.getBounds().pad(0.1))
     } else {
       map.setView([props.userLocation.latitude, props.userLocation.longitude], 15)
     }
-  } else if (markers.length > 0) {
-    // Si no hay ubicación del usuario, ajustar vista a los comercios
-    const group = new window.L.FeatureGroup(markers)
-    map.fitBounds(group.getBounds().pad(0.1))
+  } else {
+    // Si no hay ubicación del usuario, NO ajustar vista a los comercios
+    // Respetar siempre el centro del mapa que viene del prop (obelisco por defecto)
+    if (map && props.center) {
+      // Forzar el centro del mapa al valor del prop
+      map.setView(props.center, props.zoom)
+    }
   }
 }
 
@@ -388,9 +391,15 @@ watch(() => props.userLocation, () => {
 
 watch(() => [props.center, props.zoom], () => {
   if (map && isMapReady.value) {
-    map.setView(props.center, props.zoom)
+    // Si no hay ubicación del usuario, forzar el centro del mapa
+    // Esto asegura que el obelisco se mantenga cuando no hay filtro activo
+    if (!props.userLocation) {
+      map.setView(props.center, props.zoom, { reset: true })
+    } else {
+      map.setView(props.center, props.zoom)
+    }
   }
-})
+}, { immediate: false })
 
 let resizeHandler = null
 

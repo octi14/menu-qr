@@ -20,6 +20,7 @@ const publicRoutes = [
   '/register',
   '/forgot-password',
   '/reset-password',
+  '/discover',
 ]
 
 const isPublicRoute = (path) => {

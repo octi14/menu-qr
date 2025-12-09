@@ -26,30 +26,8 @@
           <span class="text-xs font-medium">Mapa</span>
         </NuxtLink>
         
-        <NuxtLink
-          to="/contact"
-          class="flex flex-col items-center justify-center gap-1 flex-1 py-2 transition-colors"
-          :class="isActive('/contact') ? 'text-emerald-500' : 'text-slate-500 dark:text-slate-400'"
-        >
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-          </svg>
-          <span class="text-xs font-medium">Contacto</span>
-        </NuxtLink>
-        
         <!-- Opciones para usuarios autenticados -->
         <template v-if="isAuthenticated">
-          <NuxtLink
-            to="/favorites"
-            class="flex flex-col items-center justify-center gap-1 flex-1 py-2 transition-colors"
-            :class="isActive('/favorites') ? 'text-emerald-500' : 'text-slate-500 dark:text-slate-400'"
-          >
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-            <span class="text-xs font-medium">Favoritos</span>
-          </NuxtLink>
-          
           <NuxtLink
             to="/select-business"
             class="flex flex-col items-center justify-center gap-1 flex-1 py-2 transition-colors"
@@ -59,19 +37,6 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
             <span class="text-xs font-medium">Comercios</span>
-          </NuxtLink>
-          
-          <!-- CRM (solo para admins) -->
-          <NuxtLink
-            v-if="userRole === 'admin' || userEmail === 'gonzalezoctavio5@gmail.com'"
-            to="/crm"
-            class="flex flex-col items-center justify-center gap-1 flex-1 py-2 transition-colors"
-            :class="isActive('/crm') ? 'text-emerald-500' : 'text-slate-500 dark:text-slate-400'"
-          >
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span class="text-xs font-medium">CRM</span>
           </NuxtLink>
         </template>
         
@@ -156,6 +121,18 @@
               </div>
               
               <NuxtLink
+                to="/favorites"
+                @click="showProfileMenu = false"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-base text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                :class="isActive('/favorites') ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : ''"
+              >
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span class="font-medium">Favoritos</span>
+              </NuxtLink>
+              
+              <NuxtLink
                 to="/profile"
                 @click="showProfileMenu = false"
                 class="flex items-center gap-3 px-4 py-3 rounded-lg text-base text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -176,6 +153,17 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
                 <span class="font-medium">Planes</span>
+              </NuxtLink>
+              <NuxtLink
+                to="/contact"
+                @click="showProfileMenu = false"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-base text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                :class="isActive('/contact') ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : ''"
+              >
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+                <span class="font-medium">Contacto</span>
               </NuxtLink>
               <NuxtLink
                 v-if="userRole === 'admin' || userEmail === 'gonzalezoctavio5@gmail.com'"
@@ -211,6 +199,17 @@
               </button>
             </template>
             <template v-else>
+              <NuxtLink
+                to="/contact"
+                @click="showProfileMenu = false"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-base text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                :class="isActive('/contact') ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300' : ''"
+              >
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+                <span class="font-medium">Contacto</span>
+              </NuxtLink>
               <NuxtLink
                 to="/login"
                 @click="showProfileMenu = false"
@@ -266,14 +265,8 @@
             </span>
           </NuxtLink>
 
-          <!-- Navigation Links -->
+          <!-- Navigation Links (simplificado - solo elementos esenciales) -->
           <div class="flex items-center gap-4">
-            <!-- Plan actual (solo si está autenticado) -->
-            <div v-if="isAuthenticated" class="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
-              <span class="text-xs text-slate-600 dark:text-slate-400">Plan:</span>
-              <span class="text-sm font-semibold text-emerald-700 dark:text-emerald-300">{{ userPlan.name }}</span>
-            </div>
-            
             <div class="flex items-center gap-1">
               <NuxtLink
                 to="/"
@@ -306,37 +299,7 @@
               Mapa
             </NuxtLink>
             
-            <NuxtLink
-              to="/contact"
-              :class="[
-                'px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2',
-                isActive('/contact')
-                  ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-900'
-              ]"
-            >
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-              </svg>
-              Contacto
-            </NuxtLink>
-            
             <template v-if="isAuthenticated">
-              <NuxtLink
-                to="/favorites"
-                :class="[
-                  'px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2',
-                  isActive('/favorites')
-                    ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-900'
-                ]"
-              >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                Favoritos
-              </NuxtLink>
-              
               <NuxtLink
                 to="/select-business"
                 :class="[
@@ -351,11 +314,18 @@
                 </svg>
                 Mis comercios
               </NuxtLink>
-              
+            </template>
+            </div>
+          </div>
+
+          <!-- Right side actions -->
+          <div class="flex items-center gap-3">
+            <ThemeToggle />
+            <template v-if="isAuthenticated">
               <NuxtLink
                 to="/profile"
                 :class="[
-                  'px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2',
+                  'px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2',
                   isActive('/profile') || isActive('/billing')
                     ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-900'
@@ -366,30 +336,6 @@
                 </svg>
                 Perfil
               </NuxtLink>
-              
-              <NuxtLink
-                v-if="userRole === 'admin' || userEmail === 'gonzalezoctavio5@gmail.com'"
-                to="/crm"
-                :class="[
-                  'px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2',
-                  isActive('/crm')
-                    ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-50 hover:bg-slate-100 dark:hover:bg-slate-900'
-                ]"
-              >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                CRM
-              </NuxtLink>
-            </template>
-            </div>
-          </div>
-
-          <!-- Right side actions -->
-          <div class="flex items-center gap-3">
-            <ThemeToggle />
-            <template v-if="isAuthenticated">
               <button
                 @click="handleLogout"
                 class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"

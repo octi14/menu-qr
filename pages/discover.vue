@@ -129,7 +129,7 @@
       <div v-else-if="!isLoading && (businesses.length > 0 || (useLocationFilter && userLocation))" class="mb-8" style="position: relative; z-index: 1;">
         <!-- Controles del mapa (arriba del mapa) -->
         <div class="mb-4 flex flex-wrap items-center gap-2">
-          <!-- Botón para activar filtro de ubicación -->
+          <!-- Botón para activar filtro de ubicación (usa dirección favorita si hay usuario logueado) -->
           <button
             @click="toggleLocationFilter"
             :disabled="isRequestingLocation"
@@ -149,6 +149,27 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             <span>{{ isRequestingLocation ? 'Obteniendo...' : (useLocationFilter ? 'Cerca de mí' : 'Mi ubicación') }}</span>
+          </button>
+          
+          <!-- Botón para usar ubicación GPS actual (solo si está autenticado) -->
+          <button
+            v-if="isAuthenticated"
+            @click="useCurrentGPSLocation"
+            :disabled="isRequestingLocation"
+            :class="[
+              'px-3 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg flex items-center gap-2',
+              'bg-blue-500 text-white hover:bg-blue-600',
+              isRequestingLocation ? 'opacity-50 cursor-not-allowed' : ''
+            ]"
+            title="Usar mi ubicación GPS actual"
+          >
+            <svg v-if="!isRequestingLocation" class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            </svg>
+            <svg v-else class="h-4 w-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>{{ isRequestingLocation ? 'Obteniendo...' : 'Mi ubicación GPS' }}</span>
           </button>
           
           <!-- Selector de direcciones guardadas (si está autenticado o hay direcciones guardadas) -->
@@ -467,31 +488,34 @@ const maxDistance = ref(3) // Distancia máxima en km (3km por defecto)
 const sortBy = ref('featured') // 'distance', 'name', 'featured'
 
 // Centro y zoom del mapa
+// Obelisco de Buenos Aires: -34.6037, -58.3816
+const OBELISCO_COORDS = [-34.6037, -58.3816]
+
 const mapCenter = computed(() => {
-  if (userLocation.value) {
+  // Si el filtro de ubicación está activo y hay ubicación del usuario, usar esa
+  if (useLocationFilter.value && userLocation.value) {
     return [userLocation.value.latitude, userLocation.value.longitude]
   }
-  // Si hay comercios, usar el centro de ellos
-  if (filteredBusinesses.value.length > 0) {
-    const businessesWithCoords = filteredBusinesses.value.filter(b => b.latitude && b.longitude)
-    if (businessesWithCoords.length > 0) {
-      const avgLat = businessesWithCoords.reduce((sum, b) => sum + b.latitude, 0) / businessesWithCoords.length
-      const avgLon = businessesWithCoords.reduce((sum, b) => sum + b.longitude, 0) / businessesWithCoords.length
-      return [avgLat, avgLon]
-    }
+  // Si hay usuario logueado y tiene direcciones guardadas, usar la primera (favorita)
+  if (isAuthenticated.value && savedAddresses.value && savedAddresses.value.length > 0) {
+    const favoriteAddress = savedAddresses.value[0]
+    return [favoriteAddress.latitude, favoriteAddress.longitude]
   }
-  // Por defecto: Buenos Aires
-  return [-34.6037, -58.3816]
+  // Por defecto: mostrar el obelisco de Buenos Aires
+  return OBELISCO_COORDS
 })
 
 const mapZoom = computed(() => {
-  if (userLocation.value && filteredBusinesses.value.length > 0) {
+  // Si el filtro de ubicación está activo y hay ubicación, zoom más cercano
+  if (useLocationFilter.value && userLocation.value) {
     return 13
   }
-  if (filteredBusinesses.value.length > 0) {
-    return 12
+  // Si hay usuario logueado con dirección favorita (sin filtro activo), zoom medio-alto
+  if (isAuthenticated.value && savedAddresses.value && savedAddresses.value.length > 0) {
+    return 13
   }
-  return 10
+  // Por defecto (obelisco), zoom medio
+  return 12
 })
 
 // Comercios con coordenadas para el mapa
@@ -677,8 +701,23 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return R * c
 }
 
+// Verificar permisos de geolocalización
+const checkGeolocationPermission = async () => {
+  if (!process.client || !navigator.permissions) {
+    return null // API de Permissions no disponible, retornar null
+  }
+  
+  try {
+    const result = await navigator.permissions.query({ name: 'geolocation' })
+    return result.state // 'granted', 'denied', o 'prompt'
+  } catch (error) {
+    console.warn('Error checking geolocation permission:', error)
+    return null
+  }
+}
+
 // Solicitar ubicación del usuario
-const requestLocation = () => {
+const requestLocation = async () => {
   locationError.value = null
   isRequestingLocation.value = true
   
@@ -700,6 +739,17 @@ const requestLocation = () => {
     locationError.value = {
       title: 'Geolocalización no soportada',
       message: 'Tu navegador no soporta geolocalización. Probá con otro navegador o actualizá el tuyo.',
+    }
+    isRequestingLocation.value = false
+    return
+  }
+
+  // Verificar permisos antes de solicitar
+  const permissionState = await checkGeolocationPermission()
+  if (permissionState === 'denied') {
+    locationError.value = {
+      title: 'Permisos de ubicación denegados',
+      message: 'Los permisos de ubicación están denegados. Por favor, permití el acceso a tu ubicación en la configuración del navegador y luego intentá nuevamente.',
     }
     isRequestingLocation.value = false
     return
@@ -755,19 +805,46 @@ const requestLocation = () => {
   )
 }
 
+// Usar ubicación GPS actual (botón separado para usuarios logueados)
+const useCurrentGPSLocation = () => {
+  // Activar el filtro y solicitar GPS directamente
+  useLocationFilter.value = true
+  locationError.value = null
+  requestLocation()
+}
+
 const toggleLocationFilter = () => {
   if (!useLocationFilter.value) {
     // Activar el filtro primero para mostrar el estado de carga
     useLocationFilter.value = true
     locationError.value = null
     
-    // Si ya tenemos la ubicación, no necesitamos solicitarla de nuevo
-    if (!userLocation.value) {
-      // Solicitar ubicación automáticamente
+    // Si el usuario está logueado y tiene direcciones guardadas, usar la primera (favorita)
+    if (isAuthenticated.value && savedAddresses.value && savedAddresses.value.length > 0) {
+      const favoriteAddress = savedAddresses.value[0] // Primera dirección como favorita
+      userLocation.value = {
+        latitude: favoriteAddress.latitude,
+        longitude: favoriteAddress.longitude,
+      }
+      showUserLocationPopup.value = true
+      // Guardar en localStorage como dirección de entrega
+      if (process.client) {
+        localStorage.setItem('foodland-delivery-address', JSON.stringify({
+          id: favoriteAddress.id,
+          name: favoriteAddress.name,
+          address: favoriteAddress.address,
+          latitude: favoriteAddress.latitude,
+          longitude: favoriteAddress.longitude,
+        }))
+      }
+    } else if (!userLocation.value) {
+      // Si no hay usuario logueado o no tiene direcciones, solicitar GPS
       requestLocation()
     }
   } else {
+    // Desactivar filtro y volver al obelisco
     useLocationFilter.value = false
+    userLocation.value = null
     locationError.value = null
   }
 }
@@ -868,28 +945,20 @@ const checkUrlParams = () => {
 }
 
 
+// Ya no solicitamos ubicación automáticamente al cargar
+// El mapa siempre inicia en el obelisco de Buenos Aires
+
 onMounted(async () => {
   checkIfLocalIP()
   checkUrlParams()
   loadBusinesses()
   
-  // Cargar direcciones guardadas primero
+  // Cargar direcciones guardadas
   await loadSavedAddresses()
   
-  // Si hay direcciones guardadas y no hay ubicación del usuario, usar la primera dirección guardada
-  if (savedAddresses.value && savedAddresses.value.length > 0 && !userLocation.value) {
-    const defaultAddress = savedAddresses.value[0]
-    userLocation.value = {
-      latitude: defaultAddress.latitude,
-      longitude: defaultAddress.longitude,
-    }
-    useLocationFilter.value = true
-    showUserLocationPopup.value = false // No mostrar popup cuando se carga por defecto
-    // Guardar en localStorage como dirección de entrega
-    if (process.client) {
-      localStorage.setItem('foodland-delivery-address', JSON.stringify(defaultAddress))
-    }
-  }
+  // El mapa siempre inicia en el obelisco de Buenos Aires por defecto
+  // No se solicita ubicación automáticamente
+  // El usuario debe presionar "Mi ubicación" para activar el filtro
   
   // Cerrar menú de direcciones al hacer click fuera
   if (process.client) {

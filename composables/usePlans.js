@@ -24,9 +24,9 @@ export const PLANS = [
     id: "basic",
     name: "Básico",
     description: "Ideal para emprendimientos y negocios pequeños",
-    price: 3900, // Precio con impuestos
-    priceWithoutTaxes: 3900, // Precio sin impuestos
-    priceWithTaxes: 4719, // Precio con impuestos (21% IVA)
+    price: 3000, // Precio con impuestos
+    priceWithoutTaxes: 2479, // Precio sin impuestos
+    priceWithTaxes: 3000, // Precio con impuestos (21% IVA)
     maxBusinesses: 1,
     hasQR: true, // SÍ puede generar QR
     canExportPDF: true, // SÍ puede exportar PDF
@@ -49,24 +49,21 @@ export const PLANS = [
     id: "professional",
     name: "Pro",
     description: "Ideal para negocios en expansión",
-    price: 9900, // Precio con impuestos
-    priceWithoutTaxes: 9900, // Precio sin impuestos
-    priceWithTaxes: 11979, // Precio con impuestos (21% IVA)
-    maxBusinesses: 5,
+    price: 5000, // Precio con impuestos
+    priceWithoutTaxes: 4132, // Precio sin impuestos
+    priceWithTaxes: 5000, // Precio con impuestos (21% IVA)
+    maxBusinesses: 3,
     hasQR: true,
     canExportPDF: true,
     isPublic: true,
     canShare: true,
     canScreenshot: true,
     hasWhatsAppOrders: false, // Removido
-    hasYearlyBilling: true, // Soporte para billing anual
-    yearlyPrice: 95040, // 20% descuento (9900 * 12 * 0.8)
-    yearlyDiscount: 20, // Porcentaje de descuento
     features: [
-      "Hasta 5 comercios",
+      "Hasta 3 comercios",
       "Menú QR ilimitado",
       "Menú público y compartible",
-      "Aparece destacado en el mapa ⭐",
+      "Aparece en mapa de descubrimiento ⭐",
       "Links a apps de pedidos",
       "Personalización completa (colores, fuentes, imágenes, header, logo)",
       "Exportar menú a PDF ⭐",
@@ -77,27 +74,52 @@ export const PLANS = [
     popular: true,
   },
   {
-    id: "enterprise",
-    name: "Enterprise",
-    description: "Para grandes cadenas y franquicias",
-    price: 24793, // Precio con impuestos
-    priceWithoutTaxes: 24793, // Precio sin impuestos
-    priceWithTaxes: 30000, // Precio con impuestos (21% IVA)
-    maxBusinesses: 50,
+    id: "business",
+    name: "Business",
+    description: "Ideal para cadenas medianas",
+    price: 10000, // Precio con impuestos
+    priceWithoutTaxes: 8264, // Precio sin impuestos
+    priceWithTaxes: 10000, // Precio con impuestos (21% IVA)
+    maxBusinesses: 10,
     hasQR: true,
     canExportPDF: true,
     isPublic: true,
     canShare: true,
     canScreenshot: true,
     hasWhatsAppOrders: false, // Removido
-    hasYearlyBilling: true, // Soporte para billing anual
-    yearlyPrice: 238008, // 20% descuento (24793 * 12 * 0.8)
-    yearlyDiscount: 20, // Porcentaje de descuento
     features: [
-      "Hasta 50 comercios",
+      "Hasta 10 comercios",
       "Menú QR ilimitado",
       "Menú público y compartible",
       "Aparece destacado en el mapa ⭐",
+      "Links a apps de pedidos",
+      "Personalización completa (colores, fuentes, imágenes, header, logo)",
+      "Exportar menú a PDF ⭐",
+      "Analytics mejorados",
+      "Templates predefinidos",
+      "Logo personalizado en el mapa",
+      "Soporte prioritario",
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    description: "Para grandes cadenas y franquicias",
+    price: 30000, // Precio con impuestos
+    priceWithoutTaxes: 24793, // Precio sin impuestos
+    priceWithTaxes: 30000, // Precio con impuestos (21% IVA)
+    maxBusinesses: 100,
+    hasQR: true,
+    canExportPDF: true,
+    isPublic: true,
+    canShare: true,
+    canScreenshot: true,
+    hasWhatsAppOrders: false, // Removido
+    features: [
+      "Hasta 100 comercios",
+      "Menú QR ilimitado",
+      "Menú público y compartible",
+      "Aparece destacado premium en el mapa ⭐",
       "Links a apps de pedidos",
       "Personalización completa",
       "Logo personalizado en el mapa",

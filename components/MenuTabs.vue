@@ -491,8 +491,10 @@ const showHoursModal = ref(false)
 
 // Obtener secciones del menú
 const sections = computed(() => {
-  if (!props.business?.sections) return []
-  return props.business.sections.filter(section => section.items && section.items.length > 0)
+  // Intentar múltiples formatos posibles
+  const menuSections = props.business?.menu?.sections || props.business?.sections || []
+  if (!Array.isArray(menuSections)) return []
+  return menuSections.filter(section => section && section.items && Array.isArray(section.items) && section.items.length > 0)
 })
 
 // Establecer tab activa por defecto (primera sección)
