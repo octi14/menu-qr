@@ -96,10 +96,10 @@
         <p class="text-sm text-slate-600 dark:text-slate-400">
           Si el problema persiste, contactanos en{' '}
           <a
-            href="mailto:soporte@foodland.com"
+            href="mailto:soporte@mapamorfi.com"
             class="text-emerald-600 dark:text-emerald-400 hover:underline font-medium"
           >
-            soporte@foodland.com
+            soporte@mapamorfi.com
           </a>
         </p>
       </div>
@@ -135,7 +135,7 @@ const handleGoBack = () => {
 
 // Configurar el título de la página
 useHead({
-  title: `${statusCode.value} - ${statusCode.value === 404 ? 'Página no encontrada' : 'Error del servidor'} · FoodLand`,
+  title: `${statusCode.value} - ${statusCode.value === 404 ? 'Página no encontrada' : 'Error del servidor'} · MapaMorfi`,
 })
 </script>
 

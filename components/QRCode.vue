@@ -55,7 +55,7 @@ const downloadQR = async () => {
   try {
     const dataUrl = canvasRef.value.toDataURL('image/png')
     const link = document.createElement('a')
-    link.download = 'foodland-qr.png'
+    link.download = 'mapamorfi-qr.png'
     link.href = dataUrl
     link.click()
   } catch (error) {

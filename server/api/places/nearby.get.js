@@ -16,7 +16,7 @@ async function searchOverpassAPI(lat, lon, radius) {
   try {
     const response = await fetch(overpassUrl, {
       headers: {
-        'User-Agent': 'FoodLand/1.0',
+        'User-Agent': 'MapaMorfi/1.0',
       },
     })
 
@@ -57,7 +57,7 @@ async function searchNominatim(lat, lon, radius) {
       
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'FoodLand/1.0',
+          'User-Agent': 'MapaMorfi/1.0',
         },
         signal: controller.signal,
       })

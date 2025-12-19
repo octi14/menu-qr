@@ -330,7 +330,7 @@ const updateMarkers = () => {
           </div>
       `
       
-      // Para comercios de FoodLand, mostrar link al menú si tiene slug
+      // Para comercios de MapaMorfi, mostrar link al menú si tiene slug
       if (hasMenu) {
         popupContent += `
           <a href="/${business.slug}/menu" style="display: inline-block; width: 100%; text-align: center; margin-top: 8px; padding: 10px 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3); transition: all 0.2s;">Ver menú</a>

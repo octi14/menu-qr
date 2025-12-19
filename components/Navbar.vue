@@ -261,7 +261,7 @@
               <span class="text-white font-bold text-sm">QR</span>
             </div>
             <span class="font-semibold text-slate-900 dark:text-slate-50">
-              FoodLand
+              MapaMorfi
             </span>
           </NuxtLink>
 

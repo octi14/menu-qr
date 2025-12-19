@@ -1,6 +1,6 @@
-# FoodLand · Menús digitales para tu comercio
+# MapaMorfi · Menús digitales para tu comercio
 
-**FoodLand** es una plataforma construida con **Nuxt.js 3** y Tailwind CSS para crear y gestionar menús digitales con códigos QR. Perfecta para restaurantes, bares, cervecerías y cualquier negocio gastronómico que quiera digitalizar su menú.
+**MapaMorfi** es una plataforma construida con **Nuxt.js 3** y Tailwind CSS para crear y gestionar menús digitales con códigos QR. Perfecta para restaurantes, bares, cervecerías y cualquier negocio gastronómico que quiera digitalizar su menú.
 
 ## 🚀 Tecnologías
 

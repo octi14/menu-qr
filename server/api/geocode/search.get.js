@@ -79,7 +79,7 @@ export default defineEventHandler(async (event) => {
       
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'FoodLand/1.0',
+          'User-Agent': 'MapaMorfi/1.0',
         },
       })
 

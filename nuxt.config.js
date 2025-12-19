@@ -31,15 +31,15 @@ export default defineNuxtConfig({
   
   app: {
     head: {
-      title: 'FoodLand · Menús digitales para tu comercio',
+      title: 'MapaMorfi · Menús digitales para tu comercio',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
-        { name: 'description', content: 'FoodLand - Plataforma de menús digitales con códigos QR para tu comercio.' },
+        { name: 'description', content: 'MapaMorfi - Plataforma de menús digitales con códigos QR para tu comercio.' },
         { name: 'theme-color', content: '#10b981' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
-        { name: 'apple-mobile-web-app-title', content: 'FoodLand' }
+        { name: 'apple-mobile-web-app-title', content: 'MapaMorfi' }
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },

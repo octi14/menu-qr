@@ -206,7 +206,7 @@ watch(isLoading, (newVal) => {
 })
 
 useHead({
-  title: 'Mis comercios · FoodLand',
+  title: 'Mis comercios · MapaMorfi',
 })
 </script>
 

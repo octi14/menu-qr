@@ -129,8 +129,8 @@
           <p class="text-slate-600 dark:text-slate-400 text-sm">
             También podés contactarnos directamente por email:
           </p>
-          <a href="mailto:soporte@foodland.com" class="text-emerald-600 dark:text-emerald-400 hover:underline font-medium">
-            soporte@foodland.com
+          <a href="mailto:soporte@mapamorfi.com" class="text-emerald-600 dark:text-emerald-400 hover:underline font-medium">
+            soporte@mapamorfi.com
           </a>
         </div>
 
@@ -215,7 +215,7 @@ const handleSubmit = async () => {
 }
 
 useHead({
-  title: 'Contacto y Soporte · FoodLand',
+  title: 'Contacto y Soporte · MapaMorfi',
 })
 </script>
 

@@ -2,7 +2,7 @@
  * Composable para caché de menús en localStorage
  */
 export const useMenuCache = () => {
-  const CACHE_PREFIX = 'foodland-menu-cache-'
+  const CACHE_PREFIX = 'mapamorfi-menu-cache-'
   const CACHE_VERSION = '1.0'
   const CACHE_EXPIRY = 24 * 60 * 60 * 1000 // 24 horas en milisegundos
 

@@ -519,7 +519,7 @@
           <span>
             Hecho con
             <span class="font-semibold" :style="{ color: priceColor }">
-              FoodLand
+              MapaMorfi
             </span>
           </span>
         </div>
@@ -969,7 +969,7 @@ const exportToPDF = async () => {
       pdf.setFontSize(8)
       pdf.setTextColor(128, 128, 128)
       pdf.text(
-        `Hecho con FoodLand · Página ${i} de ${pageCount}`,
+        `Hecho con MapaMorfi · Página ${i} de ${pageCount}`,
         pdfWidth / 2,
         pdfHeight - 5,
         { align: 'center' }

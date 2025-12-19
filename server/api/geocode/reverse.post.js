@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     
     const response = await fetch(url, {
       headers: {
-          'User-Agent': 'FoodLand/1.0', // Nominatim requiere User-Agent
+          'User-Agent': 'MapaMorfi/1.0', // Nominatim requiere User-Agent
       },
     })
 

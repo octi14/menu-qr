@@ -1237,7 +1237,7 @@ onMounted(async () => {
 })
 
 useHead({
-  title: 'Crear comercio · FoodLand',
+  title: 'Crear comercio · MapaMorfi',
 })
 </script>
 

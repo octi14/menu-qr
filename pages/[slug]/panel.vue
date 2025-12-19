@@ -1646,7 +1646,7 @@ onMounted(async () => {
 })
 
 useHead({
-  title: business.value ? `${business.value.name} · Panel` : 'Panel · FoodLand',
+  title: business.value ? `${business.value.name} · Panel` : 'Panel · MapaMorfi',
 })
 </script>
 

@@ -3,7 +3,7 @@
     <div class="w-full max-w-md space-y-8">
       <div class="text-center space-y-2">
         <div class="flex items-center justify-center gap-2 mb-4">
-          <h1 class="text-2xl font-semibold">FoodLand</h1>
+          <h1 class="text-2xl font-semibold">MapaMorfi</h1>
           <div class="relative z-10">
             <ThemeToggle />
           </div>
@@ -138,7 +138,7 @@ const handleSubmit = async () => {
 }
 
 useHead({
-  title: 'Iniciar sesión · FoodLand',
+  title: 'Iniciar sesión · MapaMorfi',
 })
 </script>
 

@@ -528,7 +528,7 @@ const businessesWithCoordinates = computed(() => {
   )
 })
 
-// Todos los comercios para el mapa (solo FoodLand)
+// Todos los comercios para el mapa (solo MapaMorfi)
 const allBusinessesForMap = computed(() => {
   return businessesWithCoordinates.value
 })
@@ -723,7 +723,7 @@ const requestLocation = async () => {
   
   // Limpiar dirección de entrega guardada cuando se usa ubicación del GPS
   if (process.client) {
-    localStorage.removeItem('foodland-delivery-address')
+    localStorage.removeItem('mapamorfi-delivery-address')
   }
   
   if (!process.client) {
@@ -829,7 +829,7 @@ const toggleLocationFilter = () => {
       showUserLocationPopup.value = true
       // Guardar en localStorage como dirección de entrega
       if (process.client) {
-        localStorage.setItem('foodland-delivery-address', JSON.stringify({
+        localStorage.setItem('mapamorfi-delivery-address', JSON.stringify({
           id: favoriteAddress.id,
           name: favoriteAddress.name,
           address: favoriteAddress.address,
@@ -917,7 +917,7 @@ const selectSavedAddress = (address) => {
   
   // Guardar la dirección seleccionada en localStorage para usar en el pedido
   if (process.client) {
-    localStorage.setItem('foodland-delivery-address', JSON.stringify({
+    localStorage.setItem('mapamorfi-delivery-address', JSON.stringify({
       id: address.id,
       name: address.name,
       address: address.address,
@@ -971,7 +971,7 @@ onMounted(async () => {
 })
 
 useHead({
-  title: 'Descubrir comercios · FoodLand',
+  title: 'Descubrir comercios · MapaMorfi',
   meta: [
     {
       name: 'description',
@@ -979,7 +979,7 @@ useHead({
     },
     {
       property: 'og:title',
-      content: 'Descubrir comercios · FoodLand'
+      content: 'Descubrir comercios · MapaMorfi'
     },
     {
       property: 'og:description',
@@ -995,7 +995,7 @@ useHead({
     },
     {
       name: 'twitter:title',
-      content: 'Descubrir comercios · FoodLand'
+      content: 'Descubrir comercios · MapaMorfi'
     },
     {
       name: 'twitter:description',

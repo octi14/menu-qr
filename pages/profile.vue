@@ -573,7 +573,7 @@ const confirmDeleteAccount = async () => {
     if (process.client) {
       localStorage.removeItem('qrmenu-auth')
       localStorage.removeItem('qrmenu-theme')
-      localStorage.removeItem('foodland-delivery-address')
+      localStorage.removeItem('mapamorfi-delivery-address')
     }
 
     // Redirigir al login con mensaje
@@ -592,7 +592,7 @@ onMounted(() => {
 })
 
 useHead({
-  title: 'Mi perfil · FoodLand',
+  title: 'Mi perfil · MapaMorfi',
 })
 </script>
 

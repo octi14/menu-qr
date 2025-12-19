@@ -289,7 +289,7 @@ onMounted(() => {
 })
 
 useHead({
-  title: 'FoodLand - Menús digitales con códigos QR',
+  title: 'MapaMorfi - Menús digitales con códigos QR',
   meta: [
     { name: 'description', content: 'Crea menús digitales profesionales con códigos QR. Sin apps, sin complicaciones. Digitaliza tu negocio en minutos.' }
   ]

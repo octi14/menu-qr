@@ -388,7 +388,7 @@ onMounted(() => {
 })
 
 useHead({
-  title: 'Direcciones guardadas · FoodLand',
+  title: 'Direcciones guardadas · MapaMorfi',
 })
 </script>
 

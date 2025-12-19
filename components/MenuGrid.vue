@@ -374,7 +374,7 @@
           <span>
             Hecho con
             <span class="font-semibold" :style="{ color: priceColor }">
-              FoodLand
+              MapaMorfi
             </span>
           </span>
         </div>

@@ -126,7 +126,7 @@ onMounted(() => {
 })
 
 useHead({
-  title: 'Favoritos · FoodLand',
+  title: 'Favoritos · MapaMorfi',
 })
 </script>
 
