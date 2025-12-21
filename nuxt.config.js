@@ -3,6 +3,10 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   
+  experimental: {
+    appManifest: false
+  },
+  
   devServer: {
     host: '0.0.0.0', // Escuchar en todas las interfaces de red
     port: 3000,
@@ -26,6 +30,15 @@ export default defineNuxtConfig({
     jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
     public: {
       // Variables públicas si las necesitas
+    }
+  },
+  
+  vite: {
+    optimizeDeps: {
+      include: ['nuxt']
+    },
+    ssr: {
+      noExternal: []
     }
   },
   

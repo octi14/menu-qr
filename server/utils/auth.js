@@ -44,6 +44,13 @@ export function verifyToken(token) {
   try {
     return jwt.verify(token, JWT_SECRET)
   } catch (error) {
+    // Distinguir entre diferentes tipos de errores
+    if (error.name === 'TokenExpiredError') {
+      return { expired: true, error: 'Token expirado' }
+    }
+    if (error.name === 'JsonWebTokenError') {
+      return { invalid: true, error: 'Token inválido' }
+    }
     return null
   }
 }
@@ -80,7 +87,17 @@ export async function requireAuth(event) {
   }
 
   const decoded = verifyToken(token)
-  if (!decoded || !decoded.userId) {
+  
+  // Verificar si el token está expirado
+  if (decoded && decoded.expired) {
+    throw createError({
+      statusCode: 401,
+      message: 'No autorizado: Token expirado',
+    })
+  }
+  
+  // Verificar si el token es inválido o no tiene userId
+  if (!decoded || decoded.invalid || !decoded.userId) {
     throw createError({
       statusCode: 401,
       message: 'No autorizado: Token inválido',

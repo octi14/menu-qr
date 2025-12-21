@@ -303,13 +303,25 @@
           }"
         >
           <!-- Imagen del ítem -->
-          <div v-if="item.imageUrl" class="flex-shrink-0">
+          <div class="flex-shrink-0">
             <img
+              v-if="item.imageUrl"
               :src="item.imageUrl"
               :alt="item.name"
               loading="lazy"
               class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg object-cover"
             />
+              <div v-else class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 dark:from-emerald-900/20 dark:to-amber-900/20 flex items-center justify-center">
+                <svg class="w-10 h-10 sm:w-14 sm:h-14 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                  <!-- Plato -->
+                  <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="currentColor" opacity="0.2"/>
+                  <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="none"/>
+                  <!-- Comida en el plato -->
+                  <circle cx="9" cy="14" r="2" fill="currentColor" opacity="0.6"/>
+                  <circle cx="15" cy="14" r="2.5" fill="currentColor" opacity="0.6"/>
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor" opacity="0.7"/>
+                </svg>
+              </div>
           </div>
           
           <!-- Contenido del ítem -->
@@ -431,9 +443,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { getContrastTextColor } from '~/composables/useColorUtils'
 import { getFontById } from '~/composables/useFonts'
+import { normalizeBusinessSections, filterSectionsWithItems } from '~/composables/useMenuNormalizer'
 
 const props = defineProps({
   business: {
@@ -489,18 +502,21 @@ const activeTab = ref(null)
 const showShareMenu = ref(false)
 const showHoursModal = ref(false)
 
-// Obtener secciones del menú
+// Obtener secciones del menú usando el normalizador
 const sections = computed(() => {
-  // Intentar múltiples formatos posibles
-  const menuSections = props.business?.menu?.sections || props.business?.sections || []
-  if (!Array.isArray(menuSections)) return []
-  return menuSections.filter(section => section && section.items && Array.isArray(section.items) && section.items.length > 0)
+  if (!props.business) return []
+  
+  // Normalizar y filtrar secciones con items válidos
+  const normalizedSections = normalizeBusinessSections(props.business)
+  return filterSectionsWithItems(normalizedSections)
 })
 
-// Establecer tab activa por defecto (primera sección)
-if (sections.value.length > 0 && !activeTab.value) {
-  activeTab.value = sections.value[0].id
-}
+// Establecer tab activa por defecto (primera sección) cuando sections cambia
+watch(sections, (newSections) => {
+  if (newSections.length > 0 && !activeTab.value) {
+    activeTab.value = newSections[0].id
+  }
+}, { immediate: true })
 
 // Sección activa
 const activeSection = computed(() => {

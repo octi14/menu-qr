@@ -69,14 +69,22 @@ export const useBusinesses = () => {
 
   const updateBusinessToAPI = async (slug, business) => {
     try {
-      await $fetch(`/api/businesses/${slug}`, {
+      console.log(`updateBusinessToAPI: Updating business ${slug}, sections count: ${business.sections?.length || 0}`)
+      const response = await $fetch(`/api/businesses/${slug}`, {
         method: 'PUT',
         body: business,
       })
+      console.log('updateBusinessToAPI: Update successful', response)
       return true
     } catch (error) {
       console.error('Error updating business to API:', error)
-      return false
+      console.error('Error details:', {
+        statusCode: error.statusCode,
+        status: error.status,
+        message: error.message,
+        data: error.data
+      })
+      throw error // Re-lanzar el error para que pueda ser manejado en el componente
     }
   }
 

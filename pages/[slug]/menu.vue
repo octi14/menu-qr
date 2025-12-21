@@ -452,13 +452,25 @@
               <!-- Contenido del ítem -->
               <div class="flex items-start justify-between gap-4 sm:gap-6">
                 <!-- Imagen del ítem como miniatura -->
-                <div v-if="item.imageUrl" class="flex-shrink-0">
+                <div class="flex-shrink-0">
                   <img
+                    v-if="item.imageUrl"
                     :src="item.imageUrl"
                     :alt="`${item.name}${item.description ? ' - ' + item.description : ''}`"
                     loading="lazy"
                     class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105 shadow-md"
                   />
+                  <div v-else class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 dark:from-emerald-900/20 dark:to-amber-900/20 flex items-center justify-center">
+                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                      <!-- Plato -->
+                      <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="currentColor" opacity="0.2"/>
+                      <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="none"/>
+                      <!-- Comida en el plato -->
+                      <circle cx="9" cy="14" r="2" fill="currentColor" opacity="0.6"/>
+                      <circle cx="15" cy="14" r="2.5" fill="currentColor" opacity="0.6"/>
+                      <circle cx="12" cy="12" r="1.5" fill="currentColor" opacity="0.7"/>
+                    </svg>
+                  </div>
                 </div>
                 
                 <div class="flex-1 space-y-3 min-w-0">
@@ -772,13 +784,8 @@ const isSectionCollapsed = (sectionId) => {
 const filteredSections = computed(() => {
   if (!business.value) return []
   
-  // Migrar estructura antigua si existe (menu.sections -> sections)
-  let sections = []
-  if (business.value.sections && Array.isArray(business.value.sections)) {
-    sections = business.value.sections
-  } else if (business.value.menu && business.value.menu.sections && Array.isArray(business.value.menu.sections)) {
-    sections = business.value.menu.sections
-  }
+  // Usar normalizador para obtener secciones consistentes
+  let sections = filterSectionsWithItems(normalizeBusinessSections(business.value))
   
   if (sections.length === 0) return []
   
@@ -787,15 +794,16 @@ const filteredSections = computed(() => {
   const query = searchQuery.value.toLowerCase().trim()
   return sections
     .map(section => {
-      const filteredItems = section.items.filter(item => {
+      const filteredItems = (section.items || []).filter(item => {
+        if (!item || !item.name) return false
         const nameMatch = item.name?.toLowerCase().includes(query)
         const descMatch = item.description?.toLowerCase().includes(query)
-        const tagMatch = item.tags?.some(tag => tag.toLowerCase().includes(query))
+        const tagMatch = Array.isArray(item.tags) && item.tags.some(tag => tag?.toLowerCase().includes(query))
         return nameMatch || descMatch || tagMatch
       })
       return { ...section, items: filteredItems }
     })
-    .filter(section => section.items.length > 0)
+    .filter(section => section.items && section.items.length > 0)
 })
 
 // Compartir funciones
@@ -834,92 +842,255 @@ const exportToPDF = async () => {
     const { default: jsPDF } = await import('jspdf')
 
     // Ocultar elementos que no queremos en el PDF
-    const shareMenu = document.querySelector('.absolute.right-5')
-    const themeToggle = document.querySelector('button[title*="tema"]')
-    const favoriteButton = document.querySelector('button[title*="favoritos"]')
-    const searchInput = document.querySelector('input[placeholder*="Buscar"]')
-    const actionButtons = document.querySelectorAll('.flex.items-center.justify-end.gap-3 button')
+    const shareMenu = document.querySelector('.absolute.right-5, .absolute.right-0.top-full')
+    const themeToggle = document.querySelector('button[title*="tema"], button[title*="Tema"]')
+    const favoriteButton = document.querySelector('button[title*="favoritos"], button[title*="Favoritos"]')
+    
+    // Elementos específicos del layout vertical (header con acciones)
+    const headerActions = document.querySelector('header .flex.items-center.justify-end')
+    const searchContainer = document.querySelector('.relative.flex-1.max-w-xs')
+    const searchInputs = document.querySelectorAll('input[placeholder*="Buscar"], input[placeholder*="buscar"], input#menu-search')
+    const actionButtons = document.querySelectorAll('.flex.items-center.justify-end.gap-3 button, .flex.items-center.justify-end.gap-2 button')
+    const deliveryPlatforms = document.querySelectorAll('a[target="_blank"][rel*="noopener"]')
+    
+    // Elementos específicos del layout grid y tabs (sticky con filtros/tabs y búsqueda)
+    const stickyFilters = document.querySelector('.sticky.top-0.z-40')
+    const categoryFilters = document.querySelectorAll('.sticky.top-0 button')
+    const stickySearchContainer = document.querySelector('.sticky.top-0 .relative.mt-3')
+    
+    // Barra superior de acciones del layout tabs (antes del header)
+    const topActionBar = document.querySelector('.flex.items-center.justify-end.gap-3.mb-4')
+    
+    // Botones de colapsar/expandir secciones (layout vertical)
+    const collapseButtons = document.querySelectorAll('button[aria-label*="Expandir"], button[aria-label*="Colapsar"]')
+    
+    // Tabs de categorías (layout tabs)
+    const tabButtons = document.querySelectorAll('.sticky.top-0 button[class*="px-4 py-2 rounded-lg"]')
     
     // Guardar estados originales
     const originalDisplays = []
-    if (shareMenu) {
-      originalDisplays.push({ element: shareMenu, display: shareMenu.style.display })
-      shareMenu.style.display = 'none'
+    const hideElement = (el) => {
+      if (el && el.style) {
+        originalDisplays.push({ element: el, display: el.style.display })
+        el.style.display = 'none'
+      }
     }
-    if (themeToggle) {
-      originalDisplays.push({ element: themeToggle, display: themeToggle.style.display })
-      themeToggle.style.display = 'none'
+    
+    hideElement(shareMenu)
+    hideElement(themeToggle)
+    hideElement(favoriteButton)
+    hideElement(headerActions) // Ocultar todo el contenedor de acciones del header
+    hideElement(searchContainer) // Ocultar contenedor de búsqueda completo (layout vertical)
+    hideElement(topActionBar) // Ocultar barra superior de acciones (layout tabs)
+    if (stickyFilters) {
+      hideElement(stickyFilters) // Ocultar sticky completo (grid y tabs)
     }
-    if (favoriteButton) {
-      originalDisplays.push({ element: favoriteButton, display: favoriteButton.style.display })
-      favoriteButton.style.display = 'none'
+    if (stickySearchContainer) {
+      hideElement(stickySearchContainer) // Ocultar contenedor de búsqueda dentro del sticky
     }
-    if (searchInput) {
-      originalDisplays.push({ element: searchInput, display: searchInput.style.display })
-      searchInput.style.display = 'none'
-    }
-    actionButtons.forEach(btn => {
-      originalDisplays.push({ element: btn, display: btn.style.display })
-      btn.style.display = 'none'
-    })
+    actionButtons.forEach(btn => hideElement(btn))
+    searchInputs.forEach(input => hideElement(input))
+    categoryFilters.forEach(btn => hideElement(btn))
+    tabButtons.forEach(btn => hideElement(btn)) // Ocultar botones de tabs
+    deliveryPlatforms.forEach(link => hideElement(link))
+    collapseButtons.forEach(btn => hideElement(btn))
 
     // Obtener el contenedor principal del menú
     const element = document.querySelector('.min-h-screen > .mx-auto')
     if (!element) {
       // Restaurar elementos
       originalDisplays.forEach(({ element: el, display }) => {
-        el.style.display = display
+        if (el && el.style) el.style.display = display
       })
       return
     }
 
+    // Eliminar padding para que el menú ocupe todo el ancho
+    const originalPadding = {
+      top: element.style.paddingTop,
+      bottom: element.style.paddingBottom,
+      left: element.style.paddingLeft,
+      right: element.style.paddingRight,
+      computedTop: window.getComputedStyle(element).paddingTop,
+      computedBottom: window.getComputedStyle(element).paddingBottom,
+      computedLeft: window.getComputedStyle(element).paddingLeft,
+      computedRight: window.getComputedStyle(element).paddingRight,
+    }
+    
+    // Eliminar todo el padding
+    element.style.paddingTop = '0px'
+    element.style.paddingBottom = '0px'
+    element.style.paddingLeft = '0px'
+    element.style.paddingRight = '0px'
+    
+    // Eliminar también márgenes laterales para ocupar todo el ancho
+    const originalMargin = {
+      left: element.style.marginLeft,
+      right: element.style.marginRight,
+    }
+    element.style.marginLeft = '0'
+    element.style.marginRight = '0'
+
+    // Remover line-clamp de las descripciones para que se vean completas en el PDF
+    const descriptions = element.querySelectorAll('.line-clamp-2, .line-clamp-3')
+    const originalDescriptionStyles = []
+    descriptions.forEach(desc => {
+      originalDescriptionStyles.push({
+        element: desc,
+        classes: Array.from(desc.classList),
+        style: {
+          webkitLineClamp: desc.style.webkitLineClamp,
+          display: desc.style.display,
+          webkitBoxOrient: desc.style.webkitBoxOrient,
+          overflow: desc.style.overflow
+        }
+      })
+      desc.classList.remove('line-clamp-2', 'line-clamp-3')
+      desc.style.webkitLineClamp = 'unset'
+      desc.style.display = 'block'
+      desc.style.webkitBoxOrient = 'unset'
+      desc.style.overflow = 'visible'
+    })
+
+    // Ocultar todas las imágenes para evitar problemas de carga externa
+    const images = element.querySelectorAll('img')
+    const originalImageDisplays = []
+    images.forEach(img => {
+      originalImageDisplays.push({
+        element: img,
+        display: img.style.display
+      })
+      img.style.display = 'none'
+    })
+
+    // Pequeña pausa para asegurar que todo se renderice
+    await new Promise(resolve => setTimeout(resolve, 200))
+
     // Configuración mejorada para html2canvas
     const canvas = await html2canvas(element, {
-      scale: 3, // Aumentar escala para mejor calidad
+      scale: 2, // Escala suficiente para buena calidad
       useCORS: true,
-      allowTaint: true,
+      allowTaint: false, // Cambiar a false para mejor manejo de imágenes
       backgroundColor: backgroundColor.value || '#ffffff',
       logging: false,
       width: element.scrollWidth,
       height: element.scrollHeight,
       windowWidth: element.scrollWidth,
       windowHeight: element.scrollHeight,
+      removeContainer: false,
+      imageTimeout: 15000, // Aumentar timeout para imágenes
       onclone: (clonedDoc) => {
-        // Asegurar que las imágenes se carguen en el documento clonado
+        // Ocultar elementos en el clon también
+        const clonedShareMenu = clonedDoc.querySelector('.absolute.right-5, .absolute.right-0.top-full')
+        const clonedSticky = clonedDoc.querySelector('.sticky.top-0.z-40')
+        const clonedStickySearch = clonedDoc.querySelector('.sticky.top-0 .relative.mt-3')
+        const clonedHeaderActions = clonedDoc.querySelector('header .flex.items-center.justify-end')
+        const clonedSearchContainer = clonedDoc.querySelector('.relative.flex-1.max-w-xs')
+        const clonedTopActionBar = clonedDoc.querySelector('.flex.items-center.justify-end.gap-3.mb-4')
+        const clonedSearch = clonedDoc.querySelectorAll('input[placeholder*="Buscar"], input[placeholder*="buscar"], input#menu-search')
+        const clonedActions = clonedDoc.querySelectorAll('.flex.items-center.justify-end button')
+        const clonedDeliveryPlatforms = clonedDoc.querySelectorAll('a[target="_blank"][rel*="noopener"]')
+        const clonedCollapseButtons = clonedDoc.querySelectorAll('button[aria-label*="Expandir"], button[aria-label*="Colapsar"]')
+        const clonedTabButtons = clonedDoc.querySelectorAll('.sticky.top-0 button[class*="px-4 py-2 rounded-lg"]')
+        const clonedCategoryFilters = clonedDoc.querySelectorAll('.sticky.top-0 button')
+        
+        if (clonedShareMenu) clonedShareMenu.style.display = 'none'
+        if (clonedSticky) clonedSticky.style.display = 'none'
+        if (clonedStickySearch) clonedStickySearch.style.display = 'none'
+        if (clonedHeaderActions) clonedHeaderActions.style.display = 'none'
+        if (clonedSearchContainer) clonedSearchContainer.style.display = 'none'
+        if (clonedTopActionBar) clonedTopActionBar.style.display = 'none'
+        clonedSearch.forEach(input => input.style.display = 'none')
+        clonedActions.forEach(btn => btn.style.display = 'none')
+        clonedDeliveryPlatforms.forEach(link => link.style.display = 'none')
+        clonedCollapseButtons.forEach(btn => btn.style.display = 'none')
+        clonedTabButtons.forEach(btn => btn.style.display = 'none')
+        clonedCategoryFilters.forEach(btn => btn.style.display = 'none')
+        
+        // Eliminar padding y márgenes en el clon también
+        const clonedElement = clonedDoc.querySelector('.min-h-screen > .mx-auto')
+        if (clonedElement) {
+          clonedElement.style.paddingTop = '0px'
+          clonedElement.style.paddingBottom = '0px'
+          clonedElement.style.paddingLeft = '0px'
+          clonedElement.style.paddingRight = '0px'
+          clonedElement.style.marginLeft = '0'
+          clonedElement.style.marginRight = '0'
+        }
+        
+        // Ocultar imágenes en el clon
         const clonedImages = clonedDoc.querySelectorAll('img')
-        clonedImages.forEach((img) => {
-          if (img.complete) {
-            return
-          }
-          return new Promise((resolve) => {
-            img.onload = resolve
-            img.onerror = resolve
-          })
+        clonedImages.forEach(img => {
+          img.style.display = 'none'
         })
+        
+        // Remover line-clamp de las descripciones para que se vean completas en el PDF
+        const clonedDescriptions = clonedDoc.querySelectorAll('.line-clamp-2, .line-clamp-3')
+        clonedDescriptions.forEach(desc => {
+          desc.classList.remove('line-clamp-2', 'line-clamp-3')
+          desc.style.webkitLineClamp = 'unset'
+          desc.style.display = 'block'
+          desc.style.webkitBoxOrient = 'unset'
+          desc.style.overflow = 'visible'
+        })
+        
+        // Asegurar que las etiquetas se rendericen correctamente
+        const clonedTags = clonedDoc.querySelectorAll('[class*="rounded-full"][class*="px-2"]')
+        clonedTags.forEach(tag => {
+          tag.style.display = 'inline-flex'
+          tag.style.visibility = 'visible'
+        })
+        
+      }
+    })
+
+    // Restaurar padding y márgenes
+    element.style.paddingTop = originalPadding.top || ''
+    element.style.paddingBottom = originalPadding.bottom || ''
+    element.style.paddingLeft = originalPadding.left || ''
+    element.style.paddingRight = originalPadding.right || ''
+    element.style.marginLeft = originalMargin.left || ''
+    element.style.marginRight = originalMargin.right || ''
+    
+    // Restaurar imágenes
+    originalImageDisplays.forEach(({ element: img, display }) => {
+      if (img && img.style) {
+        img.style.display = display || ''
+      }
+    })
+
+    // Restaurar estilos de descripciones
+    originalDescriptionStyles.forEach(({ element: el, classes, style }) => {
+      if (el) {
+        classes.forEach(cls => el.classList.add(cls))
+        el.style.webkitLineClamp = style.webkitLineClamp
+        el.style.display = style.display
+        el.style.webkitBoxOrient = style.webkitBoxOrient
+        el.style.overflow = style.overflow
       }
     })
 
     // Restaurar elementos ocultos
     originalDisplays.forEach(({ element: el, display }) => {
-      el.style.display = display
+      if (el && el.style) el.style.display = display
     })
 
-    // Configuración del PDF
+    // Configuración del PDF - sin márgenes para ocupar todo el ancho
     const pdf = new jsPDF('p', 'mm', 'a4')
     const pdfWidth = 210 // Ancho A4 en mm
     const pdfHeight = 297 // Alto A4 en mm
-    const margin = 10 // Márgenes en mm
-    const contentWidth = pdfWidth - (margin * 2)
-    const contentHeight = pdfHeight - (margin * 2)
+    const margin = 0 // Sin márgenes para ocupar todo el ancho
+    const contentWidth = pdfWidth
+    const contentHeight = pdfHeight
 
     // Calcular dimensiones de la imagen
     const imgWidth = canvas.width
     const imgHeight = canvas.height
     const ratio = imgWidth / imgHeight
 
-    // Calcular dimensiones para el PDF
-    let finalWidth = contentWidth
-    let finalHeight = contentWidth / ratio
+    // Calcular dimensiones para el PDF usando todo el ancho disponible
+    let finalWidth = pdfWidth // Usar todo el ancho de la página
+    let finalHeight = pdfWidth / ratio
 
     // Si la altura es mayor que el contenido disponible, ajustar
     if (finalHeight > contentHeight) {
@@ -927,38 +1098,53 @@ const exportToPDF = async () => {
       finalWidth = contentHeight * ratio
     }
 
-    // Convertir a imagen de alta calidad
-    const imgData = canvas.toDataURL('image/jpeg', 0.95) // JPEG con 95% de calidad
+    // Convertir a imagen de alta calidad (PNG para mejor calidad, especialmente para grid)
+    const imgData = canvas.toDataURL('image/png', 1.0)
 
     // Calcular cuántas páginas necesitamos
     const totalHeight = finalHeight
-    let yPosition = margin
     let remainingHeight = totalHeight
+    let sourceY = 0
 
     // Agregar primera página
-    pdf.addImage(imgData, 'JPEG', margin, yPosition, finalWidth, finalHeight, undefined, 'FAST')
-
-    // Si el contenido es más alto que una página, dividir en múltiples páginas
-    if (totalHeight > contentHeight) {
-      let sourceY = 0
+    if (totalHeight <= contentHeight) {
+      // Si cabe en una página, agregar directamente sin margen
+      pdf.addImage(imgData, 'PNG', 0, 0, finalWidth, finalHeight, undefined, 'FAST')
+    } else {
+      // Si necesita múltiples páginas, dividir correctamente
       const pageHeightPx = (contentHeight / totalHeight) * imgHeight
+      
+      // Primera página
+      const firstPageHeight = Math.min(pageHeightPx, imgHeight)
+      const tempCanvas1 = document.createElement('canvas')
+      tempCanvas1.width = imgWidth
+      tempCanvas1.height = firstPageHeight
+      const tempCtx1 = tempCanvas1.getContext('2d')
+      tempCtx1.drawImage(canvas, 0, 0, imgWidth, firstPageHeight, 0, 0, imgWidth, firstPageHeight)
+      const firstPageData = tempCanvas1.toDataURL('image/png', 1.0)
+      const firstPageHeightMm = (firstPageHeight / imgHeight) * finalHeight
+      pdf.addImage(firstPageData, 'PNG', 0, 0, finalWidth, firstPageHeightMm, undefined, 'FAST')
+      
+      sourceY = firstPageHeight
+      remainingHeight -= contentHeight
 
-      while (remainingHeight > contentHeight) {
+      // Páginas adicionales
+      while (remainingHeight > 0 && sourceY < imgHeight) {
         pdf.addPage()
-        yPosition = margin
-        sourceY += pageHeightPx
-        remainingHeight -= contentHeight
-
-        // Crear un canvas temporal para la porción de la imagen
+        
+        const pageHeight = Math.min(pageHeightPx, imgHeight - sourceY)
         const tempCanvas = document.createElement('canvas')
         tempCanvas.width = imgWidth
-        tempCanvas.height = Math.min(pageHeightPx, imgHeight - sourceY)
+        tempCanvas.height = pageHeight
         const tempCtx = tempCanvas.getContext('2d')
-        tempCtx.drawImage(canvas, 0, sourceY, imgWidth, tempCanvas.height, 0, 0, imgWidth, tempCanvas.height)
+        tempCtx.drawImage(canvas, 0, sourceY, imgWidth, pageHeight, 0, 0, imgWidth, pageHeight)
 
-        const tempImgData = tempCanvas.toDataURL('image/jpeg', 0.95)
-        const tempHeight = (tempCanvas.height / imgHeight) * finalHeight
-        pdf.addImage(tempImgData, 'JPEG', margin, yPosition, finalWidth, tempHeight, undefined, 'FAST')
+        const tempImgData = tempCanvas.toDataURL('image/png', 1.0)
+        const tempHeightMm = (pageHeight / imgHeight) * finalHeight
+        pdf.addImage(tempImgData, 'PNG', 0, 0, finalWidth, tempHeightMm, undefined, 'FAST')
+        
+        sourceY += pageHeight
+        remainingHeight -= contentHeight
       }
     }
 
@@ -971,7 +1157,7 @@ const exportToPDF = async () => {
       pdf.text(
         `Hecho con MapaMorfi · Página ${i} de ${pageCount}`,
         pdfWidth / 2,
-        pdfHeight - 5,
+        pdfHeight - 3,
         { align: 'center' }
       )
     }
@@ -987,6 +1173,20 @@ const exportToPDF = async () => {
 
 onMounted(async () => {
   try {
+    // Si es el slug de demo, cargar el business de demo
+    if (slug === 'demo') {
+      try {
+        const demo = await $fetch('/api/businesses/demo')
+        if (demo) {
+          business.value = normalizeBusiness(demo)
+          pending.value = false
+          return
+        }
+      } catch (error) {
+        console.error('Error loading demo business:', error)
+      }
+    }
+
     // Intentar cargar desde caché primero para mostrar contenido rápido
     const cachedBusiness = getCachedMenu(slug)
     if (cachedBusiness) {

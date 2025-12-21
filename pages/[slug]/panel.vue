@@ -271,28 +271,39 @@
             </p>
             <div v-if="userPlan && userPlan.id === 'basic' && userRole !== 'admin'" class="space-y-4">
               <!-- Solo layout vertical para plan básico -->
-              <div class="p-4 rounded-lg border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20">
-                <div class="flex items-center gap-3">
-                  <div class="text-2xl">📄</div>
-                  <div>
-                    <div class="font-semibold text-sm">Vertical/Clásico</div>
-                    <div class="text-xs text-slate-600 dark:text-slate-400">
-                      Secciones colapsables, diseño minimalista
+              <div class="p-6 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20">
+                <div class="flex items-start gap-4">
+                  <div class="flex-1 flex items-center justify-center h-24">
+                    <!-- Preview de layout vertical -->
+                    <div class="w-full max-w-xs space-y-2">
+                      <div class="h-3 bg-slate-300 dark:bg-slate-600 rounded w-3/4"></div>
+                      <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                      <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
+                      <div class="h-3 bg-slate-300 dark:bg-slate-600 rounded w-3/4 mt-3"></div>
+                      <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                      <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
                     </div>
                   </div>
+                  <div class="flex-1">
+                    <div class="font-bold text-base mb-1">Vertical/Clásico</div>
+                    <div class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                      Secciones colapsables, diseño minimalista
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                      Los layouts avanzados están disponibles en planes Pro y Enterprise.
+                    </p>
+                  </div>
                 </div>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                  Los layouts avanzados están disponibles en planes Pro y Enterprise.
-                </p>
               </div>
             </div>
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <!-- Vertical/Clásico -->
               <label
-                class="relative flex flex-col items-center p-4 rounded-lg border-2 cursor-pointer transition-all"
+                class="relative flex flex-col p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg"
                 :class="
                   (localBusiness.menuLayout || 'vertical') === 'vertical'
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-md'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
                 "
               >
                 <input
@@ -301,19 +312,30 @@
                   value="vertical"
                   class="sr-only"
                 />
-                <div class="text-2xl mb-2">📄</div>
-                <div class="font-semibold text-sm mb-1">Vertical/Clásico</div>
-                <div class="text-xs text-slate-600 dark:text-slate-400 text-center">
+                <div class="flex-1 flex items-center justify-center mb-4 h-32">
+                  <!-- Preview de layout vertical -->
+                  <div class="w-full max-w-xs space-y-2">
+                    <div class="h-3 bg-slate-300 dark:bg-slate-600 rounded w-3/4"></div>
+                    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
+                    <div class="h-3 bg-slate-300 dark:bg-slate-600 rounded w-3/4 mt-3"></div>
+                    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
+                  </div>
+                </div>
+                <div class="font-bold text-base mb-2 text-center">Vertical/Clásico</div>
+                <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
                   Secciones colapsables, diseño minimalista
                 </div>
               </label>
               
+              <!-- Tabs/Lista -->
               <label
-                class="relative flex flex-col items-center p-4 rounded-lg border-2 cursor-pointer transition-all"
+                class="relative flex flex-col p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg"
                 :class="
                   localBusiness.menuLayout === 'tabs'
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-md'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
                 "
               >
                 <input
@@ -322,19 +344,43 @@
                   value="tabs"
                   class="sr-only"
                 />
-                <div class="text-2xl mb-2">📋</div>
-                <div class="font-semibold text-sm mb-1">Tabs/Lista</div>
-                <div class="text-xs text-slate-600 dark:text-slate-400 text-center">
+                <div class="flex-1 flex items-center justify-center mb-4 h-32">
+                  <!-- Preview de layout tabs -->
+                  <div class="w-full max-w-xs space-y-3">
+                    <div class="flex gap-2">
+                      <div class="h-6 bg-emerald-500 rounded w-16"></div>
+                      <div class="h-6 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
+                      <div class="h-6 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
+                    </div>
+                    <div class="flex gap-3 items-center">
+                      <div class="w-12 h-12 bg-slate-300 dark:bg-slate-600 rounded"></div>
+                      <div class="flex-1 space-y-1">
+                        <div class="h-2 bg-slate-300 dark:bg-slate-600 rounded w-3/4"></div>
+                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                      </div>
+                    </div>
+                    <div class="flex gap-3 items-center">
+                      <div class="w-12 h-12 bg-slate-300 dark:bg-slate-600 rounded"></div>
+                      <div class="flex-1 space-y-1">
+                        <div class="h-2 bg-slate-300 dark:bg-slate-600 rounded w-3/4"></div>
+                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="font-bold text-base mb-2 text-center">Tabs/Lista</div>
+                <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
                   Tabs por categoría, lista con imágenes
                 </div>
               </label>
               
+              <!-- Grid/Visual -->
               <label
-                class="relative flex flex-col items-center p-4 rounded-lg border-2 cursor-pointer transition-all"
+                class="relative flex flex-col p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg"
                 :class="
                   localBusiness.menuLayout === 'grid'
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-md'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
                 "
               >
                 <input
@@ -343,19 +389,32 @@
                   value="grid"
                   class="sr-only"
                 />
-                <div class="text-2xl mb-2">🖼️</div>
-                <div class="font-semibold text-sm mb-1">Grid/Visual</div>
-                <div class="text-xs text-slate-600 dark:text-slate-400 text-center">
+                <div class="flex-1 flex items-center justify-center mb-4 h-32">
+                  <!-- Preview de layout grid -->
+                  <div class="w-full max-w-xs">
+                    <div class="grid grid-cols-3 gap-2">
+                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
+                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
+                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
+                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
+                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
+                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="font-bold text-base mb-2 text-center">Grid/Visual</div>
+                <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
                   Grid de ítems con imágenes grandes
                 </div>
               </label>
               
+              <!-- Categorías/Cards -->
               <label
-                class="relative flex flex-col items-center p-4 rounded-lg border-2 cursor-pointer transition-all"
+                class="relative flex flex-col p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg"
                 :class="
                   localBusiness.menuLayout === 'categories'
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20'
-                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-md'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
                 "
               >
                 <input
@@ -364,9 +423,23 @@
                   value="categories"
                   class="sr-only"
                 />
-                <div class="text-2xl mb-2">🎴</div>
-                <div class="font-semibold text-sm mb-1">Categorías/Cards</div>
-                <div class="text-xs text-slate-600 dark:text-slate-400 text-center">
+                <div class="flex-1 flex items-center justify-center mb-4 h-32">
+                  <!-- Preview de layout categorías -->
+                  <div class="w-full max-w-xs space-y-2">
+                    <div class="border-2 border-slate-300 dark:border-slate-600 rounded-lg p-2">
+                      <div class="h-16 bg-slate-300 dark:bg-slate-600 rounded mb-2"></div>
+                      <div class="h-3 bg-slate-400 dark:bg-slate-500 rounded w-2/3 mb-1"></div>
+                      <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                    </div>
+                    <div class="border-2 border-slate-300 dark:border-slate-600 rounded-lg p-2">
+                      <div class="h-16 bg-slate-300 dark:bg-slate-600 rounded mb-2"></div>
+                      <div class="h-3 bg-slate-400 dark:bg-slate-500 rounded w-2/3 mb-1"></div>
+                      <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="font-bold text-base mb-2 text-center">Categorías/Cards</div>
+                <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
                   Categorías en cards con "Ver menú"
                 </div>
               </label>
@@ -419,6 +492,22 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
                       </svg>
                     </div>
+                    <button
+                      @click="toggleSectionCollapse(section.id)"
+                      class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors flex-shrink-0 p-1"
+                      @mousedown.stop
+                      title="Colapsar/Expandir sección"
+                    >
+                      <svg 
+                        class="h-5 w-5 transition-transform duration-200"
+                        :class="{ 'rotate-180': !isSectionCollapsed(section.id) }"
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
                     <div class="flex-1 space-y-3">
                       <input
                         v-model="section.name"
@@ -446,7 +535,7 @@
                 </div>
 
                 <!-- Items de la sección -->
-                <div class="space-y-3" @mousedown.stop>
+                <div v-show="!isSectionCollapsed(section.id)" class="space-y-3" @mousedown.stop>
                   <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium text-slate-700 dark:text-slate-300">Ítems</h3>
                     <button
@@ -914,6 +1003,8 @@
 </template>
 
 <script setup>
+import { normalizeBusiness } from '~/composables/useMenuNormalizer'
+
 definePageMeta({
   layout: 'dashboard',
 })
@@ -947,6 +1038,7 @@ const showSuggestions = ref(false)
 const searchTimeout = ref(null)
 const showDeleteConfirm = ref(false)
 const isDeleting = ref(false)
+const collapsedSections = ref(new Set())
 
 const menuUrl = computed(() => {
   if (process.client) {
@@ -959,22 +1051,22 @@ const menuUrl = computed(() => {
 const cloneBusiness = (biz) => {
   if (!biz) return null
   
-  const cloned = JSON.parse(JSON.stringify(biz))
+  // Normalizar el business primero para asegurar estructura consistente
+  const normalized = normalizeBusiness(biz)
+  const cloned = JSON.parse(JSON.stringify(normalized))
   
-  // Migrar estructura antigua si existe
-  if (cloned.menu && cloned.menu.sections) {
-    cloned.sections = cloned.menu.sections
-    delete cloned.menu
-  }
+  // Asegurar que sections existe
   if (!cloned.sections) {
     cloned.sections = []
   }
   
   // Agregar tagsString a cada item para edición
   cloned.sections.forEach(section => {
-    section.items.forEach(item => {
-      item.tagsString = item.tags ? item.tags.join(', ') : ''
-    })
+    if (section.items && Array.isArray(section.items)) {
+      section.items.forEach(item => {
+        item.tagsString = item.tags ? item.tags.join(', ') : ''
+      })
+    }
   })
   
   // Asegurar que socialMedia existe
@@ -1125,13 +1217,36 @@ const addSection = () => {
 const deleteSection = (index) => {
   if (!localBusiness.value) return
   if (confirm('¿Estás seguro de que querés eliminar esta sección y todos sus ítems?')) {
+    const section = localBusiness.value.sections[index]
+    // Remover de las secciones colapsadas si estaba colapsada
+    if (section?.id) {
+      collapsedSections.value.delete(section.id)
+    }
     localBusiness.value.sections.splice(index, 1)
   }
+}
+
+const toggleSectionCollapse = (sectionId) => {
+  if (collapsedSections.value.has(sectionId)) {
+    collapsedSections.value.delete(sectionId)
+  } else {
+    collapsedSections.value.add(sectionId)
+  }
+}
+
+const isSectionCollapsed = (sectionId) => {
+  return collapsedSections.value.has(sectionId)
 }
 
 
 const addItem = (sectionIndex) => {
   if (!localBusiness.value) return
+  if (!localBusiness.value.sections || !localBusiness.value.sections[sectionIndex]) return
+  
+  // Asegurar que la sección tenga un array de items
+  if (!Array.isArray(localBusiness.value.sections[sectionIndex].items)) {
+    localBusiness.value.sections[sectionIndex].items = []
+  }
   
   const newItem = {
     id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -1285,14 +1400,45 @@ const handleSave = async () => {
       delete businessToSave.promotion
     }
     
-    // Convertir tagsString a tags y eliminar tagsString
+    // Normalizar sections e items antes de guardar
+    if (!businessToSave.sections) {
+      businessToSave.sections = []
+    }
+    
+    // Convertir tagsString a tags y eliminar tagsString, normalizar items
     businessToSave.sections.forEach(section => {
-      section.items.forEach(item => {
-        if (item.tagsString) {
-          item.tags = item.tagsString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-        }
-        delete item.tagsString
-      })
+      if (!section.items || !Array.isArray(section.items)) {
+        section.items = []
+      }
+      
+      section.items = section.items
+        .filter(item => item && item.name && item.name.trim() !== '') // Solo items válidos
+        .map(item => {
+          const normalizedItem = {
+            id: item.id || `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            name: item.name || '',
+            description: item.description || '',
+            price: item.price != null ? Number(item.price) : null,
+            imageUrl: item.imageUrl || '',
+            tags: [],
+            isAvailable: item.isAvailable !== false,
+          }
+          
+          // Convertir tagsString a tags
+          if (item.tagsString && typeof item.tagsString === 'string') {
+            normalizedItem.tags = item.tagsString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+          } else if (Array.isArray(item.tags)) {
+            normalizedItem.tags = item.tags.filter(tag => tag && typeof tag === 'string')
+          }
+          
+          return normalizedItem
+        })
+    })
+    
+    // Filtrar secciones vacías (sin items válidos)
+    businessToSave.sections = businessToSave.sections.filter(section => {
+      if (!section.items || section.items.length === 0) return false
+      return section.name && section.name.trim() !== ''
     })
     
     // Limpiar socialMedia si está vacío
@@ -1344,11 +1490,37 @@ const handleSave = async () => {
       businessToSave.logoUrl = undefined
     }
     
-    const successResult = await updateBusinessToAPI(slug, businessToSave)
+    // Normalizar el business antes de guardar usando el normalizador
+    const normalizedBusiness = normalizeBusiness(businessToSave)
     
-    if (successResult) {
-      success.value = '¡Cambios guardados correctamente!'
-      hasChanges.value = false
+    if (!normalizedBusiness) {
+      error.value = 'Error al normalizar los datos del comercio'
+      isSaving.value = false
+      return
+    }
+    
+    console.log('handleSave: Normalized business sections:', normalizedBusiness.sections?.length || 0)
+    console.log('handleSave: Sections with items:', normalizedBusiness.sections?.filter(s => s.items && s.items.length > 0).length || 0)
+    console.log('handleSave: Total items:', normalizedBusiness.sections?.reduce((sum, s) => sum + (s.items?.length || 0), 0) || 0)
+    
+    try {
+      const successResult = await updateBusinessToAPI(slug, normalizedBusiness)
+      
+      if (!successResult) {
+        error.value = 'Error al guardar los cambios. Por favor, intentá nuevamente.'
+        isSaving.value = false
+        return
+      }
+    } catch (saveError) {
+      console.error('handleSave: Error calling updateBusinessToAPI:', saveError)
+      error.value = saveError.data?.message || saveError.message || 'Error al guardar los cambios. Por favor, intentá nuevamente.'
+      isSaving.value = false
+      return
+    }
+    
+    // Si llegamos aquí, el guardado fue exitoso
+    success.value = '¡Cambios guardados correctamente!'
+    hasChanges.value = false
       
       // Limpiar mensaje de éxito después de 3 segundos
       setTimeout(() => {
@@ -1356,8 +1528,18 @@ const handleSave = async () => {
       }, 3000)
       
       // Recargar el business actualizado
-      business.value = await fetchBusinessBySlug(slug)
-      localBusiness.value = cloneBusiness(business.value)
+      const updatedBusiness = await fetchBusinessBySlug(slug)
+      if (updatedBusiness) {
+        // Normalizar el business recuperado
+        const normalizedUpdated = normalizeBusiness(updatedBusiness)
+        business.value = normalizedUpdated
+        localBusiness.value = cloneBusiness(normalizedUpdated)
+        
+        // Forzar actualización reactiva
+        localBusiness.value = { ...localBusiness.value }
+        
+        console.log('handleSave: Business reloaded, sections count:', localBusiness.value.sections?.length || 0)
+      }
       
       // Aplicar restricciones del plan después de cargar
       if (userPlan.value && userPlan.value.id === 'basic' && userRole.value !== 'admin') {
@@ -1374,12 +1556,9 @@ const handleSave = async () => {
           localBusiness.value.logoUrl = ''
         }
       }
-    } else {
-      error.value = 'Error al guardar los cambios. Por favor, intentá nuevamente.'
-    }
   } catch (err) {
     console.error('Error saving business:', err)
-    error.value = err.data?.message || 'Error al guardar los cambios. Por favor, intentá nuevamente.'
+    error.value = err.data?.message || err.message || 'Error al guardar los cambios. Por favor, intentá nuevamente.'
   } finally {
     isSaving.value = false
   }
@@ -1616,12 +1795,19 @@ const loadUserPlan = async () => {
 
 onMounted(async () => {
   try {
-    business.value = await fetchBusinessBySlug(slug)
-    if (!business.value) {
+    const fetchedBusiness = await fetchBusinessBySlug(slug)
+    if (!fetchedBusiness) {
       router.push('/select-business')
       return
     }
-    localBusiness.value = cloneBusiness(business.value)
+    business.value = fetchedBusiness
+    localBusiness.value = cloneBusiness(fetchedBusiness)
+    
+    // Forzar inicialización reactiva de sections si no existen
+    if (!localBusiness.value.sections || !Array.isArray(localBusiness.value.sections)) {
+      localBusiness.value.sections = []
+    }
+    
     await loadUserPlan()
     
     // Aplicar restricciones del plan después de cargar

@@ -54,19 +54,47 @@ export async function getAllBusinesses(userId = null) {
 export async function saveBusiness(business) {
   try {
     const db = await getDatabase()
-    if (!db) return false
+    if (!db) {
+      console.error('saveBusiness: No database connection')
+      return false
+    }
+    
+    if (!business || !business.slug) {
+      console.error('saveBusiness: Invalid business data - missing slug')
+      return false
+    }
     
     const { id, ...businessData } = business
     
-    await db.collection('businesses').updateOne(
+    // Asegurar que sections existe y es un array
+    if (!businessData.sections) {
+      businessData.sections = []
+    }
+    
+    // Validar estructura básica de sections e items
+    if (Array.isArray(businessData.sections)) {
+      businessData.sections = businessData.sections.map(section => {
+        if (!section.items || !Array.isArray(section.items)) {
+          section.items = []
+        }
+        return section
+      })
+    }
+    
+    console.log(`saveBusiness: Saving business with slug: ${business.slug}, sections: ${businessData.sections?.length || 0}`)
+    
+    const result = await db.collection('businesses').updateOne(
       { slug: business.slug },
       { $set: businessData },
       { upsert: true }
     )
     
+    console.log(`saveBusiness: Update result - matched: ${result.matchedCount}, modified: ${result.modifiedCount}, upserted: ${result.upsertedCount}`)
+    
     return true
   } catch (error) {
     console.error('Error saving business:', error)
+    console.error('Error stack:', error.stack)
     return false
   }
 }

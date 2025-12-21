@@ -190,7 +190,7 @@
 
       <!-- CTA para Grandes Cadenas -->
       <div class="mt-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-8 text-center text-white">
-        <h2 class="text-3xl font-bold mb-4">¿Necesitás más de 50 comercios?</h2>
+        <h2 class="text-3xl font-bold mb-4">¿Necesitás más de 100 comercios?</h2>
         <p class="text-lg mb-6 opacity-90 max-w-2xl mx-auto">
           Consulte por planes personalizados para grandes cadenas y franquicias. 
           Ofrecemos soluciones escalables adaptadas a tus necesidades.

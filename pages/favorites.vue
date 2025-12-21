@@ -79,6 +79,7 @@ definePageMeta({
   layout: 'dashboard',
 })
 
+const { authenticatedFetch, isAuthenticated } = useAuth()
 const favorites = ref([])
 const isLoading = ref(true)
 const error = ref(null)
@@ -88,34 +89,25 @@ const loadFavorites = async () => {
   error.value = null
   
   try {
-    // Obtener token del localStorage
-    let token = null
-    if (process.client) {
-      const auth = localStorage.getItem('qrmenu-auth')
-      if (auth) {
-        try {
-          const parsed = JSON.parse(auth)
-          token = parsed.token
-        } catch {
-          // Error parsing
-        }
+    // Verificar autenticación antes de hacer la petición
+    if (!isAuthenticated()) {
+      // Redirigir al login si no está autenticado
+      if (process.client) {
+        await navigateTo('/login')
       }
+      return
     }
 
-    if (!token) {
-      throw new Error('No estás autenticado')
-    }
-
-    const response = await $fetch('/api/favorites', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    })
+    const response = await authenticatedFetch('/api/favorites')
 
     favorites.value = response || []
   } catch (err) {
     console.error('Error loading favorites:', err)
-    error.value = err.data?.message || err.message || 'Error al cargar favoritos'
+    // Si el error es de autenticación, el composable ya redirige
+    // Solo mostrar el error si no es un error de autenticación
+    if (err.statusCode !== 401 && err.status !== 401) {
+      error.value = err.data?.message || err.message || 'Error al cargar favoritos'
+    }
   } finally {
     isLoading.value = false
   }

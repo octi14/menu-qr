@@ -166,6 +166,19 @@
         </div>
       </div>
       
+      <!-- Nombre del comercio (solo si no hay header image o no tiene overlay) -->
+      <div v-if="(!business.headerImageUrl || !business.headerImageOverlay) && !business.hideName" class="text-center space-y-4">
+        <h1 
+          class="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-none"
+          :class="isPacifico ? 'font-medium tracking-wide' : isScriptFont ? 'font-semibold tracking-wide' : 'font-bold'"
+        >
+          {{ business.name }}
+        </h1>
+        <p v-if="business.description" class="text-base sm:text-lg opacity-80 leading-relaxed italic max-w-xl mx-auto">
+          {{ business.description }}
+        </p>
+      </div>
+      
       <!-- Información de contacto y horarios -->
       <div class="flex flex-wrap items-center justify-center gap-4 text-sm">
         <div v-if="business.address" class="flex items-center gap-2 px-4 py-2 rounded-lg border" :style="{ borderColor: `${textColor}30`, backgroundColor: `${textColor}08` }">
@@ -281,13 +294,25 @@
               backgroundColor: `${textColor}05`,
             }"
           >
-            <div v-if="item.imageUrl" class="flex-shrink-0">
+            <div class="flex-shrink-0">
               <img
+                v-if="item.imageUrl"
                 :src="item.imageUrl"
                 :alt="item.name"
                 loading="lazy"
                 class="w-20 h-20 rounded-lg object-cover"
               />
+              <div v-else class="w-20 h-20 rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 dark:from-emerald-900/20 dark:to-amber-900/20 flex items-center justify-center">
+                <svg class="w-8 h-8 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                  <!-- Plato -->
+                  <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="currentColor" opacity="0.2"/>
+                  <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="none"/>
+                  <!-- Comida en el plato -->
+                  <circle cx="9" cy="14" r="2" fill="currentColor" opacity="0.6"/>
+                  <circle cx="15" cy="14" r="2.5" fill="currentColor" opacity="0.6"/>
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor" opacity="0.7"/>
+                </svg>
+              </div>
             </div>
             
             <div class="flex-1 space-y-2 min-w-0">
@@ -399,6 +424,7 @@
 import { ref, computed } from 'vue'
 import { getContrastTextColor } from '~/composables/useColorUtils'
 import { getFontById } from '~/composables/useFonts'
+import { normalizeBusinessSections, filterSectionsWithItems } from '~/composables/useMenuNormalizer'
 
 const props = defineProps({
   business: {
@@ -453,12 +479,13 @@ const selectedCategory = ref(null)
 const showShareMenu = ref(false)
 const showHoursModal = ref(false)
 
-// Obtener secciones del menú
+// Obtener secciones del menú usando el normalizador
 const sections = computed(() => {
-  // Intentar múltiples formatos posibles
-  const menuSections = props.business?.menu?.sections || props.business?.sections || []
-  if (!Array.isArray(menuSections)) return []
-  return menuSections.filter(section => section && section.items && Array.isArray(section.items) && section.items.length > 0)
+  if (!props.business) return []
+  
+  // Normalizar y filtrar secciones con items válidos
+  const normalizedSections = normalizeBusinessSections(props.business)
+  return filterSectionsWithItems(normalizedSections)
 })
 
 // Sección seleccionada
