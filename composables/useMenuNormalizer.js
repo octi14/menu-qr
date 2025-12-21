@@ -152,3 +152,4 @@ export const filterSectionsWithItems = (sections) => {
   return sections.filter(hasValidItems)
 }
 
+

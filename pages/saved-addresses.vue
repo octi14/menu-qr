@@ -183,6 +183,7 @@ const newAddress = ref({
 const addressSuggestions = ref([])
 const showSuggestions = ref(false)
 const isLoadingGeocode = ref(false)
+let searchTimeout = null
 
 const canSaveAddress = computed(() => {
   return newAddress.value.name.trim() &&
@@ -229,20 +230,31 @@ const loadAddresses = async () => {
 }
 
 const searchAddresses = async () => {
+  // Limpiar timeout anterior
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
   if (!newAddress.value.address || newAddress.value.address.length < 3) {
     addressSuggestions.value = []
     return
   }
 
-  try {
-    const response = await $fetch(`/api/geocode/search?q=${encodeURIComponent(newAddress.value.address)}`)
-    if (response.success && response.suggestions) {
-      addressSuggestions.value = response.suggestions
+  // Debounce: esperar 300ms después de que el usuario deje de escribir
+  searchTimeout = setTimeout(async () => {
+    try {
+      const response = await $fetch(`/api/geocode/search?q=${encodeURIComponent(newAddress.value.address)}`)
+      // El endpoint devuelve directamente un array de sugerencias
+      if (Array.isArray(response) && response.length > 0) {
+        addressSuggestions.value = response
+      } else {
+        addressSuggestions.value = []
+      }
+    } catch (err) {
+      console.error('Error searching addresses:', err)
+      addressSuggestions.value = []
     }
-  } catch (err) {
-    console.error('Error searching addresses:', err)
-    addressSuggestions.value = []
-  }
+  }, 300)
 }
 
 const selectAddress = (suggestion) => {
@@ -263,16 +275,18 @@ const geocodeAddress = async () => {
 
   isLoadingGeocode.value = true
   try {
-    const response = await $fetch('/api/geocode', {
-      method: 'POST',
-      body: {
-        address: newAddress.value.address,
-      },
-    })
-
-    if (response.success) {
-      newAddress.value.latitude = response.latitude
-      newAddress.value.longitude = response.longitude
+    const response = await $fetch(`/api/geocode/search?q=${encodeURIComponent(newAddress.value.address)}`)
+    
+    // El endpoint devuelve un array de resultados
+    if (Array.isArray(response) && response.length > 0) {
+      // Tomar el primer resultado (el más relevante)
+      const firstResult = response[0]
+      newAddress.value.latitude = firstResult.latitude
+      newAddress.value.longitude = firstResult.longitude
+      // Actualizar la dirección con el nombre completo del resultado
+      if (firstResult.displayName) {
+        newAddress.value.address = firstResult.displayName
+      }
     } else {
       alert('No se pudo encontrar la ubicación. Intentá con una dirección más específica.')
     }
