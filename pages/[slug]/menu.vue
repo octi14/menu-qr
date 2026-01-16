@@ -169,74 +169,34 @@
             </a>
           </template>
           <!-- Compartir -->
-          <button
-            @click="showShareMenu = !showShareMenu"
-            class="rounded-lg border p-2 transition-colors"
-            :style="{
-              borderColor: `${textColor}30`,
-              backgroundColor: `${textColor}08`,
-              color: textColor,
-            }"
-            title="Compartir menú"
-            aria-label="Compartir menú"
-            aria-expanded="false"
-            :aria-expanded="showShareMenu"
-          >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-            </svg>
-          </button>
-          <!-- Menú de compartir -->
-          <div
-            v-if="showShareMenu"
-            class="absolute right-5 top-20 z-50 rounded-lg border shadow-lg p-2 space-y-1"
-            :style="{
-              borderColor: `${textColor}30`,
-              backgroundColor: backgroundColor,
-            }"
-          >
+          <div class="relative">
             <button
-              @click="shareOnWhatsApp"
-              class="w-full flex items-center gap-2 px-3 py-2 rounded hover:opacity-80 transition-opacity text-sm"
-              :style="{ color: textColor }"
+              @click="showShareMenu = !showShareMenu"
+              class="rounded-lg border p-2 transition-colors"
+              :style="{
+                borderColor: `${textColor}30`,
+                backgroundColor: `${textColor}08`,
+                color: textColor,
+              }"
+              title="Compartir menú"
+              aria-label="Compartir menú"
+              aria-expanded="false"
+              :aria-expanded="showShareMenu"
             >
-              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
               </svg>
-              WhatsApp
             </button>
-            <button
-              @click="shareOnFacebook"
-              class="w-full flex items-center gap-2 px-3 py-2 rounded hover:opacity-80 transition-opacity text-sm"
-              :style="{ color: textColor }"
-            >
-              <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-              Facebook
-            </button>
-            <button
-              @click="copyLink"
-              class="w-full flex items-center gap-2 px-3 py-2 rounded hover:opacity-80 transition-opacity text-sm"
-              :style="{ color: textColor }"
-            >
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              Copiar link
-            </button>
-            <button
-              @click="exportToPDF"
-              class="w-full flex items-center gap-2 px-3 py-2 rounded hover:opacity-80 transition-opacity text-sm"
-              :style="{ color: textColor }"
-            >
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Exportar PDF
-            </button>
+            <ShareMenu
+              v-model="showShareMenu"
+              :backgroundColor="backgroundColor"
+              :text-color="textColor"
+              @share-whatsapp="shareOnWhatsApp"
+              @share-facebook="shareOnFacebook"
+              @copy-link="copyLink"
+              @export-pdf="exportToPDF"
+            />
           </div>
-          <ThemeToggle />
         </div>
         
         <!-- Imagen de header con o sin overlay -->
@@ -460,8 +420,8 @@
                     loading="lazy"
                     class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105 shadow-md"
                   />
-                  <div v-else class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 dark:from-emerald-900/20 dark:to-amber-900/20 flex items-center justify-center">
-                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                  <div v-else class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 flex items-center justify-center">
+                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                       <!-- Plato -->
                       <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="currentColor" opacity="0.2"/>
                       <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="none"/>
@@ -513,7 +473,7 @@
                   </span>
                   <span
                     v-if="item.isAvailable === false"
-                    class="inline-flex items-center rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-xs font-medium text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
+                    class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 border border-amber-200"
                   >
                     agotado
                   </span>
@@ -596,7 +556,7 @@ const business = ref(null)
 const pending = ref(true)
 const isPublic = ref(true)
 
-const { calculatePriceColor, getContrastTextColor, getAdaptiveBackgroundColor } = useColorUtils()
+const { calculatePriceColor, getContrastTextColor, isLightColor } = useColorUtils()
 const { getPlanById } = usePlans()
 const { getCachedMenu, setCachedMenu } = useMenuCache()
 
@@ -624,17 +584,15 @@ const isOpenNow = computed(() => {
   return currentTime >= openTime && currentTime <= closeTime
 })
 const { getFontById, getDefaultFont } = useFonts()
-const { theme } = useTheme()
 
 // Color base seleccionado por el usuario
 const baseColor = computed(() => {
   return business.value?.backgroundColor || business.value?.primaryColor || business.value?.themeColor || '#ffffff'
 })
 
-// Color de fondo adaptado al tema (claro u oscuro)
+// Color de fondo - siempre usa el color base sin adaptación al tema
 const backgroundColor = computed(() => {
-  const isDark = theme.value === 'dark'
-  return getAdaptiveBackgroundColor(baseColor.value, isDark)
+  return baseColor.value
 })
 
 const fontFamily = computed(() => {
@@ -669,10 +627,11 @@ const textColor = computed(() => {
   return getContrastTextColor(backgroundColor.value)
 })
 
-// Color del precio que se adapta al fondo y tema
+// Color del precio que se adapta al fondo (basado en luminosidad del color de fondo, no en el tema global)
 const priceColor = computed(() => {
-  const isDark = theme.value === 'dark'
-  return calculatePriceColor(backgroundColor.value, isDark)
+  // Determinar si el fondo es claro u oscuro basándose en su luminosidad
+  const bgIsLight = isLightColor(backgroundColor.value)
+  return calculatePriceColor(backgroundColor.value, !bgIsLight)
 })
 
 // Layout del menú (por defecto 'vertical')
@@ -836,134 +795,188 @@ const copyLink = async () => {
   showShareMenu.value = false
 }
 
+// Funciones helper para exportar PDF
+const prepareElementsForPDF = (element) => {
+  const originalDisplays = []
+  const hideElement = (el) => {
+    if (el && el.style) {
+      originalDisplays.push({ element: el, display: el.style.display })
+      el.style.display = 'none'
+    }
+  }
+  
+  const hideElementsBySelector = (selector, doc = document) => {
+    const elements = doc.querySelectorAll(selector)
+    elements.forEach(el => {
+      if (el && el.style) {
+        originalDisplays.push({ element: el, display: el.style.display })
+        el.style.display = 'none'
+      }
+    })
+  }
+  
+  const selectorsToHide = [
+    '.absolute.right-5', '.absolute.right-0.top-full',
+    'button[title*="favoritos"]', 'button[title*="Favoritos"]',
+    'header .flex.items-center.justify-end',
+    '.relative.flex-1.max-w-xs',
+    '.flex.items-center.justify-end.gap-3.mb-4',
+    '.sticky.top-0.z-40',
+    '.sticky.top-0 .relative.mt-3',
+    'input[placeholder*="Buscar"]', 'input[placeholder*="buscar"]', 'input#menu-search',
+    '.flex.items-center.justify-end.gap-3 button', '.flex.items-center.justify-end.gap-2 button',
+    '.sticky.top-0 button',
+    'a[target="_blank"][rel*="noopener"]',
+    'button[aria-label*="Expandir"]', 'button[aria-label*="Colapsar"]',
+  ]
+  
+  selectorsToHide.forEach(selector => hideElementsBySelector(selector))
+  
+  // Preparar padding y márgenes
+  const originalPadding = {
+    top: element.style.paddingTop,
+    bottom: element.style.paddingBottom,
+    left: element.style.paddingLeft,
+    right: element.style.paddingRight,
+  }
+  element.style.paddingTop = '0px'
+  element.style.paddingBottom = '0px'
+  element.style.paddingLeft = '0px'
+  element.style.paddingRight = '0px'
+  
+  const originalMargin = {
+    left: element.style.marginLeft,
+    right: element.style.marginRight,
+  }
+  element.style.marginLeft = '0'
+  element.style.marginRight = '0'
+  
+  // Preparar descripciones (remover line-clamp)
+  const descriptions = element.querySelectorAll('.line-clamp-2, .line-clamp-3')
+  const originalDescriptionStyles = []
+  descriptions.forEach(desc => {
+    originalDescriptionStyles.push({
+      element: desc,
+      classes: Array.from(desc.classList),
+      style: {
+        webkitLineClamp: desc.style.webkitLineClamp,
+        display: desc.style.display,
+        webkitBoxOrient: desc.style.webkitBoxOrient,
+        overflow: desc.style.overflow
+      }
+    })
+    desc.classList.remove('line-clamp-2', 'line-clamp-3')
+    desc.style.webkitLineClamp = 'unset'
+    desc.style.display = 'block'
+    desc.style.webkitBoxOrient = 'unset'
+    desc.style.overflow = 'visible'
+  })
+  
+  // Ocultar imágenes
+  const images = element.querySelectorAll('img')
+  const originalImageDisplays = []
+  images.forEach(img => {
+    originalImageDisplays.push({ element: img, display: img.style.display })
+    img.style.display = 'none'
+  })
+  
+  return {
+    originalDisplays,
+    originalPadding,
+    originalMargin,
+    originalDescriptionStyles,
+    originalImageDisplays,
+    hideElementsBySelector,
+  }
+}
+
+const restoreElementsAfterPDF = (element, { originalDisplays, originalPadding, originalMargin, originalDescriptionStyles, originalImageDisplays }) => {
+  element.style.paddingTop = originalPadding.top || ''
+  element.style.paddingBottom = originalPadding.bottom || ''
+  element.style.paddingLeft = originalPadding.left || ''
+  element.style.paddingRight = originalPadding.right || ''
+  element.style.marginLeft = originalMargin.left || ''
+  element.style.marginRight = originalMargin.right || ''
+  
+  originalImageDisplays.forEach(({ element: img, display }) => {
+    if (img && img.style) img.style.display = display || ''
+  })
+  
+  originalDescriptionStyles.forEach(({ element: el, classes, style }) => {
+    if (el) {
+      classes.forEach(cls => el.classList.add(cls))
+      el.style.webkitLineClamp = style.webkitLineClamp
+      el.style.display = style.display
+      el.style.webkitBoxOrient = style.webkitBoxOrient
+      el.style.overflow = style.overflow
+    }
+  })
+  
+  originalDisplays.forEach(({ element: el, display }) => {
+    if (el && el.style) el.style.display = display
+  })
+}
+
+const generatePDFPages = (pdf, canvas, imgWidth, imgHeight, pdfWidth, pdfHeight) => {
+  const ratio = imgWidth / imgHeight
+  let finalWidth = pdfWidth
+  let finalHeight = pdfWidth / ratio
+  const contentHeight = pdfHeight
+  
+  if (finalHeight > contentHeight) {
+    finalHeight = contentHeight
+    finalWidth = contentHeight * ratio
+  }
+  
+  const imgData = canvas.toDataURL('image/png', 1.0)
+  const totalHeight = finalHeight
+  
+  if (totalHeight <= contentHeight) {
+    pdf.addImage(imgData, 'PNG', 0, 0, finalWidth, finalHeight, undefined, 'FAST')
+  } else {
+    const pageHeightPx = (contentHeight / totalHeight) * imgHeight
+    let sourceY = 0
+    
+    // Primera página
+    const firstPageHeight = Math.min(pageHeightPx, imgHeight)
+    const tempCanvas1 = document.createElement('canvas')
+    tempCanvas1.width = imgWidth
+    tempCanvas1.height = firstPageHeight
+    const tempCtx1 = tempCanvas1.getContext('2d')
+    tempCtx1.drawImage(canvas, 0, 0, imgWidth, firstPageHeight, 0, 0, imgWidth, firstPageHeight)
+    const firstPageData = tempCanvas1.toDataURL('image/png', 1.0)
+    const firstPageHeightMm = (firstPageHeight / imgHeight) * finalHeight
+    pdf.addImage(firstPageData, 'PNG', 0, 0, finalWidth, firstPageHeightMm, undefined, 'FAST')
+    sourceY = firstPageHeight
+    
+    // Páginas adicionales
+    while (sourceY < imgHeight) {
+      pdf.addPage()
+      const pageHeight = Math.min(pageHeightPx, imgHeight - sourceY)
+      const tempCanvas = document.createElement('canvas')
+      tempCanvas.width = imgWidth
+      tempCanvas.height = pageHeight
+      const tempCtx = tempCanvas.getContext('2d')
+      tempCtx.drawImage(canvas, 0, sourceY, imgWidth, pageHeight, 0, 0, imgWidth, pageHeight)
+      const tempImgData = tempCanvas.toDataURL('image/png', 1.0)
+      const tempHeightMm = (pageHeight / imgHeight) * finalHeight
+      pdf.addImage(tempImgData, 'PNG', 0, 0, finalWidth, tempHeightMm, undefined, 'FAST')
+      sourceY += pageHeight
+    }
+  }
+  
+  return pdfWidth
+}
+
 const exportToPDF = async () => {
   try {
     const { default: html2canvas } = await import('html2canvas')
     const { default: jsPDF } = await import('jspdf')
 
-    // Ocultar elementos que no queremos en el PDF
-    const shareMenu = document.querySelector('.absolute.right-5, .absolute.right-0.top-full')
-    const themeToggle = document.querySelector('button[title*="tema"], button[title*="Tema"]')
-    const favoriteButton = document.querySelector('button[title*="favoritos"], button[title*="Favoritos"]')
-    
-    // Elementos específicos del layout vertical (header con acciones)
-    const headerActions = document.querySelector('header .flex.items-center.justify-end')
-    const searchContainer = document.querySelector('.relative.flex-1.max-w-xs')
-    const searchInputs = document.querySelectorAll('input[placeholder*="Buscar"], input[placeholder*="buscar"], input#menu-search')
-    const actionButtons = document.querySelectorAll('.flex.items-center.justify-end.gap-3 button, .flex.items-center.justify-end.gap-2 button')
-    const deliveryPlatforms = document.querySelectorAll('a[target="_blank"][rel*="noopener"]')
-    
-    // Elementos específicos del layout grid y tabs (sticky con filtros/tabs y búsqueda)
-    const stickyFilters = document.querySelector('.sticky.top-0.z-40')
-    const categoryFilters = document.querySelectorAll('.sticky.top-0 button')
-    const stickySearchContainer = document.querySelector('.sticky.top-0 .relative.mt-3')
-    
-    // Barra superior de acciones del layout tabs (antes del header)
-    const topActionBar = document.querySelector('.flex.items-center.justify-end.gap-3.mb-4')
-    
-    // Botones de colapsar/expandir secciones (layout vertical)
-    const collapseButtons = document.querySelectorAll('button[aria-label*="Expandir"], button[aria-label*="Colapsar"]')
-    
-    // Tabs de categorías (layout tabs)
-    const tabButtons = document.querySelectorAll('.sticky.top-0 button[class*="px-4 py-2 rounded-lg"]')
-    
-    // Guardar estados originales
-    const originalDisplays = []
-    const hideElement = (el) => {
-      if (el && el.style) {
-        originalDisplays.push({ element: el, display: el.style.display })
-        el.style.display = 'none'
-      }
-    }
-    
-    hideElement(shareMenu)
-    hideElement(themeToggle)
-    hideElement(favoriteButton)
-    hideElement(headerActions) // Ocultar todo el contenedor de acciones del header
-    hideElement(searchContainer) // Ocultar contenedor de búsqueda completo (layout vertical)
-    hideElement(topActionBar) // Ocultar barra superior de acciones (layout tabs)
-    if (stickyFilters) {
-      hideElement(stickyFilters) // Ocultar sticky completo (grid y tabs)
-    }
-    if (stickySearchContainer) {
-      hideElement(stickySearchContainer) // Ocultar contenedor de búsqueda dentro del sticky
-    }
-    actionButtons.forEach(btn => hideElement(btn))
-    searchInputs.forEach(input => hideElement(input))
-    categoryFilters.forEach(btn => hideElement(btn))
-    tabButtons.forEach(btn => hideElement(btn)) // Ocultar botones de tabs
-    deliveryPlatforms.forEach(link => hideElement(link))
-    collapseButtons.forEach(btn => hideElement(btn))
-
-    // Obtener el contenedor principal del menú
     const element = document.querySelector('.min-h-screen > .mx-auto')
-    if (!element) {
-      // Restaurar elementos
-      originalDisplays.forEach(({ element: el, display }) => {
-        if (el && el.style) el.style.display = display
-      })
-      return
-    }
-
-    // Eliminar padding para que el menú ocupe todo el ancho
-    const originalPadding = {
-      top: element.style.paddingTop,
-      bottom: element.style.paddingBottom,
-      left: element.style.paddingLeft,
-      right: element.style.paddingRight,
-      computedTop: window.getComputedStyle(element).paddingTop,
-      computedBottom: window.getComputedStyle(element).paddingBottom,
-      computedLeft: window.getComputedStyle(element).paddingLeft,
-      computedRight: window.getComputedStyle(element).paddingRight,
-    }
+    if (!element) return
     
-    // Eliminar todo el padding
-    element.style.paddingTop = '0px'
-    element.style.paddingBottom = '0px'
-    element.style.paddingLeft = '0px'
-    element.style.paddingRight = '0px'
-    
-    // Eliminar también márgenes laterales para ocupar todo el ancho
-    const originalMargin = {
-      left: element.style.marginLeft,
-      right: element.style.marginRight,
-    }
-    element.style.marginLeft = '0'
-    element.style.marginRight = '0'
-
-    // Remover line-clamp de las descripciones para que se vean completas en el PDF
-    const descriptions = element.querySelectorAll('.line-clamp-2, .line-clamp-3')
-    const originalDescriptionStyles = []
-    descriptions.forEach(desc => {
-      originalDescriptionStyles.push({
-        element: desc,
-        classes: Array.from(desc.classList),
-        style: {
-          webkitLineClamp: desc.style.webkitLineClamp,
-          display: desc.style.display,
-          webkitBoxOrient: desc.style.webkitBoxOrient,
-          overflow: desc.style.overflow
-        }
-      })
-      desc.classList.remove('line-clamp-2', 'line-clamp-3')
-      desc.style.webkitLineClamp = 'unset'
-      desc.style.display = 'block'
-      desc.style.webkitBoxOrient = 'unset'
-      desc.style.overflow = 'visible'
-    })
-
-    // Ocultar todas las imágenes para evitar problemas de carga externa
-    const images = element.querySelectorAll('img')
-    const originalImageDisplays = []
-    images.forEach(img => {
-      originalImageDisplays.push({
-        element: img,
-        display: img.style.display
-      })
-      img.style.display = 'none'
-    })
-
-    // Pequeña pausa para asegurar que todo se renderice
+    const prepared = prepareElementsForPDF(element)
     await new Promise(resolve => setTimeout(resolve, 200))
 
     // Configuración mejorada para html2canvas
@@ -980,52 +993,38 @@ const exportToPDF = async () => {
       removeContainer: false,
       imageTimeout: 15000, // Aumentar timeout para imágenes
       onclone: (clonedDoc) => {
-        // Ocultar elementos en el clon también
-        const clonedShareMenu = clonedDoc.querySelector('.absolute.right-5, .absolute.right-0.top-full')
-        const clonedSticky = clonedDoc.querySelector('.sticky.top-0.z-40')
-        const clonedStickySearch = clonedDoc.querySelector('.sticky.top-0 .relative.mt-3')
-        const clonedHeaderActions = clonedDoc.querySelector('header .flex.items-center.justify-end')
-        const clonedSearchContainer = clonedDoc.querySelector('.relative.flex-1.max-w-xs')
-        const clonedTopActionBar = clonedDoc.querySelector('.flex.items-center.justify-end.gap-3.mb-4')
-        const clonedSearch = clonedDoc.querySelectorAll('input[placeholder*="Buscar"], input[placeholder*="buscar"], input#menu-search')
-        const clonedActions = clonedDoc.querySelectorAll('.flex.items-center.justify-end button')
-        const clonedDeliveryPlatforms = clonedDoc.querySelectorAll('a[target="_blank"][rel*="noopener"]')
-        const clonedCollapseButtons = clonedDoc.querySelectorAll('button[aria-label*="Expandir"], button[aria-label*="Colapsar"]')
-        const clonedTabButtons = clonedDoc.querySelectorAll('.sticky.top-0 button[class*="px-4 py-2 rounded-lg"]')
-        const clonedCategoryFilters = clonedDoc.querySelectorAll('.sticky.top-0 button')
-        
-        if (clonedShareMenu) clonedShareMenu.style.display = 'none'
-        if (clonedSticky) clonedSticky.style.display = 'none'
-        if (clonedStickySearch) clonedStickySearch.style.display = 'none'
-        if (clonedHeaderActions) clonedHeaderActions.style.display = 'none'
-        if (clonedSearchContainer) clonedSearchContainer.style.display = 'none'
-        if (clonedTopActionBar) clonedTopActionBar.style.display = 'none'
-        clonedSearch.forEach(input => input.style.display = 'none')
-        clonedActions.forEach(btn => btn.style.display = 'none')
-        clonedDeliveryPlatforms.forEach(link => link.style.display = 'none')
-        clonedCollapseButtons.forEach(btn => btn.style.display = 'none')
-        clonedTabButtons.forEach(btn => btn.style.display = 'none')
-        clonedCategoryFilters.forEach(btn => btn.style.display = 'none')
-        
-        // Eliminar padding y márgenes en el clon también
         const clonedElement = clonedDoc.querySelector('.min-h-screen > .mx-auto')
-        if (clonedElement) {
-          clonedElement.style.paddingTop = '0px'
-          clonedElement.style.paddingBottom = '0px'
-          clonedElement.style.paddingLeft = '0px'
-          clonedElement.style.paddingRight = '0px'
-          clonedElement.style.marginLeft = '0'
-          clonedElement.style.marginRight = '0'
-        }
+        if (!clonedElement) return
         
-        // Ocultar imágenes en el clon
-        const clonedImages = clonedDoc.querySelectorAll('img')
-        clonedImages.forEach(img => {
-          img.style.display = 'none'
+        // Aplicar las mismas preparaciones en el clon usando la función helper
+        const selectorsToHide = [
+          '.absolute.right-5', '.absolute.right-0.top-full',
+          'button[title*="favoritos"]', 'button[title*="Favoritos"]',
+          'header .flex.items-center.justify-end',
+          '.sticky.top-0',
+          'input[placeholder*="Buscar"]', 'input[placeholder*="buscar"]',
+          'a[target="_blank"][rel*="noopener"]',
+          'button[aria-label*="Expandir"]', 'button[aria-label*="Colapsar"]',
+        ]
+        
+        selectorsToHide.forEach(selector => {
+          const elements = clonedDoc.querySelectorAll(selector)
+          elements.forEach(el => {
+            if (el && el.style) el.style.display = 'none'
+          })
         })
         
-        // Remover line-clamp de las descripciones para que se vean completas en el PDF
-        const clonedDescriptions = clonedDoc.querySelectorAll('.line-clamp-2, .line-clamp-3')
+        clonedElement.style.paddingTop = '0px'
+        clonedElement.style.paddingBottom = '0px'
+        clonedElement.style.paddingLeft = '0px'
+        clonedElement.style.paddingRight = '0px'
+        clonedElement.style.marginLeft = '0'
+        clonedElement.style.marginRight = '0'
+        
+        const clonedImages = clonedElement.querySelectorAll('img')
+        clonedImages.forEach(img => img.style.display = 'none')
+        
+        const clonedDescriptions = clonedElement.querySelectorAll('.line-clamp-2, .line-clamp-3')
         clonedDescriptions.forEach(desc => {
           desc.classList.remove('line-clamp-2', 'line-clamp-3')
           desc.style.webkitLineClamp = 'unset'
@@ -1033,120 +1032,15 @@ const exportToPDF = async () => {
           desc.style.webkitBoxOrient = 'unset'
           desc.style.overflow = 'visible'
         })
-        
-        // Asegurar que las etiquetas se rendericen correctamente
-        const clonedTags = clonedDoc.querySelectorAll('[class*="rounded-full"][class*="px-2"]')
-        clonedTags.forEach(tag => {
-          tag.style.display = 'inline-flex'
-          tag.style.visibility = 'visible'
-        })
-        
       }
     })
 
-    // Restaurar padding y márgenes
-    element.style.paddingTop = originalPadding.top || ''
-    element.style.paddingBottom = originalPadding.bottom || ''
-    element.style.paddingLeft = originalPadding.left || ''
-    element.style.paddingRight = originalPadding.right || ''
-    element.style.marginLeft = originalMargin.left || ''
-    element.style.marginRight = originalMargin.right || ''
-    
-    // Restaurar imágenes
-    originalImageDisplays.forEach(({ element: img, display }) => {
-      if (img && img.style) {
-        img.style.display = display || ''
-      }
-    })
+    restoreElementsAfterPDF(element, prepared)
 
-    // Restaurar estilos de descripciones
-    originalDescriptionStyles.forEach(({ element: el, classes, style }) => {
-      if (el) {
-        classes.forEach(cls => el.classList.add(cls))
-        el.style.webkitLineClamp = style.webkitLineClamp
-        el.style.display = style.display
-        el.style.webkitBoxOrient = style.webkitBoxOrient
-        el.style.overflow = style.overflow
-      }
-    })
-
-    // Restaurar elementos ocultos
-    originalDisplays.forEach(({ element: el, display }) => {
-      if (el && el.style) el.style.display = display
-    })
-
-    // Configuración del PDF - sin márgenes para ocupar todo el ancho
     const pdf = new jsPDF('p', 'mm', 'a4')
-    const pdfWidth = 210 // Ancho A4 en mm
-    const pdfHeight = 297 // Alto A4 en mm
-    const margin = 0 // Sin márgenes para ocupar todo el ancho
-    const contentWidth = pdfWidth
-    const contentHeight = pdfHeight
-
-    // Calcular dimensiones de la imagen
-    const imgWidth = canvas.width
-    const imgHeight = canvas.height
-    const ratio = imgWidth / imgHeight
-
-    // Calcular dimensiones para el PDF usando todo el ancho disponible
-    let finalWidth = pdfWidth // Usar todo el ancho de la página
-    let finalHeight = pdfWidth / ratio
-
-    // Si la altura es mayor que el contenido disponible, ajustar
-    if (finalHeight > contentHeight) {
-      finalHeight = contentHeight
-      finalWidth = contentHeight * ratio
-    }
-
-    // Convertir a imagen de alta calidad (PNG para mejor calidad, especialmente para grid)
-    const imgData = canvas.toDataURL('image/png', 1.0)
-
-    // Calcular cuántas páginas necesitamos
-    const totalHeight = finalHeight
-    let remainingHeight = totalHeight
-    let sourceY = 0
-
-    // Agregar primera página
-    if (totalHeight <= contentHeight) {
-      // Si cabe en una página, agregar directamente sin margen
-      pdf.addImage(imgData, 'PNG', 0, 0, finalWidth, finalHeight, undefined, 'FAST')
-    } else {
-      // Si necesita múltiples páginas, dividir correctamente
-      const pageHeightPx = (contentHeight / totalHeight) * imgHeight
-      
-      // Primera página
-      const firstPageHeight = Math.min(pageHeightPx, imgHeight)
-      const tempCanvas1 = document.createElement('canvas')
-      tempCanvas1.width = imgWidth
-      tempCanvas1.height = firstPageHeight
-      const tempCtx1 = tempCanvas1.getContext('2d')
-      tempCtx1.drawImage(canvas, 0, 0, imgWidth, firstPageHeight, 0, 0, imgWidth, firstPageHeight)
-      const firstPageData = tempCanvas1.toDataURL('image/png', 1.0)
-      const firstPageHeightMm = (firstPageHeight / imgHeight) * finalHeight
-      pdf.addImage(firstPageData, 'PNG', 0, 0, finalWidth, firstPageHeightMm, undefined, 'FAST')
-      
-      sourceY = firstPageHeight
-      remainingHeight -= contentHeight
-
-      // Páginas adicionales
-      while (remainingHeight > 0 && sourceY < imgHeight) {
-        pdf.addPage()
-        
-        const pageHeight = Math.min(pageHeightPx, imgHeight - sourceY)
-        const tempCanvas = document.createElement('canvas')
-        tempCanvas.width = imgWidth
-        tempCanvas.height = pageHeight
-        const tempCtx = tempCanvas.getContext('2d')
-        tempCtx.drawImage(canvas, 0, sourceY, imgWidth, pageHeight, 0, 0, imgWidth, pageHeight)
-
-        const tempImgData = tempCanvas.toDataURL('image/png', 1.0)
-        const tempHeightMm = (pageHeight / imgHeight) * finalHeight
-        pdf.addImage(tempImgData, 'PNG', 0, 0, finalWidth, tempHeightMm, undefined, 'FAST')
-        
-        sourceY += pageHeight
-        remainingHeight -= contentHeight
-      }
-    }
+    const pdfWidth = 210
+    const pdfHeight = 297
+    generatePDFPages(pdf, canvas, canvas.width, canvas.height, pdfWidth, pdfHeight)
 
     // Agregar footer en cada página
     const pageCount = pdf.internal.pages.length - 1
@@ -1251,35 +1145,30 @@ onMounted(async () => {
 
 
 // Los colores se actualizan automáticamente mediante computed properties
-// cuando cambian theme o baseColor
+// cuando cambia baseColor
 
 // Verificar autenticación y cargar estado de favorito
 const checkAuthAndFavorite = async () => {
   if (!process.client) return
   
-  const auth = localStorage.getItem('qrmenu-auth')
+  const { getAuth, getToken } = useAuth()
+  const auth = getAuth()
   if (auth) {
-    try {
-      const parsed = JSON.parse(auth)
-      if (parsed.loggedIn === true && parsed.token) {
-        isAuthenticated.value = true
-        
-        // Verificar si es favorito
-        if (business.value?.id) {
-          try {
-            const response = await $fetch(`/api/favorites/check?businessId=${business.value.id}`, {
-              headers: {
-                'Authorization': `Bearer ${parsed.token}`,
-              },
-            })
-            isFavorite.value = response.isFavorite || false
-          } catch (err) {
-            console.error('Error checking favorite:', err)
-          }
-        }
+    isAuthenticated.value = true
+    
+    // Verificar si es favorito
+    if (business.value?.id) {
+      try {
+        const token = getToken()
+        const response = await $fetch(`/api/favorites/check?businessId=${business.value.id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+        isFavorite.value = response.isFavorite || false
+      } catch (err) {
+        console.error('Error checking favorite:', err)
       }
-    } catch {
-      // Error parsing
     }
   }
 }
@@ -1290,9 +1179,9 @@ const toggleFavorite = async () => {
   
   isLoadingFavorite.value = true
   try {
-    const auth = localStorage.getItem('qrmenu-auth')
-    const parsed = JSON.parse(auth)
-    const token = parsed.token
+    const { getToken } = useAuth()
+    const token = getToken()
+    if (!token) return
     
     if (isFavorite.value) {
       // Eliminar de favoritos

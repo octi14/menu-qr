@@ -388,18 +388,9 @@ const handleLogout = () => {
 
 const loadUserPlan = async () => {
   try {
-    let userId = null
-    if (process.client) {
-      const auth = localStorage.getItem('qrmenu-auth')
-      if (auth) {
-        try {
-          const parsed = JSON.parse(auth)
-          userId = parsed.userId
-        } catch {
-          // Error parsing
-        }
-      }
-    }
+    const { getAuthData } = useAuth()
+    const auth = getAuthData()
+    const userId = auth?.userId
 
     if (userId) {
       const response = await $fetch(`/api/users/profile?userId=${userId}`)
@@ -414,19 +405,13 @@ const loadUserPlan = async () => {
 
 onMounted(async () => {
   if (process.client) {
-    const auth = localStorage.getItem('qrmenu-auth')
+    const { getAuthData } = useAuth()
+    const auth = getAuthData()
     if (auth) {
-      try {
-        const parsed = JSON.parse(auth)
-        if (parsed.loggedIn === true) {
-          isAuthenticated.value = true
-          userEmail.value = parsed.email || ''
-          userRole.value = parsed.role || null
-          await loadUserPlan()
-        }
-      } catch {
-        isAuthenticated.value = false
-      }
+      isAuthenticated.value = true
+      userEmail.value = auth.email || ''
+      userRole.value = auth.role || null
+      await loadUserPlan()
     }
     
     // Cerrar menú al hacer click fuera (solo en mobile)

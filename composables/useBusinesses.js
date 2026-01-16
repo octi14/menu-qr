@@ -22,19 +22,9 @@ export const useBusinesses = () => {
 
   const fetchAllBusinesses = async () => {
     try {
-      // Obtener userId del localStorage
-      let userId = null
-      if (process.client) {
-        const auth = localStorage.getItem('qrmenu-auth')
-        if (auth) {
-          try {
-            const parsed = JSON.parse(auth)
-            userId = parsed.userId
-          } catch {
-            // Si no hay userId, continuar sin él
-          }
-        }
-      }
+      const { getAuthData } = useAuth()
+      const auth = getAuthData()
+      const userId = auth?.userId
       
       const url = userId ? `/api/businesses?userId=${userId}` : '/api/businesses'
       console.log('fetchAllBusinesses: Fetching from:', url)

@@ -351,19 +351,9 @@ const loadProfile = async () => {
   error.value = ''
 
   try {
-    // Obtener userId del localStorage
-    let userId = null
-    if (process.client) {
-      const auth = localStorage.getItem('qrmenu-auth')
-      if (auth) {
-        try {
-          const parsed = JSON.parse(auth)
-          userId = parsed.userId
-        } catch {
-          // Error parsing
-        }
-      }
-    }
+    const { getAuthData } = useAuth()
+    const auth = getAuthData()
+    const userId = auth?.userId
 
     if (!userId) {
       router.push('/login')

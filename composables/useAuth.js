@@ -22,6 +22,28 @@ export const useAuth = () => {
   }
 
   /**
+   * Obtiene los datos de autenticación sin validar token (útil para obtener userId)
+   * @returns {object|null} Datos de autenticación o null
+   */
+  const getAuthData = () => {
+    if (!process.client) return null
+    
+    try {
+      const auth = localStorage.getItem('qrmenu-auth')
+      if (!auth) return null
+      
+      const parsed = JSON.parse(auth)
+      if (parsed.loggedIn === true) {
+        return parsed
+      }
+      return null
+    } catch (error) {
+      console.error('Error parsing auth:', error)
+      return null
+    }
+  }
+
+  /**
    * Obtiene el token JWT del localStorage
    * @returns {string|null} Token JWT o null
    */
@@ -93,6 +115,7 @@ export const useAuth = () => {
 
   return {
     getAuth,
+    getAuthData,
     getToken,
     isAuthenticated,
     authenticatedFetch,
