@@ -2,142 +2,129 @@
   <div class="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors pb-20 md:pb-0">
     <!-- Vista para usuarios autenticados -->
     <template v-if="isAuthenticated">
-      <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-          <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-slate-50 mb-4">
-            Bienvenido a MapaMorfi
-          </h1>
-          <p class="text-xl text-slate-600 dark:text-slate-400">
-            Gestioná tus menús digitales desde aquí
-          </p>
-        </div>
+      <div
+        class="relative flex min-h-[calc(100dvh-7.5rem)] flex-col justify-center overflow-hidden font-sans antialiased md:min-h-[70vh] md:justify-start"
+      >
+        <!-- Fondo ambiente -->
+        <div
+          class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-15%,rgba(16,185,129,0.12),transparent_55%)] dark:bg-[radial-gradient(ellipse_90%_55%_at_50%_-10%,rgba(16,185,129,0.14),transparent_50%)]"
+          aria-hidden="true"
+        />
+        <div
+          class="pointer-events-none absolute -right-24 top-1/3 h-72 w-72 rounded-full bg-emerald-500/5 blur-3xl dark:bg-emerald-400/10"
+          aria-hidden="true"
+        />
+        <div
+          class="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-sky-500/5 blur-3xl dark:bg-sky-400/8"
+          aria-hidden="true"
+        />
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <NuxtLink
-            to="/select-business"
-            class="group relative rounded-2xl border-2 border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 p-8 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">🏪</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">Mis comercios</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Administrá tus menús digitales existentes
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
+        <div class="relative mx-auto w-full max-w-5xl px-4 py-2 sm:px-6 md:py-10 lg:px-8 md:px-4">
+          <h1 class="sr-only">Panel MapaMorfi</h1>
 
-          <NuxtLink
-            to="/create-business"
-            class="group relative rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">➕</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">Crear comercio</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Agregá un nuevo menú digital
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
+          <div class="grid grid-cols-3 gap-3 sm:gap-3.5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+            <!-- Mis comercios (destacado): relieve + brillo; en mobile compacto tipo ícono -->
+            <NuxtLink
+              to="/select-business"
+              class="dashboard-tile-featured group relative flex aspect-square min-h-0 max-md:min-h-[6.75rem] flex-col overflow-hidden rounded-xl border border-emerald-400/40 bg-gradient-to-b from-emerald-50/95 to-white px-3 py-4 text-center shadow-md transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white max-md:!border-emerald-500/50 max-md:!bg-gradient-to-br max-md:!from-emerald-600/30 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-emerald-950/35 max-md:ring-1 max-md:ring-emerald-400/30 max-md:hover:brightness-105 max-md:active:scale-[0.98] dark:border-emerald-500/35 dark:from-emerald-950/55 dark:to-slate-950 dark:focus-visible:ring-offset-slate-950 md:aspect-auto md:rounded-2xl md:px-5 md:pb-6 md:pt-7 md:!bg-gradient-to-b md:from-emerald-50/95 md:to-white md:dark:!from-emerald-950/55 md:dark:!to-slate-950 md:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75),0_6px_0_0_#047857,0_16px_40px_-14px_rgba(16,185,129,0.42)] md:hover:-translate-y-1.5 md:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_9px_0_0_#059669,0_22px_48px_-12px_rgba(16,185,129,0.48)] md:active:translate-y-0.5 md:active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.06),0_4px_0_0_#047857,0_10px_28px_-12px_rgba(16,185,129,0.35)] md:dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07),0_5px_0_0_#065f46,0_18px_44px_-16px_rgba(0,0,0,0.55)] md:dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_8px_0_0_#047857,0_24px_52px_-14px_rgba(16,185,129,0.25)]"
+            >
+              <div
+                class="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-white/45 via-transparent to-emerald-600/[0.06] dark:from-white/[0.06] dark:to-emerald-500/[0.04]"
+                aria-hidden="true"
+              />
+              <div
+                class="pointer-events-none absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-white/90 to-transparent opacity-90 dark:via-white/25"
+                aria-hidden="true"
+              />
+              <div class="relative flex min-h-0 flex-1 flex-col items-center justify-center">
+                <div
+                  class="mb-2 flex h-14 shrink-0 items-center justify-center text-emerald-500 dark:text-emerald-300 max-md:text-emerald-300 md:mb-4 md:h-16"
+                >
+                  <svg
+                    class="h-10 w-10 drop-shadow-[0_2px_10px_rgba(16,185,129,0.5)] md:h-11 md:w-11"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.35"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c-.896 0-1.7-.393-2.25-1.016a2.993 2.993 0 00-2.25 1.016c-.356.257-.96.606-1.86.952M3 9.75V6.75A2.25 2.25 0 015.25 4.5h13.5A2.25 2.25 0 0121 6.75v3"
+                    />
+                  </svg>
+                </div>
+                <h2
+                  class="line-clamp-2 min-h-[2.5rem] px-0.5 text-xs font-semibold leading-tight tracking-tight text-slate-900 max-md:text-emerald-50 dark:text-white sm:text-[0.8125rem] md:min-h-0 md:text-[1.05rem] md:leading-normal md:text-lg md:text-slate-900 md:dark:text-white"
+                >
+                  Mis comercios
+                </h2>
+                <p class="mt-2 hidden max-w-[16rem] flex-1 text-[0.8125rem] leading-snug text-slate-600 dark:text-slate-400 sm:text-sm sm:leading-relaxed md:block">
+                  Administrá tus menús digitales existentes
+                </p>
+                <div
+                  class="mt-5 hidden items-center gap-1 text-sm font-medium tabular-nums text-emerald-700 dark:text-emerald-300 md:inline-flex"
+                >
+                  <span>Abrir</span>
+                  <svg
+                    class="h-4 w-4 opacity-80 transition-transform duration-200 group-hover:translate-x-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </div>
+              </div>
+            </NuxtLink>
 
-          <NuxtLink
-            to="/discover"
-            class="group relative rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">🗺️</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">Descubrir</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Explorá comercios cerca de vos
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/profile"
-            class="group relative rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">👤</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">Mi perfil</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Configurá tu información personal
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/saved-addresses"
-            class="group relative rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">📍</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">Mis direcciones</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Gestioná tus direcciones guardadas
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/favorites"
-            class="group relative rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">❤️</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">Favoritos</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Tus comercios favoritos guardados
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/contact"
-            class="group relative rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">📧</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">Contacto</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Contactanos por consultas o soporte
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/billing"
-            class="group relative rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">💳</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">Facturación</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Gestioná tu plan y facturación
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/crm"
-            class="group relative rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-8 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 hover:scale-105"
-          >
-            <div class="text-4xl mb-4">📊</div>
-            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50 mb-2">CRM</h2>
-            <p class="text-slate-600 dark:text-slate-400">
-              Gestioná tus clientes y tickets
-            </p>
-            <svg class="absolute top-4 right-4 h-6 w-6 text-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </NuxtLink>
+            <NuxtLink
+              v-for="card in dashboardCards"
+              :key="card.to"
+              :to="card.to"
+              class="dashboard-tile group relative flex aspect-square min-h-0 max-md:min-h-[6.75rem] flex-col overflow-hidden rounded-xl border border-slate-200/95 bg-gradient-to-b from-white to-slate-50/90 px-3 py-4 text-center shadow-md transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white max-md:active:scale-[0.98] dark:border-slate-600/70 dark:from-slate-800/95 dark:to-slate-900/98 md:aspect-auto md:rounded-2xl md:px-5 md:pb-6 md:pt-7 md:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_4px_0_0_#cbd5e1,0_12px_32px_-14px_rgba(15,23,42,0.14)] md:hover:-translate-y-1.5 md:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_7px_0_0_#94a3b8,0_18px_40px_-12px_rgba(15,23,42,0.18)] md:active:translate-y-0.5 md:active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.05),0_3px_0_0_#cbd5e1,0_8px_24px_-12px_rgba(15,23,42,0.12)] md:dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_4px_0_0_#1e293b,0_16px_40px_-14px_rgba(0,0,0,0.5)] md:dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.09),0_7px_0_0_#334155,0_20px_44px_-12px_rgba(0,0,0,0.55)] dark:focus-visible:ring-offset-slate-950"
+              :class="dashboardAccentMobile[card.accent]"
+            >
+              <div
+                class="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-b from-white/30 via-transparent to-slate-900/[0.03] opacity-80 dark:from-white/[0.04] dark:to-transparent"
+                aria-hidden="true"
+              />
+              <div
+                class="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent dark:via-white/15"
+                aria-hidden="true"
+              />
+              <div class="relative flex min-h-0 flex-1 flex-col items-center justify-center">
+                <div
+                  class="dash-icon mb-2 flex h-14 shrink-0 items-center justify-center text-slate-500 transition-colors duration-200 [&_svg]:h-9 [&_svg]:w-9 [&_svg]:drop-shadow-[0_2px_8px_rgba(15,23,42,0.15)] group-hover:text-emerald-500 dark:text-slate-400 dark:group-hover:text-emerald-400 md:mb-4 md:h-16 md:!text-slate-500 md:[&_svg]:h-11 md:[&_svg]:w-11 md:dark:!text-slate-400 dark:[&_svg]:drop-shadow-[0_2px_8px_rgba(0,0,0,0.35)] max-md:[&_svg]:drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]"
+                  v-html="card.iconSvg"
+                />
+                <h2
+                  class="line-clamp-2 min-h-[2.5rem] px-0.5 text-xs font-semibold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-[0.8125rem] md:min-h-0 md:!text-slate-900 md:text-[1.05rem] md:leading-normal md:text-lg md:dark:!text-white max-md:font-semibold"
+                >
+                  {{ card.title }}
+                </h2>
+                <p class="mt-2 hidden max-w-[16rem] flex-1 text-[0.8125rem] leading-snug text-slate-600 dark:text-slate-400 sm:text-sm sm:leading-relaxed md:block">
+                  {{ card.description }}
+                </p>
+                <div
+                  class="mt-5 hidden items-center gap-1 text-sm font-medium tabular-nums text-slate-500 transition-colors group-hover:text-emerald-600 dark:text-slate-500 dark:group-hover:text-emerald-400 md:inline-flex"
+                >
+                  <span>Ir</span>
+                  <svg
+                    class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </div>
+              </div>
+            </NuxtLink>
+          </div>
         </div>
       </div>
     </template>
@@ -487,6 +474,97 @@
 
 <script setup>
 import { normalizeBusiness } from '~/composables/useMenuNormalizer'
+
+/**
+ * Estilos solo en mobile: gradiente + borde por categoría (desktop sigue neutro).
+ * currentColor en SVG toma el tono del contenedor .dash-icon.
+ */
+const dashboardAccentMobile = {
+  violet:
+    'max-md:!border-violet-500/50 max-md:!bg-gradient-to-br max-md:!from-violet-600/30 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-black/25 max-md:ring-1 max-md:ring-violet-400/25 max-md:[&_.dash-icon]:text-violet-300 max-md:[&_h2]:text-violet-50 max-md:hover:brightness-105',
+  sky:
+    'max-md:!border-sky-500/50 max-md:!bg-gradient-to-br max-md:!from-sky-600/28 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-black/25 max-md:ring-1 max-md:ring-sky-400/25 max-md:[&_.dash-icon]:text-sky-300 max-md:[&_h2]:text-sky-50 max-md:hover:brightness-105',
+  indigo:
+    'max-md:!border-indigo-500/50 max-md:!bg-gradient-to-br max-md:!from-indigo-600/28 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-black/25 max-md:ring-1 max-md:ring-indigo-400/20 max-md:[&_.dash-icon]:text-indigo-300 max-md:[&_h2]:text-indigo-50 max-md:hover:brightness-105',
+  amber:
+    'max-md:!border-amber-500/50 max-md:!bg-gradient-to-br max-md:!from-amber-600/26 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-black/25 max-md:ring-1 max-md:ring-amber-400/25 max-md:[&_.dash-icon]:text-amber-300 max-md:[&_h2]:text-amber-50 max-md:hover:brightness-105',
+  rose:
+    'max-md:!border-rose-500/50 max-md:!bg-gradient-to-br max-md:!from-rose-600/28 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-black/25 max-md:ring-1 max-md:ring-rose-400/25 max-md:[&_.dash-icon]:text-rose-300 max-md:[&_h2]:text-rose-50 max-md:hover:brightness-105',
+  teal:
+    'max-md:!border-teal-500/50 max-md:!bg-gradient-to-br max-md:!from-teal-600/28 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-black/25 max-md:ring-1 max-md:ring-teal-400/25 max-md:[&_.dash-icon]:text-teal-300 max-md:[&_h2]:text-teal-50 max-md:hover:brightness-105',
+  lime:
+    'max-md:!border-lime-500/45 max-md:!bg-gradient-to-br max-md:!from-lime-600/24 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-black/25 max-md:ring-1 max-md:ring-lime-400/25 max-md:[&_.dash-icon]:text-lime-300 max-md:[&_h2]:text-lime-50 max-md:hover:brightness-105',
+  fuchsia:
+    'max-md:!border-fuchsia-500/50 max-md:!bg-gradient-to-br max-md:!from-fuchsia-600/27 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-black/25 max-md:ring-1 max-md:ring-fuchsia-400/25 max-md:[&_.dash-icon]:text-fuchsia-300 max-md:[&_h2]:text-fuchsia-50 max-md:hover:brightness-105',
+}
+
+/** Iconos en SVG estático (sin entrada de usuario) para el panel autenticado */
+const dashboardCards = [
+  {
+    to: '/create-business',
+    title: 'Crear comercio',
+    description: 'Agregá un nuevo menú digital',
+    accent: 'violet',
+    iconSvg:
+      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>',
+  },
+  {
+    to: '/discover',
+    title: 'Descubrir',
+    description: 'Explorá comercios cerca de vos',
+    accent: 'sky',
+    iconSvg:
+      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3" /></svg>',
+  },
+  {
+    to: '/profile',
+    title: 'Mi perfil',
+    description: 'Configurá tu información personal',
+    accent: 'indigo',
+    iconSvg:
+      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>',
+  },
+  {
+    to: '/saved-addresses',
+    title: 'Mis direcciones',
+    description: 'Gestioná tus direcciones guardadas',
+    accent: 'amber',
+    iconSvg:
+      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>',
+  },
+  {
+    to: '/favorites',
+    title: 'Favoritos',
+    description: 'Tus comercios favoritos guardados',
+    accent: 'rose',
+    iconSvg:
+      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>',
+  },
+  {
+    to: '/contact',
+    title: 'Contacto',
+    description: 'Consultas y soporte',
+    accent: 'teal',
+    iconSvg:
+      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>',
+  },
+  {
+    to: '/billing',
+    title: 'Facturación',
+    description: 'Plan y pagos',
+    accent: 'lime',
+    iconSvg:
+      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 21z" /></svg>',
+  },
+  {
+    to: '/crm',
+    title: 'CRM',
+    description: 'Clientes y tickets',
+    accent: 'fuchsia',
+    iconSvg:
+      '<svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v7.125c0 .621-.504 1.125-1.125 1.125H4.125A1.125 1.125 0 013 20.25v-7.125zm6.75-4.5c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zm6.75-4.5c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" /></svg>',
+  },
+]
 
 definePageMeta({
   layout: 'default',

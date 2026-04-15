@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-slate-950">
+  <div class="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950">
     <Navbar />
     <!-- Padding bottom para mobile (evitar que el contenido quede oculto detrás del navbar) -->
     <div class="pb-16 md:pb-0">

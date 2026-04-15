@@ -1,17 +1,17 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors">
-    <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+  <div class="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors antialiased">
+    <div class="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl sm:text-4xl font-bold mb-2">Direcciones guardadas</h1>
-        <p class="text-slate-600 dark:text-slate-400">
-          Guardá direcciones para ver comercios cerca de ellas rápidamente
+        <h1 class="text-3xl sm:text-4xl font-bold mb-2 tracking-tight">Direcciones guardadas</h1>
+        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
+          Acceso rápido a comercios cercanos
         </p>
       </div>
 
       <!-- Formulario para agregar nueva dirección -->
-      <div class="mb-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-        <h2 class="text-xl font-semibold mb-4">Agregar nueva dirección</h2>
+      <div class="mb-8 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/40 backdrop-blur-sm p-6 shadow-sm">
+        <h2 class="text-lg font-semibold mb-4 tracking-tight">Nueva dirección</h2>
         
         <div class="space-y-4">
           <div>
@@ -74,9 +74,9 @@
 
           <!-- Mapa para seleccionar ubicación -->
           <div v-if="newAddress.latitude && newAddress.longitude">
-            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Seleccionar ubicación en el mapa
-            </label>
+            <p class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">
+              Ajustá el pin
+            </p>
             <LocationPicker
               v-model:latitude="newAddress.latitude"
               v-model:longitude="newAddress.longitude"
@@ -159,6 +159,19 @@
         </p>
       </div>
     </div>
+
+    <ConfirmDialog
+      v-model="showDeleteConfirm"
+      title="Eliminar dirección"
+      message="¿Estás seguro de que querés eliminar esta dirección? Esta acción no se puede deshacer."
+      confirm-label="Eliminar"
+      cancel-label="Cancelar"
+      variant="danger"
+      @confirm="executeDeleteAddress"
+      @cancel="pendingDeleteId = null"
+    />
+
+    <Toast v-model:message="toastMessage" type="error" :duration="4000" />
   </div>
 </template>
 
@@ -166,6 +179,10 @@
 definePageMeta({
   layout: 'dashboard',
 })
+
+const showDeleteConfirm = ref(false)
+const pendingDeleteId = ref(null)
+const toastMessage = ref('')
 
 const addresses = ref([])
 const isLoading = ref(true)
@@ -357,10 +374,15 @@ const saveAddress = async () => {
   }
 }
 
-const deleteAddress = async (addressId) => {
-  if (!confirm('¿Estás seguro de que querés eliminar esta dirección?')) {
-    return
-  }
+function deleteAddress(addressId) {
+  pendingDeleteId.value = addressId
+  showDeleteConfirm.value = true
+}
+
+async function executeDeleteAddress() {
+  const addressId = pendingDeleteId.value
+  pendingDeleteId.value = null
+  if (!addressId) return
 
   isDeleting.value = addressId
   try {
@@ -391,7 +413,7 @@ const deleteAddress = async (addressId) => {
     await loadAddresses()
   } catch (err) {
     console.error('Error deleting address:', err)
-    alert(err.data?.message || err.message || 'Error al eliminar la dirección')
+    toastMessage.value = `${err.data?.message || err.message || 'Error al eliminar la dirección'}-${Date.now()}`
   } finally {
     isDeleting.value = null
   }

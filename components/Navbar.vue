@@ -1,5 +1,5 @@
 <template>
-  <nav class="fixed bottom-0 left-0 right-0 z-50 md:relative md:bottom-auto md:border-b md:border-slate-200 dark:md:border-slate-800 bg-white dark:bg-slate-950 md:bg-white dark:md:bg-slate-950">
+  <nav class="fixed bottom-0 left-0 right-0 z-50 md:relative md:bottom-auto md:border-b md:border-slate-200/80 dark:md:border-slate-800/80 bg-white/95 dark:bg-slate-950/95 md:backdrop-blur-md md:supports-[backdrop-filter]:bg-white/80 md:dark:supports-[backdrop-filter]:bg-slate-950/80">
     <!-- Mobile: Bottom Navigation Bar -->
     <div class="md:hidden border-t border-slate-200 dark:border-slate-800">
       <div class="flex items-center justify-around h-16 px-2">
@@ -68,6 +68,7 @@
         <!-- Menú lateral (hamburger) -->
         <div class="flex-1">
           <button
+            type="button"
             @click.stop="showProfileMenu = !showProfileMenu"
             class="flex flex-col items-center justify-center gap-1 w-full py-2 transition-colors"
             :class="showProfileMenu ? 'text-emerald-500' : 'text-slate-500 dark:text-slate-400'"
@@ -85,18 +86,28 @@
     <div
       v-if="showProfileMenu"
       class="fixed inset-0 z-[9999] md:hidden"
+      data-mobile-sidebar-root
       @click.self="showProfileMenu = false"
     >
       <!-- Overlay oscuro -->
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="showProfileMenu = false"></div>
       
-      <!-- Sidebar -->
-      <div class="absolute right-0 top-0 bottom-0 w-80 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-xl overflow-y-auto z-[10000]">
+      <!-- Sidebar: deslizar hacia la derecha para cerrar (mobile) -->
+      <div
+        class="mobile-nav-sidebar-panel absolute right-0 top-0 bottom-0 z-[10000] w-80 overflow-y-auto border-l border-slate-200 bg-white shadow-xl touch-pan-y transition-transform duration-200 ease-out will-change-transform dark:border-slate-800 dark:bg-slate-900"
+        :class="sidebarSwipeDragging ? 'duration-0' : ''"
+        :style="sidebarTranslateStyle"
+        @touchstart.passive="onSidebarSwipeStart"
+        @touchmove="onSidebarSwipeMove"
+        @touchend="onSidebarSwipeEnd"
+        @touchcancel="onSidebarSwipeEnd"
+      >
         <div class="p-6">
           <!-- Header del sidebar -->
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-slate-900 dark:text-slate-50">Menú</h2>
             <button
+              type="button"
               @click="showProfileMenu = false"
               class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
@@ -189,6 +200,7 @@
               </div>
               <div class="border-t border-slate-200 dark:border-slate-800 my-4"></div>
               <button
+                type="button"
                 @click="handleLogout"
                 class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
               >
@@ -250,7 +262,7 @@
 
     <!-- Desktop: Top Navigation Bar -->
     <div class="hidden md:block">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
           <!-- Logo -->
           <NuxtLink
@@ -337,6 +349,7 @@
                 Perfil
               </NuxtLink>
               <button
+                type="button"
                 @click="handleLogout"
                 class="px-3 py-1.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
               >
@@ -365,6 +378,8 @@
 </template>
 
 <script setup>
+import { watch } from 'vue'
+
 const route = useRoute()
 const router = useRouter()
 const { getDefaultPlan, getPlanById } = usePlans()
@@ -375,6 +390,69 @@ const userRole = ref(null)
 const userPlan = ref(getDefaultPlan())
 const showProfileMenu = ref(false)
 
+/** Cierre del sidebar en mobile deslizando hacia la derecha (panel anclado a la derecha) */
+const sidebarTranslatePx = ref(0)
+const sidebarSwipeDragging = ref(false)
+let sidebarTouchStartX = 0
+let sidebarTouchStartY = 0
+/** null hasta decidir; 'h' = gesto horizontal (cerrar); 'v' = scroll vertical */
+let sidebarSwipeAxis = /** @type {null | 'h' | 'v'} */ (null)
+
+const sidebarTranslateStyle = computed(() => {
+  const x = sidebarTranslatePx.value
+  if (x <= 0) return {}
+  return { transform: `translateX(${x}px)` }
+})
+
+function onSidebarSwipeStart(e) {
+  if (!process.client || window.innerWidth >= 768) return
+  sidebarTouchStartX = e.touches[0].clientX
+  sidebarTouchStartY = e.touches[0].clientY
+  sidebarSwipeAxis = null
+}
+
+function onSidebarSwipeMove(e) {
+  if (!process.client || window.innerWidth >= 768) return
+  const x = e.touches[0].clientX
+  const y = e.touches[0].clientY
+  const dx = x - sidebarTouchStartX
+  const dy = y - sidebarTouchStartY
+
+  if (sidebarSwipeAxis === null) {
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return
+    sidebarSwipeAxis = Math.abs(dx) >= Math.abs(dy) ? 'h' : 'v'
+  }
+  if (sidebarSwipeAxis !== 'h') return
+  // Solo hacia la derecha (cerrar)
+  if (dx <= 0) {
+    sidebarTranslatePx.value = 0
+    return
+  }
+  e.preventDefault()
+  sidebarSwipeDragging.value = true
+  const max = Math.min(window.innerWidth, 360)
+  sidebarTranslatePx.value = Math.min(dx, max)
+}
+
+function onSidebarSwipeEnd() {
+  if (!process.client || window.innerWidth >= 768) return
+  const dx = sidebarTranslatePx.value
+  sidebarSwipeDragging.value = false
+  sidebarSwipeAxis = null
+  if (dx >= 56) {
+    showProfileMenu.value = false
+  }
+  sidebarTranslatePx.value = 0
+}
+
+watch(showProfileMenu, (open) => {
+  if (!open) {
+    sidebarTranslatePx.value = 0
+    sidebarSwipeDragging.value = false
+    sidebarSwipeAxis = null
+  }
+})
+
 const isActive = (path) => {
   return route.path?.startsWith(path)
 }
@@ -384,6 +462,12 @@ const handleLogout = () => {
     localStorage.removeItem('qrmenu-auth')
     router.push('/login')
   }
+}
+
+function handleClickOutside(e) {
+  if (!showProfileMenu.value || window.innerWidth >= 768) return
+  if (e.target.closest('[data-mobile-sidebar-root]')) return
+  showProfileMenu.value = false
 }
 
 const loadUserPlan = async () => {
@@ -428,20 +512,14 @@ onMounted(async () => {
         isAuthenticated.value = false
       }
     }
-    
-    // Cerrar menú al hacer click fuera (solo en mobile)
-    const handleClickOutside = (e) => {
-      if (showProfileMenu.value && window.innerWidth < 768) {
-        // No cerrar si el click es en el botón del menú o dentro del sidebar
-        const menuButton = e.target.closest('button[class*="flex flex-col items-center"]')
-        const sidebar = e.target.closest('.absolute.right-0')
-        const sidebarContainer = e.target.closest('.fixed.inset-0.z-50')
-        if (!menuButton && !sidebar && !sidebarContainer) {
-          showProfileMenu.value = false
-        }
-      }
-    }
+
     document.addEventListener('click', handleClickOutside)
+  }
+})
+
+onUnmounted(() => {
+  if (process.client) {
+    document.removeEventListener('click', handleClickOutside)
   }
 })
 </script>

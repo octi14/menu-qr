@@ -3,20 +3,24 @@
     <div
       ref="mapContainer"
       id="location-picker-map"
-      class="w-full h-64 rounded-lg border border-slate-300 dark:border-slate-700 overflow-hidden"
+      class="w-full h-64 rounded-xl border border-slate-200/90 dark:border-slate-700/90 overflow-hidden shadow-sm bg-slate-100 dark:bg-slate-900/50"
       style="min-height: 256px; height: 256px;"
     ></div>
-    <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg z-10">
+    <div v-if="isLoading" class="absolute inset-0 flex items-center justify-center bg-slate-100/90 dark:bg-slate-900/80 rounded-xl z-10 backdrop-blur-[2px]">
       <div class="text-center">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500 mx-auto mb-2"></div>
-        <div class="text-sm text-slate-600 dark:text-slate-400">Cargando mapa...</div>
+        <div class="animate-spin rounded-full h-8 w-8 border-2 border-emerald-500/30 border-t-emerald-500 mx-auto"></div>
       </div>
     </div>
     <div v-if="error" class="mt-2 text-xs text-red-600 dark:text-red-400">
-      <p>⚠️ {{ error }}</p>
+      <p>{{ error }}</p>
     </div>
-    <div v-if="selectedLocation" class="mt-2 text-xs text-slate-600 dark:text-slate-400">
-      <p>📍 Ubicación seleccionada: {{ selectedLocation.latitude.toFixed(6) }}, {{ selectedLocation.longitude.toFixed(6) }}</p>
+    <div
+      v-if="selectedLocation"
+      class="mt-2 flex items-center gap-2 text-[11px] font-mono text-slate-500 dark:text-slate-400 tabular-nums"
+      title="Coordenadas del pin"
+    >
+      <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
+      <span>{{ selectedLocation.latitude.toFixed(5) }}, {{ selectedLocation.longitude.toFixed(5) }}</span>
     </div>
   </div>
 </template>

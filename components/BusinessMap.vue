@@ -1,5 +1,13 @@
 <template>
-  <div class="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 overflow-hidden shadow-lg" :style="{ height: isMobile ? '500px' : '600px', zIndex: 1 }">
+  <div
+    class="relative overflow-hidden bg-white dark:bg-slate-900/40"
+    :class="
+      immersive
+        ? 'h-[calc(100dvh-5rem)] w-full rounded-none border-0 shadow-none md:h-[600px] md:rounded-2xl md:border md:border-slate-200 md:dark:border-slate-800 md:shadow-lg'
+        : 'rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg'
+    "
+    :style="immersive ? { zIndex: 1 } : { height: isMobile ? '500px' : '600px', zIndex: 1 }"
+  >
     <div ref="mapContainer" class="w-full h-full" style="z-index: 1;"></div>
     <div v-if="!isMapReady" class="absolute inset-0 flex items-center justify-center bg-slate-100 dark:bg-slate-900">
       <div class="text-center">
@@ -45,6 +53,11 @@ const props = defineProps({
     default: false,
   },
   showUserLocationPopup: {
+    type: Boolean,
+    default: false,
+  },
+  /** Mapa alto en mobile (pantalla casi completa); en md+ se mantiene 600px */
+  immersive: {
     type: Boolean,
     default: false,
   },

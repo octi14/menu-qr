@@ -1,16 +1,16 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors">
-    <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+  <div class="min-h-screen overflow-x-hidden bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 transition-colors">
+    <div class="mx-auto w-full min-w-0 max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <!-- Header -->
-      <div class="mb-8 flex items-center justify-between">
-        <div>
-          <h1 class="text-3xl font-bold mb-2">{{ business?.name || 'Cargando...' }}</h1>
+      <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div class="min-w-0 flex-1">
+          <h1 class="text-2xl font-bold mb-2 break-words sm:text-3xl">{{ business?.name || 'Cargando...' }}</h1>
           <p class="text-slate-600 dark:text-slate-400">Panel de administración</p>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end sm:gap-3">
           <NuxtLink
             :to="`/${slug}/analytics`"
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
+            class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -20,7 +20,7 @@
           <NuxtLink
             :to="`/${slug}/menu`"
             target="_blank"
-            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
+            class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -30,7 +30,7 @@
           <button
             @click="handleSave"
             :disabled="isSaving || !hasChanges"
-            class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-6 py-2 text-sm font-medium text-white hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed sm:px-6"
           >
             <svg
               v-if="isSaving"
@@ -77,11 +77,11 @@
         <p class="text-slate-600 dark:text-slate-400">Cargando comercio...</p>
       </div>
 
-      <div v-else class="grid lg:grid-cols-3 gap-8">
+      <div v-else class="grid min-w-0 gap-8 lg:grid-cols-3">
         <!-- Columna principal - Menú -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="min-w-0 space-y-6 lg:col-span-2">
           <!-- Información del comercio -->
-          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
+          <div class="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 sm:p-6">
             <h2 class="text-xl font-semibold mb-4">Información del comercio</h2>
             <div class="space-y-4">
               <div>
@@ -133,17 +133,17 @@
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Color de fondo
                 </label>
-                <div class="flex items-center gap-4">
+                <div class="flex min-w-0 flex-wrap items-center gap-4">
                   <input
                     v-model="localBusiness.backgroundColor"
                     type="color"
-                    class="h-10 w-10 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer"
+                    class="h-10 w-10 shrink-0 rounded-lg border border-slate-300 dark:border-slate-700 cursor-pointer"
                   />
                   <input
                     v-model="localBusiness.backgroundColor"
                     type="text"
                     pattern="^#[0-9A-Fa-f]{6}$"
-                    class="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors font-mono text-sm"
+                    class="min-w-0 flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors font-mono text-sm"
                   />
                 </div>
               </div>
@@ -153,7 +153,7 @@
                 </label>
                 <select
                   v-model="localBusiness.fontFamily"
-                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
+                  class="w-full max-w-full min-w-0 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
                 >
                   <option
                     v-for="font in AVAILABLE_FONTS"
@@ -650,7 +650,7 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="space-y-6">
+        <div class="min-w-0 space-y-6">
           <!-- Eliminar comercio -->
           <div class="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-6 mb-6">
             <h2 class="text-xl font-semibold mb-4 text-red-900 dark:text-red-200">Zona de peligro</h2>

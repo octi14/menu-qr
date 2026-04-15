@@ -1,10 +1,10 @@
 <template>
   <button
     v-if="mounted"
-    @click="toggleTheme"
+    type="button"
+    @click.stop="toggleTheme"
     class="inline-flex items-center justify-center rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer relative z-50"
     :aria-label="`Cambiar a tema ${theme === 'dark' ? 'claro' : 'oscuro'}`"
-    type="button"
   >
     <svg
       v-if="theme === 'dark'"
