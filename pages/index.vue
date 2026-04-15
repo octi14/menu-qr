@@ -592,16 +592,10 @@ const loadDemo = async () => {
 
 onMounted(async () => {
   if (process.client) {
-    const auth = localStorage.getItem('qrmenu-auth')
+    const { getAuthData } = useAuth()
+    const auth = getAuthData()
     if (auth) {
-      try {
-        const parsed = JSON.parse(auth)
-        if (parsed.loggedIn === true) {
-          isAuthenticated.value = true
-        }
-      } catch {
-        // Error parsing
-      }
+      isAuthenticated.value = true
     }
     
     // Solo cargar demo si no está autenticado

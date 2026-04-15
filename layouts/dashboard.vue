@@ -30,15 +30,9 @@ const isPublicRoute = (path) => {
 const checkAuth = () => {
   if (!process.client) return false
   
-  const auth = localStorage.getItem('qrmenu-auth')
-  if (!auth) return false
-  
-  try {
-    const parsed = JSON.parse(auth)
-    return parsed.loggedIn === true && parsed.userId
-  } catch {
-    return false
-  }
+  const { getAuthData } = useAuth()
+  const auth = getAuthData()
+  return auth?.loggedIn === true && auth?.userId
 }
 
 onMounted(() => {

@@ -302,111 +302,6 @@ export function calculatePriceColor(backgroundColor, isDarkTheme = false) {
   }
 }
 
-/**
- * Aclara un color (para tema claro)
- */
-function lightenColor(hex, amount = 0.3) {
-  const rgb = hexToRgb(hex)
-  if (!rgb) return hex
-
-  const r = Math.min(255, rgb.r + (255 - rgb.r) * amount)
-  const g = Math.min(255, rgb.g + (255 - rgb.g) * amount)
-  const b = Math.min(255, rgb.b + (255 - rgb.b) * amount)
-
-  return rgbToHex(r, g, b)
-}
-
-/**
- * Oscurece un color (para tema oscuro)
- */
-function darkenColor(hex, amount = 0.3) {
-  const rgb = hexToRgb(hex)
-  if (!rgb) return hex
-
-  const r = Math.max(0, rgb.r * (1 - amount))
-  const g = Math.max(0, rgb.g * (1 - amount))
-  const b = Math.max(0, rgb.b * (1 - amount))
-
-  return rgbToHex(r, g, b)
-}
-
-/**
- * Genera una versión clara del color para tema claro
- * Si el color ya es claro, lo aclara más. Si es oscuro, lo invierte hacia claro.
- */
-export function getLightVariant(baseColor) {
-  if (!baseColor || typeof baseColor !== 'string') return '#ffffff'
-
-  try {
-    const luminance = getLuminance(baseColor)
-    
-    // Si el color es muy oscuro (luminancia < 0.3), generar un color claro basado en él
-    if (luminance < 0.3) {
-      const rgb = hexToRgb(baseColor)
-      if (!rgb) return '#ffffff'
-      
-      // Aclarar significativamente manteniendo el matiz
-      const r = Math.min(255, rgb.r + (255 - rgb.r) * 0.7)
-      const g = Math.min(255, rgb.g + (255 - rgb.g) * 0.7)
-      const b = Math.min(255, rgb.b + (255 - rgb.b) * 0.7)
-      
-      return rgbToHex(r, g, b)
-    }
-    
-    // Si el color ya es claro, aclararlo un poco más
-    return lightenColor(baseColor, 0.2)
-  } catch (error) {
-    console.warn('Error generating light variant:', error)
-    return '#ffffff'
-  }
-}
-
-/**
- * Genera una versión oscura del color para tema oscuro
- * Si el color ya es oscuro, lo oscurece más. Si es claro, lo invierte hacia oscuro.
- */
-export function getDarkVariant(baseColor) {
-  if (!baseColor || typeof baseColor !== 'string') return '#0a0a0a'
-
-  try {
-    const luminance = getLuminance(baseColor)
-    
-    // Si el color es muy claro (luminancia > 0.7), generar un color oscuro basado en él
-    if (luminance > 0.7) {
-      const rgb = hexToRgb(baseColor)
-      if (!rgb) return '#0a0a0a'
-      
-      // Oscurecer significativamente manteniendo el matiz
-      const r = Math.max(0, rgb.r * 0.3)
-      const g = Math.max(0, rgb.g * 0.3)
-      const b = Math.max(0, rgb.b * 0.3)
-      
-      return rgbToHex(r, g, b)
-    }
-    
-    // Si el color ya es oscuro, oscurecerlo un poco más
-    return darkenColor(baseColor, 0.2)
-  } catch (error) {
-    console.warn('Error generating dark variant:', error)
-    return '#0a0a0a'
-  }
-}
-
-/**
- * Obtiene el color de fondo adaptado al tema
- */
-export function getAdaptiveBackgroundColor(baseColor, isDarkTheme = false) {
-  if (!baseColor || typeof baseColor !== 'string') {
-    return isDarkTheme ? '#0a0a0a' : '#ffffff'
-  }
-
-  try {
-    return isDarkTheme ? getDarkVariant(baseColor) : getLightVariant(baseColor)
-  } catch (error) {
-    console.warn('Error getting adaptive background color:', error)
-    return isDarkTheme ? '#0a0a0a' : '#ffffff'
-  }
-}
 
 /**
  * Calcula un color de texto legible sobre un fondo dado
@@ -496,9 +391,6 @@ export const useColorUtils = () => {
   return {
     calculatePriceColor,
     getContrastTextColor,
-    getLightVariant,
-    getDarkVariant,
-    getAdaptiveBackgroundColor,
     isLightColor,
     getLuminance,
   }
