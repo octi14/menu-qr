@@ -7,7 +7,8 @@
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "placeholders:encode": "node scripts/encode-menu-placeholders.mjs"
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.12.1",
@@ -23,6 +24,11 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.1"
+  },
+  "overrides": {
+    "@nuxt/kit": "3.20.1",
+    "@nuxt/schema": "3.20.1"
   }
 }

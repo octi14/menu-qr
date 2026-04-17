@@ -40,6 +40,11 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  /** Texto del popup del marcador de referencia / usuario */
+  userLocationLabel: {
+    type: String,
+    default: 'Tu ubicación',
+  },
   center: {
     type: Array,
     default: () => [-34.6037, -58.3816], // Buenos Aires por defecto
@@ -317,7 +322,9 @@ const updateMarkers = () => {
       }
       
       const openStatus = isOpenNow(business)
-      const hasMenu = business.slug
+      const hasSlug = Boolean(business.slug)
+      const hasPublicMenu = hasSlug && business.isMenuPublic !== false
+      const menuBlockedReason = 'Para tener menu publico, el comercio necesita una cuenta con plan basico o mayor.'
       const statusText = openStatus === null ? '' : (openStatus ? '🟢 Abierto ahora' : '🔴 Cerrado ahora')
       
       // Popup con información del comercio mejorado
@@ -333,7 +340,8 @@ const updateMarkers = () => {
                 ${business.isEnterprise ? `<span style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; white-space: nowrap; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">⭐ Destacado</span>` : ''}
               </div>
               ${statusText ? `<div style="margin: 6px 0; padding: 4px 8px; background-color: ${openStatus ? '#d1fae5' : '#fee2e2'}; border-radius: 6px; display: inline-block;"><p style="margin: 0; color: ${openStatus ? '#065f46' : '#991b1b'}; font-size: 12px; font-weight: 600;">${statusText}</p></div>` : ''}
-              ${hasMenu ? `<div style="margin: 6px 0; padding: 4px 8px; background-color: #d1fae5; border-radius: 6px; display: inline-block;"><p style="margin: 0; color: #065f46; font-size: 12px; font-weight: 500;">✓ Menú disponible</p></div>` : ''}
+              ${hasPublicMenu ? `<div style="margin: 6px 0; padding: 4px 8px; background-color: #d1fae5; border-radius: 6px; display: inline-block;"><p style="margin: 0; color: #065f46; font-size: 12px; font-weight: 500;">✓ Menú disponible</p></div>` : ''}
+              ${hasSlug && !hasPublicMenu ? `<div title="${menuBlockedReason}" style="margin: 6px 0; padding: 4px 8px; background-color: #fef3c7; border-radius: 6px; display: inline-block;"><p style="margin: 0; color: #92400e; font-size: 12px; font-weight: 600;">⚠ Menú no disponible</p></div>` : ''}
             </div>
           </div>
           ${business.description ? `<p style="margin-bottom: 10px; color: #4b5563; font-size: 13px; line-height: 1.5;">${business.description}</p>` : ''}
@@ -343,10 +351,14 @@ const updateMarkers = () => {
           </div>
       `
       
-      // Para comercios de MapaMorfi, mostrar link al menú si tiene slug
-      if (hasMenu) {
+      if (hasPublicMenu) {
         popupContent += `
           <a href="/${business.slug}/menu" style="display: inline-block; width: 100%; text-align: center; margin-top: 8px; padding: 10px 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3); transition: all 0.2s;">Ver menú</a>
+        </div>
+        `
+      } else if (hasSlug) {
+        popupContent += `
+          <span title="${menuBlockedReason}" style="display: inline-block; width: 100%; text-align: center; margin-top: 8px; padding: 10px 16px; background: #e5e7eb; color: #6b7280; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; cursor: not-allowed;">No tiene menú</span>
         </div>
         `
       } else {
@@ -366,19 +378,15 @@ const updateMarkers = () => {
     userMarker = window.L.marker([props.userLocation.latitude, props.userLocation.longitude], {
       icon: createUserIcon(),
     }).addTo(map)
-    userMarker.bindPopup('<div style="font-weight: 600;">Tu ubicación</div>')
+    const refLabel = (props.userLocationLabel || 'Tu ubicación').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    userMarker.bindPopup(`<div style="font-weight: 600;">${refLabel}</div>`)
     // Solo abrir el popup si showUserLocationPopup es true
     if (props.showUserLocationPopup) {
       userMarker.openPopup()
     }
-    
-    // Ajustar vista para incluir todos los marcadores cuando hay ubicación del usuario
-    if (markers.length > 0) {
-      const group = new window.L.FeatureGroup([...markers, userMarker])
-      map.fitBounds(group.getBounds().pad(0.1))
-    } else {
-      map.setView([props.userLocation.latitude, props.userLocation.longitude], 15)
-    }
+    // Siempre centrar en el punto de referencia (GPS / guardada / URL / Obelisco), no en el cluster de comercios:
+    // un fitBounds mezclando usuario + negocios desplazaba el mapa hacia el Obelisco si el seed está ahí.
+    map.setView([props.userLocation.latitude, props.userLocation.longitude], props.zoom)
   } else {
     // Si no hay ubicación del usuario, NO ajustar vista a los comercios
     // Respetar siempre el centro del mapa que viene del prop (obelisco por defecto)
@@ -396,7 +404,7 @@ watch(() => props.businesses, () => {
   }
 }, { deep: true })
 
-watch(() => props.userLocation, () => {
+watch(() => [props.userLocation, props.userLocationLabel], () => {
   if (isMapReady.value) {
     updateMarkers()
   }

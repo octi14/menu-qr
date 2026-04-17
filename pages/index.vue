@@ -23,8 +23,9 @@
           <h1 class="sr-only">Panel MapaMorfi</h1>
 
           <div class="grid grid-cols-3 gap-3 sm:gap-3.5 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
-            <!-- Mis comercios (destacado): relieve + brillo; en mobile compacto tipo ícono -->
+            <!-- Mis comercios (destacado): solo si ya tiene al menos un comercio -->
             <NuxtLink
+              v-if="showMisComerciosTile"
               to="/select-business"
               class="dashboard-tile-featured group relative flex aspect-square min-h-0 max-md:min-h-[6.75rem] flex-col overflow-hidden rounded-xl border border-emerald-400/40 bg-gradient-to-b from-emerald-50/95 to-white px-3 py-4 text-center shadow-md transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white max-md:!border-emerald-500/50 max-md:!bg-gradient-to-br max-md:!from-emerald-600/30 max-md:!to-slate-950 max-md:shadow-lg max-md:shadow-emerald-950/35 max-md:ring-1 max-md:ring-emerald-400/30 max-md:hover:brightness-105 max-md:active:scale-[0.98] dark:border-emerald-500/35 dark:from-emerald-950/55 dark:to-slate-950 dark:focus-visible:ring-offset-slate-950 md:aspect-auto md:rounded-2xl md:px-5 md:pb-6 md:pt-7 md:!bg-gradient-to-b md:from-emerald-50/95 md:to-white md:dark:!from-emerald-950/55 md:dark:!to-slate-950 md:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75),0_6px_0_0_#047857,0_16px_40px_-14px_rgba(16,185,129,0.42)] md:hover:-translate-y-1.5 md:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_9px_0_0_#059669,0_22px_48px_-12px_rgba(16,185,129,0.48)] md:active:translate-y-0.5 md:active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.06),0_4px_0_0_#047857,0_10px_28px_-12px_rgba(16,185,129,0.35)] md:dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.07),0_5px_0_0_#065f46,0_18px_44px_-16px_rgba(0,0,0,0.55)] md:dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_8px_0_0_#047857,0_24px_52px_-14px_rgba(16,185,129,0.25)]"
             >
@@ -81,7 +82,7 @@
             </NuxtLink>
 
             <NuxtLink
-              v-for="card in dashboardCards"
+              v-for="card in visibleDashboardCards"
               :key="card.to"
               :to="card.to"
               class="dashboard-tile group relative flex aspect-square min-h-0 max-md:min-h-[6.75rem] flex-col overflow-hidden rounded-xl border border-slate-200/95 bg-gradient-to-b from-white to-slate-50/90 px-3 py-4 text-center shadow-md transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-white max-md:active:scale-[0.98] dark:border-slate-600/70 dark:from-slate-800/95 dark:to-slate-900/98 md:aspect-auto md:rounded-2xl md:px-5 md:pb-6 md:pt-7 md:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.9),0_4px_0_0_#cbd5e1,0_12px_32px_-14px_rgba(15,23,42,0.14)] md:hover:-translate-y-1.5 md:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,1),0_7px_0_0_#94a3b8,0_18px_40px_-12px_rgba(15,23,42,0.18)] md:active:translate-y-0.5 md:active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.05),0_3px_0_0_#cbd5e1,0_8px_24px_-12px_rgba(15,23,42,0.12)] md:dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06),0_4px_0_0_#1e293b,0_16px_40px_-14px_rgba(0,0,0,0.5)] md:dark:hover:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.09),0_7px_0_0_#334155,0_20px_44px_-12px_rgba(0,0,0,0.55)] dark:focus-visible:ring-offset-slate-950"
@@ -134,36 +135,54 @@
     <!-- Hero Section -->
     <section class="py-20 sm:py-28">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="max-w-2xl">
-          <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-4 uppercase tracking-wide">
-            MapaMorfi
-          </p>
-          <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-slate-50 mb-6 leading-tight">
-            Menús digitales<br />con códigos QR
-          </h1>
-          
-          <p class="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-            Convertí tu menú en papel en uno digital. Tus clientes escanean el código QR y listo.
-          </p>
-          
-          <div class="flex flex-col sm:flex-row gap-3 mb-8">
-            <NuxtLink
-              to="/register"
-              class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
-            >
-              Crear cuenta gratis
-            </NuxtLink>
-            <NuxtLink
-              to="/login"
-              class="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-lg border-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
-            >
-              Ya tengo cuenta
-            </NuxtLink>
+        <div class="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-10">
+          <div class="max-w-2xl">
+            <p class="text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-4 uppercase tracking-wide">
+              MapaMorfi
+            </p>
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-slate-50 mb-6 leading-tight">
+              Menús digitales<br />con códigos QR
+            </h1>
+
+            <p class="text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+              Convertí tu menú en papel en uno digital. Tus clientes escanean el código QR y listo.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-3 mb-8">
+              <NuxtLink
+                to="/register"
+                class="inline-flex items-center justify-center px-8 py-4 text-base font-semibold rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors"
+              >
+                Crear cuenta gratis
+              </NuxtLink>
+              <NuxtLink
+                to="/login"
+                class="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-lg border-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors"
+              >
+                Ya tengo cuenta
+              </NuxtLink>
+            </div>
+
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              Sin tarjeta de crédito · Configuración en minutos
+            </p>
           </div>
-          
-          <p class="text-sm text-slate-500 dark:text-slate-400">
-            Sin tarjeta de crédito · Configuración en minutos
-          </p>
+
+          <div class="relative mx-auto w-full max-w-xl lg:max-w-none">
+            <div
+              class="pointer-events-none absolute -inset-6 rounded-[2rem] bg-[radial-gradient(ellipse_at_50%_30%,rgba(16,185,129,0.2),transparent_55%)] dark:bg-[radial-gradient(ellipse_at_50%_30%,rgba(16,185,129,0.12),transparent_50%)]"
+              aria-hidden="true"
+            />
+            <img
+              src="/brand-hero-qrmenu.png"
+              alt="Ilustración de un menú digital con código QR en un teléfono"
+              width="1200"
+              height="675"
+              class="relative w-full rounded-2xl border border-slate-200/90 shadow-xl shadow-slate-900/10 dark:border-slate-700/90 dark:shadow-black/40"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -283,8 +302,15 @@
           </div>
 
           <!-- Estadísticas -->
-          <div class="group bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-6 hover:shadow-lg transition-all">
-            <div class="flex items-start gap-4">
+          <div class="group relative overflow-hidden bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-6 hover:shadow-lg transition-all">
+            <img
+              src="/brand-placeholder-analytics.png"
+              alt=""
+              class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-[0.08] dark:opacity-[0.14]"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="relative flex items-start gap-4">
               <div class="flex-shrink-0 w-12 h-12 rounded-lg bg-emerald-500 flex items-center justify-center">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -566,6 +592,25 @@ const dashboardCards = [
   },
 ]
 
+const userRole = ref(null)
+const userEmail = ref(null)
+const hasBusinesses = ref(false)
+const businessesLoaded = ref(false)
+const { fetchAllBusinesses } = useBusinesses()
+
+/** CRM: mismo criterio que Navbar */
+const canAccessCrm = computed(
+  () => userRole.value === 'admin' || userEmail.value === 'gonzalezoctavio5@gmail.com',
+)
+
+const visibleDashboardCards = computed(() =>
+  dashboardCards.filter((card) => (card.to === '/crm' ? canAccessCrm.value : true)),
+)
+
+const showMisComerciosTile = computed(
+  () => businessesLoaded.value && hasBusinesses.value,
+)
+
 definePageMeta({
   layout: 'default',
 })
@@ -596,8 +641,18 @@ onMounted(async () => {
     const auth = getAuthData()
     if (auth) {
       isAuthenticated.value = true
+      userRole.value = auth.role ?? null
+      userEmail.value = auth.email ?? null
+      try {
+        const list = await fetchAllBusinesses()
+        hasBusinesses.value = Array.isArray(list) && list.length > 0
+      } catch {
+        hasBusinesses.value = false
+      } finally {
+        businessesLoaded.value = true
+      }
     }
-    
+
     // Solo cargar demo si no está autenticado
     if (!isAuthenticated.value) {
       await loadDemo()

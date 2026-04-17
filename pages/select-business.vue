@@ -8,9 +8,11 @@
         </p>
       </div>
 
-      <div v-if="isLoading" class="text-center py-12">
-        <p class="text-slate-600 dark:text-slate-400">Cargando comercios...</p>
-      </div>
+      <AppLoadingScreen
+        v-if="isLoading"
+        title="Cargando tus comercios…"
+        subtitle="Sincronizando menús"
+      />
 
       <div v-else>
         <div class="mb-6 flex items-center justify-between">

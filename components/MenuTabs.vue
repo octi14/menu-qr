@@ -2,7 +2,9 @@
   <div class="min-h-screen transition-all duration-300 ease-in-out" :style="rootStyle">
     <div class="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-5 py-8 sm:px-6">
       <!-- Barra superior con acciones -->
-      <div class="flex items-center justify-end gap-3 mb-4">
+      <div class="flex w-full items-center gap-2 mb-4">
+        <MenuBackToDiscoverLink :color="textColor" />
+        <div class="flex min-w-0 flex-1 items-center justify-end gap-3">
         <!-- Botón de favoritos -->
         <button
           v-if="isAuthenticated"
@@ -98,7 +100,7 @@
             @export-pdf="$emit('export-pdf')"
           />
         </div>
-        
+        </div>
       </div>
       
       <!-- Header -->
@@ -264,23 +266,11 @@
           <!-- Imagen del ítem -->
           <div class="flex-shrink-0">
             <img
-              v-if="item.imageUrl"
-              :src="item.imageUrl"
+              :src="getMenuItemImageSrc(item, activeSection?.name)"
               :alt="item.name"
               loading="lazy"
-              class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg object-cover"
+              class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg object-cover bg-slate-100"
             />
-              <div v-else class="w-24 h-24 sm:w-32 sm:h-32 rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 flex items-center justify-center">
-                <svg class="w-10 h-10 sm:w-14 sm:h-14 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                  <!-- Plato -->
-                  <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="currentColor" opacity="0.2"/>
-                  <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="none"/>
-                  <!-- Comida en el plato -->
-                  <circle cx="9" cy="14" r="2" fill="currentColor" opacity="0.6"/>
-                  <circle cx="15" cy="14" r="2.5" fill="currentColor" opacity="0.6"/>
-                  <circle cx="12" cy="12" r="1.5" fill="currentColor" opacity="0.7"/>
-                </svg>
-              </div>
           </div>
           
           <!-- Contenido del ítem -->
@@ -344,9 +334,13 @@
           <span>·</span>
           <span>
             Hecho con
-            <span class="font-semibold" :style="{ color: priceColor }">
+            <NuxtLink
+              to="/"
+              class="font-semibold underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 rounded"
+              :style="{ color: priceColor }"
+            >
               MapaMorfi
-            </span>
+            </NuxtLink>
           </span>
         </div>
       </footer>

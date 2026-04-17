@@ -189,13 +189,8 @@
                 <span class="font-medium">CRM</span>
               </NuxtLink>
               <div class="border-t border-slate-200 dark:border-slate-800 my-4"></div>
-              <div class="flex items-center justify-between px-4 py-3 rounded-lg">
-                <div class="flex items-center gap-3">
-                  <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  <span class="text-base font-medium text-slate-700 dark:text-slate-300">Tema</span>
-                </div>
+              <div class="flex items-center justify-between gap-3 px-4 py-3 rounded-lg">
+                <span class="text-base font-medium text-slate-700 dark:text-slate-300">Tema</span>
                 <ThemeToggle />
               </div>
               <div class="border-t border-slate-200 dark:border-slate-800 my-4"></div>
@@ -245,13 +240,8 @@
                 <span class="font-medium">Crear cuenta</span>
               </NuxtLink>
               <div class="border-t border-slate-200 dark:border-slate-800 my-4"></div>
-              <div class="flex items-center justify-between px-4 py-3 rounded-lg">
-                <div class="flex items-center gap-3">
-                  <svg class="h-6 w-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  <span class="text-base font-medium text-slate-700 dark:text-slate-300">Tema</span>
-                </div>
+              <div class="flex items-center justify-between gap-3 px-4 py-3 rounded-lg">
+                <span class="text-base font-medium text-slate-700 dark:text-slate-300">Tema</span>
                 <ThemeToggle />
               </div>
             </template>
@@ -269,9 +259,15 @@
             :to="isAuthenticated ? '/select-business' : '/'"
             class="flex items-center gap-2"
           >
-            <div class="h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center">
-              <span class="text-white font-bold text-sm">QR</span>
-            </div>
+            <img
+              src="/icon-192.png"
+              alt="MapaMorfi"
+              width="32"
+              height="32"
+              class="h-8 w-8 rounded-lg object-cover shadow-sm ring-1 ring-black/5 dark:ring-white/10"
+              loading="eager"
+              decoding="async"
+            />
             <span class="font-semibold text-slate-900 dark:text-slate-50">
               MapaMorfi
             </span>

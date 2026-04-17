@@ -90,7 +90,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from '#app'
-import { useTheme } from '~/composables/useTheme'
 import ThemeToggle from '~/components/ThemeToggle.vue'
 
 definePageMeta({
@@ -99,7 +98,6 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { theme } = useTheme()
 
 const form = ref({
   password: '',

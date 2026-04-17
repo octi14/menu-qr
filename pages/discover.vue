@@ -24,29 +24,32 @@
           </button>
         </div>
 
+        <!-- Filtros (primera fila, tipografía más chica) -->
         <div
           v-if="showDiscoverMap && !isMdUp && !sheetExpanded"
           class="flex items-center gap-1.5 px-2 pb-2 md:hidden"
         >
           <div class="inline-flex shrink-0 rounded-lg border border-slate-200/90 bg-slate-100/95 p-0.5 dark:border-slate-600/55 dark:bg-slate-800/95">
+            <!-- Mapa -->
             <button
               type="button"
               class="rounded-md p-1.5 transition-colors"
-              :class="mobileDiscoverView === 'map' ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400'"
+              :class="discoverView === 'map' ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400'"
               aria-label="Mapa"
-              @click="focusMobileMapView"
+              @click="focusMapView"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </button>
+            <!-- Lista -->
             <button
               type="button"
               class="rounded-md p-1.5 transition-colors"
-              :class="mobileDiscoverView === 'list' ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400'"
+              :class="discoverView === 'list' ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-400'"
               aria-label="Lista"
-              @click="mobileDiscoverView = 'list'"
+              @click="discoverView = 'list'"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -129,26 +132,9 @@
 
         <!-- Filtros (segunda fila, tipografía más chica) -->
         <div class="flex flex-wrap gap-x-3 gap-y-2 items-center text-xs sm:text-sm">
-          <!-- Categoría: solo desktop; en mobile se filtra por nombre de categoría en el buscador -->
-          <div class="hidden items-center gap-1.5 sm:gap-2 md:flex">
-            <label class="font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">Cat.</label>
-            <select
-              v-model="selectedCategory"
-              class="rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1.5 text-xs sm:px-3 sm:py-2 sm:text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-            >
-              <option value="">Todas</option>
-              <option
-                v-for="category in BUSINESS_CATEGORIES"
-                :key="category.id"
-                :value="category.id"
-              >
-                {{ category.name }}
-              </option>
-            </select>
-          </div>
 
           <!-- Filtro por distancia (solo si hay ubicación) -->
-          <div v-if="useLocationFilter && userLocation" class="flex items-center gap-1.5 sm:gap-2">
+          <div class="flex items-center gap-1.5 sm:gap-2">
             <label class="font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">Dist.</label>
             <select
               v-model="maxDistance"
@@ -189,7 +175,7 @@
                     ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400'
                     : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
                 "
-                :disabled="!useLocationFilter || !userLocation"
+                :disabled="false"
                 title="Requiere ubicación activa"
                 @click="sortBy = 'distance'"
               >
@@ -202,6 +188,35 @@
           <div class="ml-auto text-xs text-slate-500 dark:text-slate-500 sm:text-sm">
             <span class="font-medium text-slate-700 dark:text-slate-300">{{ filteredBusinesses.length }}</span>
             <span> comercio{{ filteredBusinesses.length !== 1 ? 's' : '' }}</span>
+          </div>
+        </div>
+
+        <!-- Punto de referencia para distancias y resultados -->
+        <div
+          v-if="!isLoading"
+          class="flex items-start gap-2 rounded-xl border border-emerald-200/80 bg-emerald-50/90 px-3 py-2.5 text-xs sm:text-sm dark:border-emerald-800/60 dark:bg-emerald-950/35"
+          role="status"
+        >
+          <svg
+            class="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <div class="min-w-0 flex-1 space-y-0.5">
+            <p class="font-medium text-emerald-900 dark:text-emerald-100">{{ referenceBanner.title }}</p>
+            <p class="text-[11px] leading-snug text-emerald-800/95 dark:text-emerald-200/90 sm:text-xs">
+              {{ referenceBanner.detail }}
+            </p>
           </div>
         </div>
 
@@ -224,7 +239,7 @@
                 </button>
                 <button
                   type="button"
-                  @click="useLocationFilter = false; locationError = null"
+                  @click="revertReferenceFromError"
                   class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
                 >
                   Sin ubicación
@@ -241,12 +256,12 @@
         >
           <button
             type="button"
-            @click="toggleLocationFilter"
+            @click="handlePrimaryLocationAction"
             :disabled="isRequestingLocation"
-            :title="useLocationFilter ? 'Filtrando por distancia desde tu ubicación' : 'Usar tu ubicación para ordenar y filtrar'"
+            :title="primaryLocationButtonTitle"
             :class="[
               'hidden px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm md:flex items-center gap-1.5 border border-transparent sm:px-3 sm:py-2 sm:text-sm',
-              useLocationFilter
+              referenceMode === 'gps'
                 ? 'bg-emerald-500 text-white'
                 : 'bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80 backdrop-blur-sm',
               isRequestingLocation ? 'opacity-50 cursor-not-allowed' : '',
@@ -259,28 +274,7 @@
             <svg v-else class="h-3.5 w-3.5 animate-spin sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <span>{{ isRequestingLocation ? '…' : (useLocationFilter ? 'Radio' : 'Ubicación') }}</span>
-          </button>
-
-          <button
-            v-if="isAuthenticated"
-            type="button"
-            @click="useCurrentGPSLocation"
-            :disabled="isRequestingLocation"
-            :class="[
-              'hidden px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-sm md:flex items-center gap-1.5 sm:px-3 sm:py-2 sm:text-sm',
-              'bg-sky-600 text-white hover:bg-sky-500',
-              isRequestingLocation ? 'opacity-50 cursor-not-allowed' : '',
-            ]"
-            title="Ubicación GPS en tiempo real"
-          >
-            <svg v-if="!isRequestingLocation" class="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-            </svg>
-            <svg v-else class="h-3.5 w-3.5 animate-spin sm:h-4 sm:w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            <span>{{ isRequestingLocation ? '…' : 'GPS' }}</span>
+            <span>{{ isRequestingLocation ? '…' : primaryLocationButtonLabel }}</span>
           </button>
 
           <div v-if="isAuthenticated || savedAddresses.length > 0" class="relative">
@@ -326,7 +320,7 @@
                   @click="selectSavedAddress(address)"
                   :class="[
                     'mb-1 w-full rounded-lg px-3 py-2 text-left transition-colors hover:bg-slate-100 dark:hover:bg-slate-800',
-                    userLocation && userLocation.latitude === address.latitude && userLocation.longitude === address.longitude
+                    activeSavedAddress && activeSavedAddress.id === address.id
                       ? 'border border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-900/20'
                       : '',
                   ]"
@@ -337,7 +331,7 @@
                       <div class="truncate text-xs text-slate-500 dark:text-slate-400">{{ address.address }}</div>
                     </div>
                     <svg
-                      v-if="userLocation && userLocation.latitude === address.latitude && userLocation.longitude === address.longitude"
+                      v-if="activeSavedAddress && activeSavedAddress.id === address.id"
                       class="ml-2 h-4 w-4 flex-shrink-0 text-emerald-500"
                       fill="currentColor"
                       viewBox="0 0 20 20"
@@ -366,24 +360,24 @@
           </div>
         </div>
 
-        <!-- Mapa / Lista: solo mobile (en desktop se ven ambos) -->
+        <!-- Mapa / Lista -->
         <div
           v-if="showDiscoverMap"
-          class="mt-2 flex gap-1 rounded-xl border border-slate-200/90 bg-slate-100/95 p-1 dark:border-slate-600/55 dark:bg-slate-800/95 md:hidden"
+          class="mt-2 flex gap-1 rounded-xl border border-slate-200/90 bg-slate-100/95 p-1 dark:border-slate-600/55 dark:bg-slate-800/95 md:mt-3 md:max-w-md md:mx-auto"
           role="tablist"
           aria-label="Vista de resultados"
         >
           <button
             type="button"
             role="tab"
-            :aria-selected="mobileDiscoverView === 'map'"
-            class="flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-semibold transition-colors"
+            :aria-selected="discoverView === 'map'"
+            class="flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-semibold transition-colors md:py-2.5 md:text-sm"
             :class="
-              mobileDiscoverView === 'map'
+              discoverView === 'map'
                 ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400'
                 : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
             "
-            @click="focusMobileMapView"
+            @click="focusMapView"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -394,14 +388,14 @@
           <button
             type="button"
             role="tab"
-            :aria-selected="mobileDiscoverView === 'list'"
-            class="flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-semibold transition-colors"
+            :aria-selected="discoverView === 'list'"
+            class="flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-semibold transition-colors md:py-2.5 md:text-sm"
             :class="
-              mobileDiscoverView === 'list'
+              discoverView === 'list'
                 ? 'bg-white text-emerald-700 shadow-sm dark:bg-slate-900 dark:text-emerald-400'
                 : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
             "
-            @click="mobileDiscoverView = 'list'"
+            @click="discoverView = 'list'"
           >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
@@ -413,23 +407,26 @@
       </div>
 
       <!-- Loading -->
-      <div v-if="isLoading" class="flex items-center justify-center py-20">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
-      </div>
+      <AppLoadingScreen
+        v-if="isLoading"
+        title="Cargando comercios…"
+        subtitle="Buscando menús en el mapa"
+      />
 
-      <!-- Mapa + lista (mobile: conmutador Mapa / Lista; desktop: ambos) -->
+      <!-- Mapa + lista (conmutador Mapa / Lista en todos los tamaños) -->
       <div v-else-if="showDiscoverMap" class="relative z-[1] md:mb-8">
         <div
           class="relative"
-          :class="mobileDiscoverView === 'list' ? 'max-md:hidden' : ''"
+          :class="discoverView === 'list' ? 'hidden' : ''"
         >
           <BusinessMap
             immersive
             :businesses="allBusinessesForMap"
-            :user-location="userLocation"
+            :user-location="referenceLocationForMap"
+            :user-location-label="referenceLocationMapLabel"
             :center="mapCenter"
             :zoom="mapZoom"
-            :show-no-businesses-message="useLocationFilter && userLocation && filteredBusinesses.length === 0"
+            :show-no-businesses-message="filteredBusinesses.length === 0"
             :show-user-location-popup="showUserLocationPopup"
             class="w-full"
           />
@@ -437,12 +434,12 @@
           <button
             type="button"
             class="pointer-events-auto absolute bottom-[calc(5.25rem+env(safe-area-inset-bottom,0px))] right-3 z-[1100] flex h-12 w-12 items-center justify-center rounded-full border border-slate-200/90 bg-white text-emerald-600 shadow-lg backdrop-blur-sm transition-[transform,box-shadow] hover:scale-[1.03] active:scale-[0.98] dark:border-slate-600/80 dark:bg-slate-900/95 dark:text-emerald-400 md:hidden touch-manipulation"
-            :class="useLocationFilter ? 'ring-2 ring-emerald-500/55 ring-offset-2 ring-offset-transparent dark:ring-offset-slate-950' : ''"
+            :class="referenceMode === 'gps' ? 'ring-2 ring-emerald-500/55 ring-offset-2 ring-offset-transparent dark:ring-offset-slate-950' : ''"
             :disabled="isRequestingLocation"
-            :title="useLocationFilter ? 'Quitar filtro por ubicación' : 'Usar mi ubicación actual'"
-            :aria-pressed="useLocationFilter"
-            aria-label="Usar mi ubicación actual"
-            @click="toggleLocationFilter"
+            :title="primaryLocationButtonTitle"
+            :aria-pressed="referenceMode === 'gps'"
+            aria-label="Ubicación en vivo o volver al punto de referencia"
+            @click="handlePrimaryLocationAction"
           >
             <svg v-if="!isRequestingLocation" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -456,32 +453,9 @@
 
         <div
           class="space-y-6 max-md:mt-3 max-md:space-y-5 max-md:px-4 md:mt-8 md:px-0"
-          :class="mobileDiscoverView === 'map' ? 'max-md:hidden' : ''"
+          :class="discoverView === 'map' ? 'hidden' : ''"
           :style="listViewPaddingStyle"
         >
-        <!-- Mensaje cuando no hay comercios cerca (si hay filtro de ubicación activo) -->
-        <div v-if="useLocationFilter && userLocation && filteredBusinesses.length === 0" class="mb-6 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-6 text-center">
-          <div class="flex flex-col items-center gap-3">
-            <svg class="h-12 w-12 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <div>
-              <h3 class="text-lg font-semibold text-amber-900 dark:text-amber-200 mb-1">Sin resultados en {{ maxDistance }} km</h3>
-              <p class="text-sm text-amber-700 dark:text-amber-300">
-                Probá otra distancia o desactivá el filtro.
-              </p>
-            </div>
-            <button
-              type="button"
-              @click="useLocationFilter = false; userLocation = null"
-              class="mt-2 px-4 py-2 rounded-xl bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 transition-colors"
-            >
-              Quitar filtro
-            </button>
-          </div>
-        </div>
-
         <!-- Lista de comercios con más información -->
         <div v-if="filteredBusinesses.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
@@ -640,26 +614,44 @@
             </NuxtLink>
           </div>
         </div>
+
+        <!-- Sin resultados por radio (solo búsqueda/categoría/abierto no activos) -->
+        <div
+          v-else-if="filteredBusinesses.length === 0 && businesses.length > 0 && !searchQuery.trim() && !showOpenNow"
+          class="mb-6 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-6 text-center"
+        >
+          <div class="flex flex-col items-center gap-3">
+            <svg class="h-12 w-12 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <div>
+              <h3 class="text-lg font-semibold text-amber-900 dark:text-amber-200 mb-1">Sin resultados en {{ maxDistance }} km</h3>
+              <p class="text-sm text-amber-700 dark:text-amber-300">
+                Probá aumentar el radio o cambiar el punto de referencia (Obelisco, dirección guardada o GPS).
+              </p>
+            </div>
+            <button
+              type="button"
+              @click="maxDistance = 10"
+              class="mt-2 px-4 py-2 rounded-xl bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 transition-colors"
+            >
+              Ampliar a 10 km
+            </button>
+          </div>
+        </div>
+
+        <div
+          v-else-if="filteredBusinesses.length === 0 && businesses.length > 0"
+          class="rounded-xl border border-slate-200 bg-slate-50/90 px-4 py-10 text-center dark:border-slate-700 dark:bg-slate-900/30"
+        >
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            No hay comercios que coincidan con tu búsqueda o filtros. Probá ajustar términos o desactivar «Abierto ahora».
+          </p>
+        </div>
         </div>
       </div>
 
-      <!-- Sin resultados (solo si no hay ubicación del usuario activa) -->
-      <div v-else-if="!isLoading && !(useLocationFilter && userLocation)" class="text-center py-20">
-        <div class="max-w-md mx-auto">
-          <svg
-            class="mx-auto h-16 w-16 text-slate-400 dark:text-slate-600 mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <h3 class="text-xl font-semibold mb-2">No se encontraron comercios</h3>
-          <p class="text-slate-600 dark:text-slate-400">
-            {{ searchQuery ? 'Intentá con otros términos de búsqueda' : 'Aún no hay comercios públicos disponibles' }}
-          </p>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -671,13 +663,21 @@ definePageMeta({
   layout: 'dashboard',
 })
 
+const route = useRoute()
+
 // No necesitamos useBusinesses aquí, usamos el endpoint público directamente
 
 const businesses = ref([])
+/** Tras el primer fetch con referencia resuelta; evita que el watch dispare antes del primer load */
+const discoverListReady = ref(false)
 const isLoading = ref(true)
 const searchQuery = ref('')
-const useLocationFilter = ref(false)
+/** Coordenadas GPS cuando referenceMode === 'gps' */
 const userLocation = ref(null)
+/** Punto de referencia para distancias: obelisco | gps | dirección guardada | url */
+const referenceMode = ref('obelisco')
+const activeSavedAddress = ref(null)
+const urlReferenceCoords = ref(null)
 const locationError = ref(null)
 const isRequestingLocation = ref(false)
 const isLocalIP = ref(false)
@@ -687,32 +687,26 @@ const isAuthenticated = ref(false)
 const showOpenNow = ref(false)
 const showUserLocationPopup = ref(false) // Controla si se muestra el popup de "Tu ubicación"
 const showAddressMenu = ref(false)
-// Nuevos filtros avanzados
-const selectedCategory = ref('')
 const maxDistance = ref(3) // Distancia máxima en km (3km por defecto)
 const sortBy = ref('featured') // 'featured' | 'distance'
 
-/** En mobile: 'map' | 'list' — separa mapa de la lista de comercios */
-const mobileDiscoverView = ref('map')
+/** 'map' | 'list' — vista principal en mobile y desktop */
+const discoverView = ref('map')
 /** Panel tipo cortina en mobile (mapa): compacto vs expandido */
 const sheetExpanded = ref(false)
 
-/** Mapa visible: comercios o ubicación activa (misma condición que el bloque del mapa) */
-const showDiscoverMap = computed(
-  () =>
-    !isLoading.value &&
-    (businesses.value.length > 0 || (useLocationFilter.value && userLocation.value)),
-)
+/** Mapa visible tras cargar comercios (aunque la lista filtrada quede vacía) */
+const showDiscoverMap = computed(() => !isLoading.value)
 
 watch(showDiscoverMap, (visible) => {
   if (visible) {
-    mobileDiscoverView.value = 'map'
+    discoverView.value = 'map'
     sheetExpanded.value = false
   }
 })
 
-const focusMobileMapView = () => {
-  mobileDiscoverView.value = 'map'
+const focusMapView = () => {
+  discoverView.value = 'map'
   if (process.client) {
     nextTick(() => {
       requestAnimationFrame(() => {
@@ -766,7 +760,7 @@ const discoverPanelShellClassList = computed(() => {
 })
 
 const listViewPaddingStyle = computed(() => {
-  if (!process.client || !showDiscoverMap.value || mobileDiscoverView.value !== 'list' || isMdUp.value) {
+  if (!process.client || !showDiscoverMap.value || discoverView.value !== 'list' || isMdUp.value) {
     return {}
   }
   const h = floatingPanelHeightPx.value
@@ -831,36 +825,99 @@ const onSheetTouchEnd = () => {
   sheetTouchDragging = false
 }
 
-// Centro y zoom del mapa
-// Obelisco de Buenos Aires: -34.6037, -58.3816
 const OBELISCO_COORDS = [-34.6037, -58.3816]
 
-const mapCenter = computed(() => {
-  // Si el filtro de ubicación está activo y hay ubicación del usuario, usar esa
-  if (useLocationFilter.value && userLocation.value) {
-    return [userLocation.value.latitude, userLocation.value.longitude]
+const referenceCoords = computed(() => {
+  if (referenceMode.value === 'gps' && userLocation.value) {
+    return {
+      latitude: userLocation.value.latitude,
+      longitude: userLocation.value.longitude,
+    }
   }
-  // Si hay usuario logueado y tiene direcciones guardadas, usar la primera (favorita)
-  if (isAuthenticated.value && savedAddresses.value && savedAddresses.value.length > 0) {
-    const favoriteAddress = savedAddresses.value[0]
-    return [favoriteAddress.latitude, favoriteAddress.longitude]
+  if (referenceMode.value === 'url' && urlReferenceCoords.value) {
+    return urlReferenceCoords.value
   }
-  // Por defecto: mostrar el obelisco de Buenos Aires
-  return OBELISCO_COORDS
+  if (referenceMode.value === 'saved' && activeSavedAddress.value) {
+    return {
+      latitude: activeSavedAddress.value.latitude,
+      longitude: activeSavedAddress.value.longitude,
+    }
+  }
+  return {
+    latitude: OBELISCO_COORDS[0],
+    longitude: OBELISCO_COORDS[1],
+  }
 })
 
-const mapZoom = computed(() => {
-  // Si el filtro de ubicación está activo y hay ubicación, zoom más cercano
-  if (useLocationFilter.value && userLocation.value) {
-    return 13
+const referenceBanner = computed(() => {
+  const r = maxDistance.value
+  const suffix = `Comercios hasta ${r} km desde este punto.`
+  if (referenceMode.value === 'url') {
+    return {
+      title: 'Referencia: ubicación del enlace',
+      detail: `Coordenadas recibidas por la URL. ${suffix}`,
+    }
   }
-  // Si hay usuario logueado con dirección favorita (sin filtro activo), zoom medio-alto
-  if (isAuthenticated.value && savedAddresses.value && savedAddresses.value.length > 0) {
-    return 13
+  if (referenceMode.value === 'gps') {
+    return {
+      title: 'Referencia: tu ubicación (GPS)',
+      detail: `Distancias desde donde estás ahora. ${suffix}`,
+    }
   }
-  // Por defecto (obelisco), zoom medio
-  return 12
+  if (referenceMode.value === 'saved' && activeSavedAddress.value) {
+    return {
+      title: `Referencia: ${activeSavedAddress.value.name}`,
+      detail: `${activeSavedAddress.value.address}. ${suffix}`,
+    }
+  }
+  return {
+    title: 'Referencia: Obelisco (CABA)',
+    detail: `Por defecto usamos el centro de la ciudad hasta que actives el GPS. ${suffix}`,
+  }
 })
+
+/** Punto de referencia en el mapa (Obelisco, GPS, dirección guardada o URL) — no solo GPS en vivo */
+const referenceLocationForMap = computed(() => {
+  const c = referenceCoords.value
+  if (c.latitude == null || c.longitude == null || Number.isNaN(c.latitude) || Number.isNaN(c.longitude)) {
+    return null
+  }
+  return { latitude: c.latitude, longitude: c.longitude }
+})
+
+const referenceLocationMapLabel = computed(() => {
+  if (referenceMode.value === 'gps') {
+    return 'Tu ubicación (GPS en vivo)'
+  }
+  if (referenceMode.value === 'saved' && activeSavedAddress.value) {
+    return `Tu referencia: ${activeSavedAddress.value.name}`
+  }
+  if (referenceMode.value === 'url') {
+    return 'Punto de referencia (enlace)'
+  }
+  return 'Referencia: Obelisco (centro CABA)'
+})
+
+const primaryLocationButtonLabel = computed(() =>
+  referenceMode.value === 'gps' ? 'Volver' : 'GPS',
+)
+
+const primaryLocationButtonTitle = computed(() => {
+  if (referenceMode.value === 'gps') {
+    return isAuthenticated.value && savedAddresses.value.length > 0
+      ? 'Volver a tu dirección guardada'
+      : 'Volver al Obelisco'
+  }
+  return 'Activar ubicación en vivo'
+})
+
+const mapCenter = computed(() => {
+  const c = referenceCoords.value
+  return [c.latitude, c.longitude]
+})
+
+/** Zoom inicial más cercano (~manzanas); si hay varios marcadores, el mapa ajusta el encuadre */
+const mapZoom = computed(() => 15)
 
 // Comercios con coordenadas para el mapa
 const businessesWithCoordinates = computed(() => {
@@ -878,13 +935,19 @@ const allBusinessesForMap = computed(() => {
 })
 
 
-// Obtener todos los comercios públicos
+// Comercios públicos cercanos al punto de referencia (servidor filtra por radio; reduce payload)
 const loadBusinesses = async () => {
-  isLoading.value = true
   try {
-    // Obtener comercios públicos desde el endpoint dedicado
-    console.log('discover.vue: Loading public businesses...')
-    businesses.value = await $fetch('/api/businesses/public')
+    const c = referenceCoords.value
+    const radiusKm = maxDistance.value
+    console.log('discover.vue: Loading public businesses near', c.latitude, c.longitude, `r=${radiusKm}km`)
+    businesses.value = await $fetch('/api/businesses/public', {
+      query: {
+        lat: c.latitude,
+        lng: c.longitude,
+        radiusKm,
+      },
+    })
     console.log('discover.vue: Loaded', businesses.value?.length || 0, 'businesses')
   } catch (error) {
     console.error('Error loading businesses:', error)
@@ -895,21 +958,32 @@ const loadBusinesses = async () => {
       data: error.data
     })
     businesses.value = []
-  } finally {
-    isLoading.value = false
   }
 }
 
+watch(
+  () => [
+    referenceCoords.value.latitude,
+    referenceCoords.value.longitude,
+    maxDistance.value,
+  ],
+  async () => {
+    if (!process.client || !discoverListReady.value) return
+    await loadBusinesses()
+  },
+)
+
 // Calcular total de ítems
 const getTotalItems = (business) => {
-  if (!business.menu?.sections) return 0
-  return business.menu.sections.reduce((total, section) => {
+  const sections = business.menu?.sections || business.sections
+  if (!sections?.length) return 0
+  return sections.reduce((total, section) => {
     return total + (section.items?.length || 0)
   }, 0)
 }
 
 // Obtener nombre de categoría
-const { getCategoryById, BUSINESS_CATEGORIES } = useBusinessCategories()
+const { getCategoryById } = useBusinessCategories()
 const getCategoryName = (categoryId) => {
   if (!categoryId) return null
   const category = getCategoryById(categoryId)
@@ -973,40 +1047,29 @@ const filteredBusinesses = computed(() => {
     })
   }
 
-  // Filtro por categoría (solo desktop; en mobile se usa el buscador)
-  if (selectedCategory.value && isMdUp.value) {
-    filtered = filtered.filter(business => business.category === selectedCategory.value)
-  }
-
   // Filtro por "abierto ahora"
   if (showOpenNow.value) {
     filtered = filtered.filter(business => isBusinessOpenNow(business))
   }
 
-  // Filtro por ubicación
-  if (useLocationFilter.value && userLocation.value) {
-    // Filtrar solo comercios que tengan coordenadas
-    filtered = filtered.filter(business => {
-      return business.latitude != null && business.longitude != null
-    })
+  // Proximidad desde el punto de referencia (Obelisco, GPS, dirección guardada o URL)
+  filtered = filtered.filter(
+    (business) =>
+      business.latitude != null &&
+      business.longitude != null &&
+      !isNaN(business.latitude) &&
+      !isNaN(business.longitude),
+  )
+  const refLat = referenceCoords.value.latitude
+  const refLng = referenceCoords.value.longitude
+  filtered = filtered.map((business) => {
+    const distance = calculateDistance(refLat, refLng, business.latitude, business.longitude)
+    return { ...business, distance }
+  })
+  // El API ya devuelve solo comercios dentro de radiusKm (= maxDistance); este filtro es redundante pero asegura coherencia
+  filtered = filtered.filter((business) => business.distance <= maxDistance.value)
 
-    // Calcular distancia
-    filtered = filtered.map(business => {
-      const distance = calculateDistance(
-        userLocation.value.latitude,
-        userLocation.value.longitude,
-        business.latitude,
-        business.longitude
-      )
-      return { ...business, distance }
-    })
-    // Filtrar por distancia máxima configurada
-    filtered = filtered.filter(business => business.distance <= maxDistance.value)
-  }
-
-  // Ordenamiento (sin modo alfabético; si piden distancia sin ubicación, se comporta como destacados)
-  const sortMode =
-    sortBy.value === 'distance' && useLocationFilter.value && userLocation.value ? 'distance' : 'featured'
+  const sortMode = sortBy.value === 'distance' ? 'distance' : 'featured'
 
   if (sortMode === 'featured') {
     filtered = filtered.sort((a, b) => {
@@ -1056,16 +1119,15 @@ const checkGeolocationPermission = async () => {
   }
 }
 
-// Solicitar ubicación del usuario
+// Solicitar ubicación del usuario (GPS en vivo)
 const requestLocation = async () => {
   locationError.value = null
   isRequestingLocation.value = true
-  
-  // Limpiar dirección de entrega guardada cuando se usa ubicación del GPS
+
   if (process.client) {
     localStorage.removeItem('mapamorfi-delivery-address')
   }
-  
+
   if (!process.client) {
     locationError.value = {
       title: 'Error de geolocalización',
@@ -1084,7 +1146,6 @@ const requestLocation = async () => {
     return
   }
 
-  // Verificar permisos antes de solicitar
   const permissionState = await checkGeolocationPermission()
   if (permissionState === 'denied') {
     locationError.value = {
@@ -1095,11 +1156,10 @@ const requestLocation = async () => {
     return
   }
 
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 15000, // 15 segundos para dar más tiempo
-    maximumAge: 0, // No usar caché
-  }
+  const options =
+    permissionState === 'granted'
+      ? { enableHighAccuracy: true, timeout: 12000, maximumAge: 120000 }
+      : { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -1107,10 +1167,12 @@ const requestLocation = async () => {
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
       }
+      referenceMode.value = 'gps'
+      activeSavedAddress.value = null
+      urlReferenceCoords.value = null
       locationError.value = null
       isRequestingLocation.value = false
-      showUserLocationPopup.value = true // Mostrar popup cuando el usuario hace clic en "Mi ubicación"
-      // El filtro ya está activado desde toggleLocationFilter
+      showUserLocationPopup.value = true
     },
     (error) => {
       console.error('Error getting location:', error)
@@ -1145,48 +1207,45 @@ const requestLocation = async () => {
   )
 }
 
-// Usar ubicación GPS actual (botón separado para usuarios logueados)
-const useCurrentGPSLocation = () => {
-  // Activar el filtro y solicitar GPS directamente
-  useLocationFilter.value = true
+function leaveGpsMode() {
+  userLocation.value = null
+  locationError.value = null
+  if (isAuthenticated.value && savedAddresses.value.length > 0) {
+    referenceMode.value = 'saved'
+    activeSavedAddress.value = savedAddresses.value[0]
+  } else {
+    referenceMode.value = 'obelisco'
+    activeSavedAddress.value = null
+  }
+}
+
+function handlePrimaryLocationAction() {
+  if (referenceMode.value === 'gps') {
+    leaveGpsMode()
+    return
+  }
   locationError.value = null
   requestLocation()
 }
 
-const toggleLocationFilter = () => {
-  if (!useLocationFilter.value) {
-    // Activar el filtro primero para mostrar el estado de carga
-    useLocationFilter.value = true
-    locationError.value = null
-    
-    // Si el usuario está logueado y tiene direcciones guardadas, usar la primera (favorita)
-    if (isAuthenticated.value && savedAddresses.value && savedAddresses.value.length > 0) {
-      const favoriteAddress = savedAddresses.value[0] // Primera dirección como favorita
-      userLocation.value = {
-        latitude: favoriteAddress.latitude,
-        longitude: favoriteAddress.longitude,
-      }
-      showUserLocationPopup.value = true
-      // Guardar en localStorage como dirección de entrega
-      if (process.client) {
-        localStorage.setItem('mapamorfi-delivery-address', JSON.stringify({
-          id: favoriteAddress.id,
-          name: favoriteAddress.name,
-          address: favoriteAddress.address,
-          latitude: favoriteAddress.latitude,
-          longitude: favoriteAddress.longitude,
-        }))
-      }
-    } else if (!userLocation.value) {
-      // Si no hay usuario logueado o no tiene direcciones, solicitar GPS
-      requestLocation()
-    }
+function revertReferenceFromError() {
+  locationError.value = null
+  isRequestingLocation.value = false
+  userLocation.value = null
+  if (isAuthenticated.value && savedAddresses.value.length > 0) {
+    referenceMode.value = 'saved'
+    activeSavedAddress.value = savedAddresses.value[0]
   } else {
-    // Desactivar filtro y volver al obelisco
-    useLocationFilter.value = false
-    userLocation.value = null
-    locationError.value = null
+    referenceMode.value = 'obelisco'
+    activeSavedAddress.value = null
   }
+}
+
+async function requestGuestGps() {
+  if (!process.client || isAuthenticated.value) return
+  const perm = await checkGeolocationPermission()
+  if (perm === 'denied') return
+  await requestLocation()
 }
 
 // Detectar si estamos en desarrollo local
@@ -1225,89 +1284,116 @@ const loadSavedAddresses = async () => {
   }
 }
 
-// Usar dirección guardada
+// Usar dirección guardada (selector legacy si existe en template)
 const useSavedAddress = () => {
   if (!selectedSavedAddress.value) {
-    useLocationFilter.value = false
+    referenceMode.value = 'obelisco'
+    activeSavedAddress.value = null
     userLocation.value = null
     return
   }
 
-  const address = savedAddresses.value.find(a => a.id === selectedSavedAddress.value)
+  const address = savedAddresses.value.find((a) => a.id === selectedSavedAddress.value)
   if (address) {
-    userLocation.value = {
-      latitude: address.latitude,
-      longitude: address.longitude,
-    }
-    useLocationFilter.value = true
+    referenceMode.value = 'saved'
+    activeSavedAddress.value = address
+    userLocation.value = null
     locationError.value = null
   }
 }
 
-// Seleccionar dirección guardada desde el menú
 const selectSavedAddress = (address) => {
-  userLocation.value = {
-    latitude: address.latitude,
-    longitude: address.longitude,
-  }
-  useLocationFilter.value = true
+  referenceMode.value = 'saved'
+  activeSavedAddress.value = address
+  userLocation.value = null
   locationError.value = null
   showAddressMenu.value = false
-  showUserLocationPopup.value = true // Mostrar popup cuando el usuario selecciona una dirección
-  
-  // Guardar la dirección seleccionada en localStorage para usar en el pedido
+  showUserLocationPopup.value = true
+
   if (process.client) {
-    localStorage.setItem('mapamorfi-delivery-address', JSON.stringify({
-      id: address.id,
-      name: address.name,
-      address: address.address,
-      latitude: address.latitude,
-      longitude: address.longitude,
-    }))
+    localStorage.setItem(
+      'mapamorfi-delivery-address',
+      JSON.stringify({
+        id: address.id,
+        name: address.name,
+        address: address.address,
+        latitude: address.latitude,
+        longitude: address.longitude,
+      }),
+    )
   }
 }
 
-// Verificar si hay parámetros de URL (lat/lng) para usar una dirección guardada
 const checkUrlParams = () => {
   if (!process.client) return
-  
-  const route = useRoute()
+
   const lat = route.query.lat
   const lng = route.query.lng
-  
+
   if (lat && lng) {
-    userLocation.value = {
+    urlReferenceCoords.value = {
       latitude: parseFloat(lat),
       longitude: parseFloat(lng),
     }
-    useLocationFilter.value = true
+    referenceMode.value = 'url'
+    activeSavedAddress.value = null
+    userLocation.value = null
   }
 }
 
-
-// Ya no solicitamos ubicación automáticamente al cargar
-// El mapa siempre inicia en el obelisco de Buenos Aires
+function attachAddressMenuOutsideClick() {
+  if (!process.client) return
+  document.addEventListener('click', (e) => {
+    if (showAddressMenu.value && !e.target.closest('.relative')) {
+      showAddressMenu.value = false
+    }
+  })
+}
 
 onMounted(async () => {
   checkIfLocalIP()
-  checkUrlParams()
-  loadBusinesses()
-  
-  // Cargar direcciones guardadas
+  isLoading.value = true
   await loadSavedAddresses()
-  
-  // El mapa siempre inicia en el obelisco de Buenos Aires por defecto
-  // No se solicita ubicación automáticamente
-  // El usuario debe presionar "Mi ubicación" para activar el filtro
-  
-  // Cerrar menú de direcciones al hacer click fuera
-  if (process.client) {
-    document.addEventListener('click', (e) => {
-      if (showAddressMenu.value && !e.target.closest('.relative')) {
-        showAddressMenu.value = false
-      }
-    })
+  checkUrlParams()
+
+  if (referenceMode.value === 'url') {
+    attachAddressMenuOutsideClick()
+    await loadBusinesses()
+    discoverListReady.value = true
+    isLoading.value = false
+    return
   }
+
+  if (isAuthenticated.value && savedAddresses.value.length > 0) {
+    referenceMode.value = 'saved'
+    activeSavedAddress.value = savedAddresses.value[0]
+    if (process.client && activeSavedAddress.value) {
+      const a = activeSavedAddress.value
+      localStorage.setItem(
+        'mapamorfi-delivery-address',
+        JSON.stringify({
+          id: a.id,
+          name: a.name,
+          address: a.address,
+          latitude: a.latitude,
+          longitude: a.longitude,
+        }),
+      )
+    }
+    attachAddressMenuOutsideClick()
+    await loadBusinesses()
+    discoverListReady.value = true
+    isLoading.value = false
+    return
+  }
+
+  referenceMode.value = 'obelisco'
+  activeSavedAddress.value = null
+  await loadBusinesses()
+  discoverListReady.value = true
+  isLoading.value = false
+  await requestGuestGps()
+  attachAddressMenuOutsideClick()
 })
 
 useHead({

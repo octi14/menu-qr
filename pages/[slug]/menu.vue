@@ -1,7 +1,7 @@
 <template>
   <!-- Renderizar según layout seleccionado -->
   <MenuTabs
-    v-if="business && business.isActive !== false && isPublic && menuLayout === 'tabs'"
+    v-if="showActivePublicMenu && menuLayout === 'tabs'"
     :business="business"
     :backgroundColor="backgroundColor"
     :text-color="textColor"
@@ -20,7 +20,7 @@
     @export-pdf="exportToPDF"
   />
   <MenuGrid
-    v-else-if="business && business.isActive !== false && isPublic && menuLayout === 'grid'"
+    v-else-if="showActivePublicMenu && menuLayout === 'grid'"
     :business="business"
     :backgroundColor="backgroundColor"
     :text-color="textColor"
@@ -39,7 +39,7 @@
     @export-pdf="exportToPDF"
   />
   <MenuCategories
-    v-else-if="business && business.isActive !== false && isPublic && menuLayout === 'categories'"
+    v-else-if="showActivePublicMenu && menuLayout === 'categories'"
     :business="business"
     :backgroundColor="backgroundColor"
     :text-color="textColor"
@@ -59,7 +59,7 @@
   />
   <!-- Layout vertical/clásico (por defecto) -->
   <div
-    v-else-if="business && business.isActive !== false && isPublic"
+    v-else-if="showActivePublicMenu"
     class="min-h-screen transition-all duration-300 ease-in-out"
     :style="{
       backgroundColor: backgroundColor,
@@ -70,8 +70,10 @@
   >
     <div class="mx-auto flex min-h-screen max-w-2xl flex-col gap-10 px-5 py-10 sm:px-6">
       <header class="space-y-6 pb-8 border-b" :style="{ borderColor: `${textColor}20` }" role="banner">
-        <!-- Toggle de tema y acciones en la esquina superior derecha -->
-        <div class="flex items-center justify-end gap-3">
+        <!-- Volver al mapa + acciones -->
+        <div class="flex w-full items-center gap-2">
+          <MenuBackToDiscoverLink :color="textColor" />
+          <div class="flex min-w-0 flex-1 items-center justify-end gap-3">
           <!-- Botón de favoritos (solo si está autenticado) -->
           <button
             v-if="isAuthenticated"
@@ -180,7 +182,6 @@
               }"
               title="Compartir menú"
               aria-label="Compartir menú"
-              aria-expanded="false"
               :aria-expanded="showShareMenu"
             >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -196,6 +197,7 @@
               @copy-link="copyLink"
               @export-pdf="exportToPDF"
             />
+          </div>
           </div>
         </div>
         
@@ -214,7 +216,7 @@
           >
             <h1 
               class="text-3xl sm:text-4xl md:text-5xl tracking-tight leading-none text-white drop-shadow-lg px-4 text-center"
-              :class="isPacifico ? 'font-medium tracking-wide' : isScriptFont ? 'font-semibold tracking-wide' : 'font-bold'"
+              :class="headingWeightClass"
             >
               {{ business.name }}
             </h1>
@@ -277,7 +279,7 @@
         <div v-if="(!business.headerImageUrl || !business.headerImageOverlay) && !business.hideName" class="text-center space-y-4">
           <h1 
             class="text-4xl sm:text-5xl md:text-6xl tracking-tight leading-none"
-            :class="isPacifico ? 'font-medium tracking-wide' : isScriptFont ? 'font-semibold tracking-wide' : 'font-bold'"
+            :class="headingWeightClass"
           >
             {{ business.name }}
           </h1>
@@ -376,7 +378,7 @@
             >
               <h2 
                 class="text-2xl sm:text-3xl md:text-4xl tracking-tight text-left flex-shrink-0"
-                :class="isPacifico ? 'font-medium tracking-wide' : isScriptFont ? 'font-semibold tracking-wide' : 'font-bold'"
+                :class="headingWeightClass"
               >
                 {{ section.name }}
               </h2>
@@ -414,30 +416,18 @@
                 <!-- Imagen del ítem como miniatura -->
                 <div class="flex-shrink-0">
                   <img
-                    v-if="item.imageUrl"
-                    :src="item.imageUrl"
+                    :src="getMenuItemImageSrc(item, section.name)"
                     :alt="`${item.name}${item.description ? ' - ' + item.description : ''}`"
                     loading="lazy"
-                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105 shadow-md"
+                    class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover transition-transform duration-300 group-hover:scale-105 shadow-md bg-slate-100"
                   />
-                  <div v-else class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 flex items-center justify-center">
-                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                      <!-- Plato -->
-                      <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="currentColor" opacity="0.2"/>
-                      <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="none"/>
-                      <!-- Comida en el plato -->
-                      <circle cx="9" cy="14" r="2" fill="currentColor" opacity="0.6"/>
-                      <circle cx="15" cy="14" r="2.5" fill="currentColor" opacity="0.6"/>
-                      <circle cx="12" cy="12" r="1.5" fill="currentColor" opacity="0.7"/>
-                    </svg>
-                  </div>
                 </div>
                 
                 <div class="flex-1 space-y-3 min-w-0">
                   <div class="space-y-2">
                     <h3 
                       class="text-xl sm:text-2xl leading-tight tracking-tight"
-                      :class="isPacifico ? 'font-medium tracking-wide' : isScriptFont ? 'font-semibold tracking-wide' : 'font-bold'"
+                      :class="headingWeightClass"
                     >
                       {{ item.name }}
                     </h3>
@@ -490,9 +480,13 @@
           <span>·</span>
           <span>
             Hecho con
-            <span class="font-semibold" :style="{ color: priceColor }">
+            <NuxtLink
+              to="/"
+              class="font-semibold underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 rounded"
+              :style="{ color: priceColor }"
+            >
               MapaMorfi
-            </span>
+            </NuxtLink>
           </span>
         </div>
       </footer>
@@ -529,6 +523,15 @@
       </NuxtLink>
     </div>
   </div>
+  <div
+    v-else-if="pending"
+    class="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50"
+  >
+    <AppLoadingScreen
+      title="Cargando menú…"
+      subtitle="Preparando productos y precios"
+    />
+  </div>
   <div v-else-if="!pending" class="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
     <div class="max-w-md text-center space-y-4 px-6">
       <h1 class="text-2xl font-semibold">Menú no encontrado</h1>
@@ -556,8 +559,11 @@ const business = ref(null)
 const pending = ref(true)
 const isPublic = ref(true)
 
+const showActivePublicMenu = computed(
+  () => !!business.value && business.value.isActive !== false && isPublic.value
+)
+
 const { calculatePriceColor, getContrastTextColor, isLightColor } = useColorUtils()
-const { getPlanById } = usePlans()
 const { getCachedMenu, setCachedMenu } = useMenuCache()
 
 
@@ -601,14 +607,12 @@ const fontFamily = computed(() => {
   return font.family
 })
 
-const isScriptFont = computed(() => {
+/** Peso tipográfico unificado para títulos según fuente del menú */
+const headingWeightClass = computed(() => {
   const fontId = business.value?.fontFamily || 'inter'
-  return fontId === 'dancing' || fontId === 'pacifico'
-})
-
-const isPacifico = computed(() => {
-  const fontId = business.value?.fontFamily || 'inter'
-  return fontId === 'pacifico'
+  if (fontId === 'pacifico') return 'font-medium tracking-wide'
+  if (fontId === 'dancing') return 'font-semibold tracking-wide'
+  return 'font-bold'
 })
 
 // Estado de secciones colapsadas (por defecto todas expandidas)
@@ -795,42 +799,43 @@ const copyLink = async () => {
   showShareMenu.value = false
 }
 
+/** Elementos a ocultar al generar PDF (mismo criterio en DOM y en el clon de html2canvas) */
+const PDF_EXPORT_HIDE_SELECTORS = [
+  '.absolute.right-5',
+  '.absolute.right-0.top-full',
+  'button[title*="favoritos"]',
+  'button[title*="Favoritos"]',
+  'header .flex.items-center.justify-end',
+  '.relative.flex-1.max-w-xs',
+  '.flex.items-center.justify-end.gap-3.mb-4',
+  '.sticky.top-0.z-40',
+  '.sticky.top-0 .relative.mt-3',
+  'input[placeholder*="Buscar"]',
+  'input[placeholder*="buscar"]',
+  'input#menu-search',
+  '.flex.items-center.justify-end.gap-3 button',
+  '.flex.items-center.justify-end.gap-2 button',
+  '.sticky.top-0 button',
+  'a[target="_blank"][rel*="noopener"]',
+  'button[aria-label*="Expandir"]',
+  'button[aria-label*="Colapsar"]',
+]
+
 // Funciones helper para exportar PDF
 const prepareElementsForPDF = (element) => {
   const originalDisplays = []
-  const hideElement = (el) => {
-    if (el && el.style) {
-      originalDisplays.push({ element: el, display: el.style.display })
-      el.style.display = 'none'
-    }
-  }
-  
+
   const hideElementsBySelector = (selector, doc = document) => {
     const elements = doc.querySelectorAll(selector)
-    elements.forEach(el => {
+    elements.forEach((el) => {
       if (el && el.style) {
         originalDisplays.push({ element: el, display: el.style.display })
         el.style.display = 'none'
       }
     })
   }
-  
-  const selectorsToHide = [
-    '.absolute.right-5', '.absolute.right-0.top-full',
-    'button[title*="favoritos"]', 'button[title*="Favoritos"]',
-    'header .flex.items-center.justify-end',
-    '.relative.flex-1.max-w-xs',
-    '.flex.items-center.justify-end.gap-3.mb-4',
-    '.sticky.top-0.z-40',
-    '.sticky.top-0 .relative.mt-3',
-    'input[placeholder*="Buscar"]', 'input[placeholder*="buscar"]', 'input#menu-search',
-    '.flex.items-center.justify-end.gap-3 button', '.flex.items-center.justify-end.gap-2 button',
-    '.sticky.top-0 button',
-    'a[target="_blank"][rel*="noopener"]',
-    'button[aria-label*="Expandir"]', 'button[aria-label*="Colapsar"]',
-  ]
-  
-  selectorsToHide.forEach(selector => hideElementsBySelector(selector))
+
+  PDF_EXPORT_HIDE_SELECTORS.forEach((selector) => hideElementsBySelector(selector))
   
   // Preparar padding y márgenes
   const originalPadding = {
@@ -886,7 +891,6 @@ const prepareElementsForPDF = (element) => {
     originalMargin,
     originalDescriptionStyles,
     originalImageDisplays,
-    hideElementsBySelector,
   }
 }
 
@@ -964,8 +968,6 @@ const generatePDFPages = (pdf, canvas, imgWidth, imgHeight, pdfWidth, pdfHeight)
       sourceY += pageHeight
     }
   }
-  
-  return pdfWidth
 }
 
 const exportToPDF = async () => {
@@ -997,19 +999,8 @@ const exportToPDF = async () => {
         if (!clonedElement) return
         
         // Aplicar las mismas preparaciones en el clon usando la función helper
-        const selectorsToHide = [
-          '.absolute.right-5', '.absolute.right-0.top-full',
-          'button[title*="favoritos"]', 'button[title*="Favoritos"]',
-          'header .flex.items-center.justify-end',
-          '.sticky.top-0',
-          'input[placeholder*="Buscar"]', 'input[placeholder*="buscar"]',
-          'a[target="_blank"][rel*="noopener"]',
-          'button[aria-label*="Expandir"]', 'button[aria-label*="Colapsar"]',
-        ]
-        
-        selectorsToHide.forEach(selector => {
-          const elements = clonedDoc.querySelectorAll(selector)
-          elements.forEach(el => {
+        PDF_EXPORT_HIDE_SELECTORS.forEach((selector) => {
+          clonedDoc.querySelectorAll(selector).forEach((el) => {
             if (el && el.style) el.style.display = 'none'
           })
         })

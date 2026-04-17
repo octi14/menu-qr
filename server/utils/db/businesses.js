@@ -1,4 +1,4 @@
-import { getDatabase } from '../mongodb'
+import { getDatabase } from '../mongodb.js'
 
 export async function getBusinessBySlug(slug) {
   if (!slug) return null

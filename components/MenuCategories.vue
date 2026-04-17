@@ -2,7 +2,9 @@
   <div class="min-h-screen transition-all duration-300 ease-in-out" :style="{ backgroundColor, fontFamily, color: textColor, '--price-color': priceColor }">
     <div class="mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-5 py-10 sm:px-6">
       <!-- Barra superior con acciones -->
-      <div class="flex items-center justify-end gap-3 mb-4">
+      <div class="flex w-full items-center gap-2 mb-4">
+        <MenuBackToDiscoverLink :color="textColor" />
+        <div class="flex min-w-0 flex-1 items-center justify-end gap-3">
         <!-- Botón de favoritos -->
         <button
           v-if="isAuthenticated"
@@ -98,6 +100,7 @@
             @export-pdf="$emit('export-pdf')"
           />
         </div>
+        </div>
       </div>
       
       <!-- Hero Image con logo overlay -->
@@ -181,20 +184,14 @@
               backgroundColor: selectedCategory === section.id ? `${priceColor}10` : `${textColor}05`,
             }"
           >
-            <!-- Imagen de la categoría (usar primera imagen de ítem o placeholder) -->
+            <!-- Imagen de la categoría (primera foto de ítem o placeholder) -->
             <div class="aspect-video overflow-hidden bg-slate-200">
               <img
-                v-if="getCategoryImage(section)"
                 :src="getCategoryImage(section)"
                 :alt="section.name"
                 loading="lazy"
                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
-              <div v-else class="w-full h-full flex items-center justify-center" :style="{ backgroundColor: priceColor, opacity: 0.2 }">
-                <svg class="w-16 h-16 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
             </div>
             
             <!-- Contenido de la categoría -->
@@ -254,23 +251,11 @@
           >
             <div class="flex-shrink-0">
               <img
-                v-if="item.imageUrl"
-                :src="item.imageUrl"
+                :src="getMenuItemImageSrc(item, selectedSection?.name)"
                 :alt="item.name"
                 loading="lazy"
-                class="w-20 h-20 rounded-lg object-cover"
+                class="w-20 h-20 rounded-lg object-cover bg-slate-100"
               />
-              <div v-else class="w-20 h-20 rounded-lg bg-gradient-to-br from-emerald-50 to-amber-50 flex items-center justify-center">
-                <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                  <!-- Plato -->
-                  <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="currentColor" opacity="0.2"/>
-                  <ellipse cx="12" cy="17" rx="8" ry="2" stroke="currentColor" fill="none"/>
-                  <!-- Comida en el plato -->
-                  <circle cx="9" cy="14" r="2" fill="currentColor" opacity="0.6"/>
-                  <circle cx="15" cy="14" r="2.5" fill="currentColor" opacity="0.6"/>
-                  <circle cx="12" cy="12" r="1.5" fill="currentColor" opacity="0.7"/>
-                </svg>
-              </div>
             </div>
             
             <div class="flex-1 space-y-2 min-w-0">
@@ -321,9 +306,13 @@
           <span>·</span>
           <span>
             Hecho con
-            <span class="font-semibold" :style="{ color: priceColor }">
+            <NuxtLink
+              to="/"
+              class="font-semibold underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 rounded"
+              :style="{ color: priceColor }"
+            >
               MapaMorfi
-            </span>
+            </NuxtLink>
           </span>
         </div>
       </footer>
@@ -383,6 +372,7 @@ import { ref, computed } from 'vue'
 import { getContrastTextColor } from '~/composables/useColorUtils'
 import { getFontById } from '~/composables/useFonts'
 import { normalizeBusinessSections, filterSectionsWithItems } from '~/composables/useMenuNormalizer'
+import { getMenuItemImageSrc, MENU_PLACEHOLDER_DEFAULT } from '~/composables/useMenuItemPlaceholder'
 
 const props = defineProps({
   business: {
@@ -457,11 +447,12 @@ const selectedSectionItems = computed(() => {
   return selectedSection.value.items || []
 })
 
-// Obtener imagen de categoría (primera imagen de ítem)
+// Imagen de categoría: primera foto real o placeholder según el primer ítem
 const getCategoryImage = (section) => {
-  if (!section.items || section.items.length === 0) return null
-  const itemWithImage = section.items.find(item => item.imageUrl)
-  return itemWithImage?.imageUrl || null
+  if (!section.items || section.items.length === 0) return MENU_PLACEHOLDER_DEFAULT
+  const itemWithImage = section.items.find((item) => item.imageUrl)
+  if (itemWithImage?.imageUrl) return itemWithImage.imageUrl
+  return getMenuItemImageSrc(section.items[0], section.name)
 }
 
 // isOpenNow viene como prop, no necesita computed

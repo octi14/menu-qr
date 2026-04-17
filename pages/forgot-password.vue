@@ -62,14 +62,11 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useTheme } from '~/composables/useTheme'
 import ThemeToggle from '~/components/ThemeToggle.vue'
 
 definePageMeta({
   layout: false,
 })
-
-const { theme } = useTheme()
 
 const email = ref('')
 const error = ref('')
