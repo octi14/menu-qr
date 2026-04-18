@@ -8,14 +8,17 @@
         <!-- Botón de favoritos -->
         <button
           v-if="isAuthenticated"
+          type="button"
           @click="$emit('toggle-favorite')"
           :disabled="isLoadingFavorite"
-          class="p-2 rounded-full transition-all hover:scale-110 disabled:opacity-50"
+          class="p-2 rounded-full transition-all hover:scale-110 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2"
           :style="{
             backgroundColor: isFavorite ? `${priceColor}20` : `${textColor}15`,
             color: isFavorite ? priceColor : textColor,
           }"
           :title="isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+          :aria-pressed="isFavorite"
+          :aria-label="isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
         >
           <svg
             v-if="isFavorite"
@@ -329,7 +332,7 @@
       
       <!-- Footer -->
       <footer class="mt-auto border-t pt-8" :style="{ borderColor: `${textColor}20` }" role="contentinfo">
-        <div class="flex items-center justify-center gap-2 text-xs opacity-60">
+        <div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs opacity-60">
           <span class="italic">Menú</span>
           <span>·</span>
           <span>
@@ -342,6 +345,14 @@
               MapaMorfi
             </NuxtLink>
           </span>
+          <span aria-hidden="true">·</span>
+          <NuxtLink
+            to="/privacidad"
+            class="underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 rounded"
+            :style="{ color: priceColor }"
+          >
+            Privacidad
+          </NuxtLink>
         </div>
       </footer>
       

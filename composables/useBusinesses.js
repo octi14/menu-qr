@@ -1,21 +1,23 @@
 export const useBusinesses = () => {
   const fetchBusinessBySlug = async (slug) => {
+    const encoded = encodeURIComponent(slug)
     try {
-      const business = await $fetch(`/api/businesses?slug=${slug}`)
+      const business = await $fetch(`/api/businesses?slug=${encoded}`)
       return business
     } catch (error) {
       console.error('Error fetching business from API:', error)
-      // Si es un 404, retornar null
       if (error.statusCode === 404 || error.status === 404) {
         return null
       }
-      // Para otros errores, intentar con el endpoint alternativo
       try {
-        const business = await $fetch(`/api/businesses/${slug}`)
+        const business = await $fetch(`/api/businesses/${encoded}`)
         return business
       } catch (secondError) {
         console.error('Error fetching business from alternative endpoint:', secondError)
-        return null
+        if (secondError.statusCode === 404 || secondError.status === 404) {
+          return null
+        }
+        throw secondError
       }
     }
   }

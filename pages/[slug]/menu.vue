@@ -77,14 +77,17 @@
           <!-- Botón de favoritos (solo si está autenticado) -->
           <button
             v-if="isAuthenticated"
+            type="button"
             @click="toggleFavorite"
             :disabled="isLoadingFavorite"
-            class="p-2 rounded-full transition-all hover:scale-110 disabled:opacity-50"
+            class="p-2 rounded-full transition-all hover:scale-110 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-emerald-500/50"
             :style="{
               backgroundColor: isFavorite ? `${priceColor}20` : `${textColor}15`,
               color: isFavorite ? priceColor : textColor,
             }"
             :title="isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+            :aria-pressed="isFavorite"
+            :aria-label="isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'"
           >
             <svg
               v-if="isFavorite"
@@ -475,7 +478,7 @@
       </main>
 
       <footer class="mt-auto border-t pt-8" :style="{ borderColor: `${textColor}20` }" role="contentinfo">
-        <div class="flex items-center justify-center gap-2 text-xs opacity-60">
+        <div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs opacity-60">
           <span class="italic">Menú</span>
           <span>·</span>
           <span>
@@ -488,6 +491,14 @@
               MapaMorfi
             </NuxtLink>
           </span>
+          <span aria-hidden="true">·</span>
+          <NuxtLink
+            to="/privacidad"
+            class="underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40 rounded"
+            :style="{ color: priceColor }"
+          >
+            Privacidad
+          </NuxtLink>
         </div>
       </footer>
     </div>
@@ -526,13 +537,36 @@
   <div
     v-else-if="pending"
     class="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50"
+    aria-busy="true"
+    aria-live="polite"
   >
     <AppLoadingScreen
       title="Cargando menú…"
       subtitle="Preparando productos y precios"
     />
   </div>
-  <div v-else-if="!pending" class="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50">
+  <div
+    v-else-if="!pending && menuLoadError"
+    class="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 px-6"
+  >
+    <div class="max-w-md text-center space-y-4">
+      <h1 class="text-2xl font-semibold">No pudimos cargar el menú</h1>
+      <p class="text-sm text-slate-600 dark:text-slate-300">
+        Puede ser un problema de conexión o del servidor. Revisá tu red e intentá de nuevo.
+      </p>
+      <button
+        type="button"
+        class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950"
+        @click="retryLoadMenu"
+      >
+        Reintentar
+      </button>
+    </div>
+  </div>
+  <div
+    v-else-if="!pending && !menuLoadError"
+    class="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50"
+  >
     <div class="max-w-md text-center space-y-4 px-6">
       <h1 class="text-2xl font-semibold">Menú no encontrado</h1>
       <p class="text-sm text-slate-600 dark:text-slate-300">
@@ -557,6 +591,7 @@ const { trackEvent } = useAnalytics()
 const slug = route.params.slug
 const business = ref(null)
 const pending = ref(true)
+const menuLoadError = ref(false)
 const isPublic = ref(true)
 
 const showActivePublicMenu = computed(
@@ -1056,9 +1091,15 @@ const exportToPDF = async () => {
 }
 
 
-onMounted(async () => {
+const retryLoadMenu = async () => {
+  menuLoadError.value = false
+  pending.value = true
+  await loadPublicMenu()
+}
+
+async function loadPublicMenu() {
+  menuLoadError.value = false
   try {
-    // Si es el slug de demo, cargar el business de demo
     if (slug === 'demo') {
       try {
         const demo = await $fetch('/api/businesses/demo')
@@ -1072,66 +1113,63 @@ onMounted(async () => {
       }
     }
 
-    // Intentar cargar desde caché primero para mostrar contenido rápido
     const cachedBusiness = getCachedMenu(slug)
     if (cachedBusiness) {
       business.value = cachedBusiness
       pending.value = false
-      // Cargar versión actualizada en background
-      fetchBusinessBySlug(slug).then(updatedBusiness => {
+      fetchBusinessBySlug(slug).then((updatedBusiness) => {
         if (updatedBusiness) {
           business.value = updatedBusiness
           setCachedMenu(slug, updatedBusiness)
         }
-      }).catch(err => {
+      }).catch((err) => {
         console.error('Error loading updated business:', err)
       })
       return
     }
 
-    // Si no hay caché, cargar normalmente
     business.value = await fetchBusinessBySlug(slug)
-    
-    // Si no se encontró el comercio, no usar mock data (dejar que muestre el 404)
+
     if (!business.value) {
       pending.value = false
       return
     }
 
-    // Guardar en caché después de cargar
     setCachedMenu(slug, business.value)
 
-    // Verificar si el menú es público según el plan del usuario
     if (business.value) {
       try {
-        const accessCheck = await $fetch(`/api/businesses/${slug}/check-access`)
+        const accessCheck = await $fetch(
+          `/api/businesses/${encodeURIComponent(slug)}/check-access`
+        )
         isPublic.value = accessCheck.isPublic === true
       } catch (err) {
         console.error('Error checking access:', err)
-        // Por defecto, permitir acceso si hay error
         isPublic.value = true
       }
 
-      // Track menu view
       if (business.value.id) {
         trackEvent(business.value.id, 'menu_view')
       }
     }
-    
-    // Verificar autenticación y cargar favoritos
+
     await checkAuthAndFavorite()
   } catch (error) {
     console.error('Error loading business:', error)
-    // Si es un 404, no usar mock data - dejar que se muestre el estado de error
     if (error.statusCode === 404 || error.status === 404) {
       business.value = null
+      menuLoadError.value = false
     } else {
-      // Para otros errores, dejar business como null
       business.value = null
+      menuLoadError.value = true
     }
   } finally {
     pending.value = false
   }
+}
+
+onMounted(() => {
+  loadPublicMenu()
 })
 
 

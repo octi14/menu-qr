@@ -1528,7 +1528,13 @@ const handleSave = async () => {
       }, 3000)
       
       // Recargar el business actualizado
-      const updatedBusiness = await fetchBusinessBySlug(slug)
+      let updatedBusiness = null
+      try {
+        updatedBusiness = await fetchBusinessBySlug(slug)
+      } catch (e) {
+        console.error('Error reloading business after save:', e)
+        error.value = 'No se pudo recargar el comercio. Revisá tu conexión.'
+      }
       if (updatedBusiness) {
         // Normalizar el business recuperado
         const normalizedUpdated = normalizeBusiness(updatedBusiness)
@@ -1795,7 +1801,14 @@ const loadUserPlan = async () => {
 
 onMounted(async () => {
   try {
-    const fetchedBusiness = await fetchBusinessBySlug(slug)
+    let fetchedBusiness = null
+    try {
+      fetchedBusiness = await fetchBusinessBySlug(slug)
+    } catch (e) {
+      console.error('Error fetching business:', e)
+      error.value = 'No se pudo cargar el comercio. Revisá tu conexión e intentá de nuevo.'
+      return
+    }
     if (!fetchedBusiness) {
       router.push('/select-business')
       return

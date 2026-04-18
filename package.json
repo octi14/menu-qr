@@ -8,7 +8,10 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "placeholders:encode": "node scripts/encode-menu-placeholders.mjs"
+    "placeholders:encode": "node scripts/encode-menu-placeholders.mjs",
+    "test": "vitest run",
+    "build:playwright": "cross-env PLAYWRIGHT=1 nuxt build",
+    "test:e2e": "npm run build:playwright && playwright test"
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.12.1",
@@ -24,8 +27,11 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@playwright/test": "^1.51.0",
+    "cross-env": "^10.1.0",
     "sharp": "^0.34.5",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "vitest": "^3.0.0"
   },
   "overrides": {
     "@nuxt/kit": "3.20.1",

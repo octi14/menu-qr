@@ -1,4 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { GOOGLE_FONTS_STYLESHEET_HREF } from './config/google-fonts.mjs'
+
+const isPlaywrightBuild = process.env.PLAYWRIGHT === '1'
+
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
@@ -22,6 +26,13 @@ export default defineNuxtConfig({
     cssPath: '~/assets/css/main.css',
     configPath: 'tailwind.config.js',
   },
+
+  // Solo en build de Playwright: el menú se hidrata en cliente para que page.route() intercepte $fetch.
+  routeRules: isPlaywrightBuild
+    ? {
+        '/:slug/menu': { ssr: false },
+      }
+    : {},
   
   runtimeConfig: {
     mongodbUri: process.env.MONGODB_URI,
@@ -47,7 +58,7 @@ export default defineNuxtConfig({
       title: 'MapaMorfi · Menús digitales para tu comercio',
       meta: [
         { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         { name: 'description', content: 'MapaMorfi - Plataforma de menús digitales con códigos QR para tu comercio.' },
         { name: 'theme-color', content: '#10b981' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -57,7 +68,7 @@ export default defineNuxtConfig({
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Lora:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Poppins:wght@400;500;600;700&family=Crimson+Text:wght@400;600;700&family=Open+Sans:wght@400;500;600;700&family=Raleway:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Lato:wght@400;500;700&family=Source+Sans+Pro:wght@400;600;700&family=Ubuntu:wght@400;500;700&family=Nunito:wght@400;500;600;700&family=Dancing+Script:wght@400;700&family=Pacifico&display=swap' },
+        { rel: 'stylesheet', href: GOOGLE_FONTS_STYLESHEET_HREF },
         { rel: 'stylesheet', href: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', crossorigin: '' },
         { rel: 'manifest', href: '/manifest.json' },
         { rel: 'icon', type: 'image/png', href: '/icon-192.png' },

@@ -1,7 +1,24 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { createError } from 'h3'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'
+const DEFAULT_JWT_PLACEHOLDER = 'your-secret-key-change-in-production'
+
+function getJwtSecret() {
+  const secret = process.env.JWT_SECRET || process.env.NUXT_JWT_SECRET
+  const isProd = process.env.NODE_ENV === 'production'
+  if (isProd) {
+    if (!secret || secret === DEFAULT_JWT_PLACEHOLDER) {
+      throw createError({
+        statusCode: 500,
+        message: 'Configuración del servidor incompleta: JWT_SECRET',
+      })
+    }
+    return secret
+  }
+  return secret || DEFAULT_JWT_PLACEHOLDER
+}
+
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d'
 
 /**
@@ -30,7 +47,7 @@ export async function verifyPassword(password, hash) {
  * @returns {string} - Token JWT
  */
 export function generateToken(payload) {
-  return jwt.sign(payload, JWT_SECRET, {
+  return jwt.sign(payload, getJwtSecret(), {
     expiresIn: JWT_EXPIRES_IN,
   })
 }
@@ -42,7 +59,7 @@ export function generateToken(payload) {
  */
 export function verifyToken(token) {
   try {
-    return jwt.verify(token, JWT_SECRET)
+    return jwt.verify(token, getJwtSecret())
   } catch (error) {
     // Distinguir entre diferentes tipos de errores
     if (error.name === 'TokenExpiredError') {
