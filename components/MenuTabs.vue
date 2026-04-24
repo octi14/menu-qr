@@ -3,11 +3,26 @@
     <div class="mx-auto flex min-h-screen max-w-4xl flex-col gap-6 px-5 py-8 sm:px-6">
       <!-- Barra superior con acciones -->
       <div class="flex w-full items-center gap-2 mb-4">
-        <MenuBackToDiscoverLink :color="textColor" />
+        <div
+          v-if="isPreview"
+          class="inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium"
+          :style="{
+            borderColor: `${textColor}30`,
+            backgroundColor: `${textColor}10`,
+            color: textColor,
+          }"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          Vista previa
+        </div>
+        <MenuBackToDiscoverLink v-else :color="textColor" />
         <div class="flex min-w-0 flex-1 items-center justify-end gap-3">
         <!-- Botón de favoritos -->
         <button
-          v-if="isAuthenticated"
+          v-if="isAuthenticated && !isPreview"
           type="button"
           @click="$emit('toggle-favorite')"
           :disabled="isLoadingFavorite"
@@ -57,7 +72,7 @@
         </button>
         
         <!-- Plataformas de pedidos -->
-        <template v-if="activeDeliveryPlatforms && activeDeliveryPlatforms.length > 0">
+        <template v-if="activeDeliveryPlatforms && activeDeliveryPlatforms.length > 0 && !isPreview">
           <a
             v-for="platform in activeDeliveryPlatforms"
             :key="platform.id"
@@ -77,8 +92,24 @@
             <span v-else class="text-xs font-medium px-2">{{ platform.name }}</span>
           </a>
         </template>
+        <template v-else-if="isPreview && activeDeliveryPlatforms && activeDeliveryPlatforms.length > 0">
+          <div
+            v-for="platform in activeDeliveryPlatforms"
+            :key="`p-${platform.id}`"
+            class="rounded-lg p-1.5 flex items-center justify-center opacity-70"
+          >
+            <img 
+              v-if="platform.logo"
+              :src="platform.logo" 
+              :alt="platform.name"
+              loading="lazy" 
+              class="h-5 w-5 object-contain"
+            />
+            <span v-else class="text-xs font-medium px-2">{{ platform.name }}</span>
+          </div>
+        </template>
         
-        <div class="relative">
+        <div v-if="!isPreview" class="relative">
           <button
             @click="showShareMenu = !showShareMenu"
             class="rounded-lg border p-2 transition-colors"
@@ -212,6 +243,21 @@
         </div>
       </header>
 
+      <div v-if="editable && isPreview" class="flex items-center justify-between gap-3">
+        <p class="text-sm font-medium opacity-90">Secciones e ítems</p>
+        <button
+          type="button"
+          class="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"
+          :style="{ borderColor: priceColor, color: priceColor, backgroundColor: `${priceColor}10` }"
+          @click="addSection"
+        >
+          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Nueva sección
+        </button>
+      </div>
+
       <!-- Tabs de categorías -->
       <div class="sticky top-0 z-40 bg-inherit pb-2 border-b" :style="{ borderColor: `${textColor}20`, backgroundColor }">
         <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
@@ -219,14 +265,47 @@
             v-for="section in sections"
             :key="section.id"
             @click="activeTab = section.id"
-            class="px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all"
+            class="group px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all"
             :style="
               activeTab === section.id
                 ? { backgroundColor: priceColor, color: getContrastTextColor(priceColor) }
                 : { backgroundColor: `${textColor}15`, color: textColor }
             "
           >
-            {{ section.name }}
+            <span class="inline-flex items-center gap-1">
+              <span v-if="!isEditing('section', section.id, 'name')">{{ section.name }}</span>
+              <input
+                v-else
+                v-model="section.name"
+                class="w-24 rounded border border-slate-300 bg-white/90 px-1.5 py-0.5 text-xs text-slate-900"
+                @click.stop
+                @blur="stopEditing"
+                @keydown.enter.prevent="stopEditing"
+              />
+              <span
+                v-if="editable && !isEditing('section', section.id, 'name')"
+                class="opacity-0 transition-opacity group-hover:opacity-60"
+                title="Editar"
+                @click.stop="startEditing('section', section.id, 'name')"
+              >
+                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </span>
+              <span
+                v-if="editable && isPreview && activeTab === section.id && !isEditing('section', section.id, 'name')"
+                class="inline-flex items-center justify-center opacity-85 transition-opacity hover:opacity-100"
+                :style="deleteIconStyle"
+                title="Eliminar sección"
+                aria-label="Eliminar sección"
+                role="button"
+                @click.stop="openDeleteSectionConfirm(section)"
+              >
+                <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16" />
+                </svg>
+              </span>
+            </span>
           </button>
         </div>
         
@@ -257,10 +336,23 @@
 
       <!-- Lista de ítems de la categoría activa -->
       <main class="flex-1 space-y-4" role="main">
+        <div v-if="editable && isPreview && activeSection" class="flex items-center justify-end">
+          <button
+            type="button"
+            class="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"
+            :style="{ borderColor: priceColor, color: priceColor, backgroundColor: `${priceColor}10` }"
+            @click="addItemToActiveSection"
+          >
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Agregar ítem
+          </button>
+        </div>
         <article
           v-for="item in activeSectionItems"
           :key="item.id"
-          class="flex items-start gap-4 p-4 rounded-lg border transition-all hover:shadow-md"
+          class="group/item relative flex items-start gap-4 p-4 rounded-lg border transition-all hover:shadow-md"
           :style="{
             borderColor: `${textColor}20`,
             backgroundColor: `${textColor}05`,
@@ -284,20 +376,93 @@
                   class="text-lg sm:text-xl leading-tight"
                   :class="isPacifico ? 'font-medium' : isScriptFont ? 'font-semibold' : 'font-bold'"
                 >
-                  {{ item.name }}
+                  <span v-if="!isEditing('item', item.id, 'name')" class="group inline-flex items-center gap-1">
+                    {{ item.name }}
+                    <button
+                      v-if="editable"
+                      type="button"
+                      class="opacity-0 transition-opacity group-hover:opacity-60"
+                      title="Editar"
+                      @click.stop="startEditing('item', item.id, 'name')"
+                    >
+                      <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </span>
+                  <input
+                    v-else
+                    v-model="item.name"
+                    class="w-full rounded border border-slate-300 bg-white/90 px-2 py-1 text-sm text-slate-900"
+                    @blur="stopEditing"
+                    @keydown.enter.prevent="stopEditing"
+                  />
                 </h3>
-                <p v-if="item.description" class="text-sm opacity-80 mt-1 line-clamp-2">
-                  {{ item.description }}
+                <p v-if="item.description && !isEditing('item', item.id, 'description')" class="group text-sm opacity-80 mt-1 line-clamp-2">
+                  <span class="inline-flex items-center gap-1">
+                    {{ item.description }}
+                    <button
+                      v-if="editable"
+                      type="button"
+                      class="opacity-0 transition-opacity group-hover:opacity-60"
+                      title="Editar"
+                      @click.stop="startEditing('item', item.id, 'description')"
+                    >
+                      <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </span>
                 </p>
+                <textarea
+                  v-else-if="isEditing('item', item.id, 'description')"
+                  v-model="item.description"
+                  rows="2"
+                  class="mt-1 w-full resize-none rounded border border-slate-300 bg-white/90 px-2 py-1 text-xs text-slate-900"
+                  @blur="stopEditing"
+                />
               </div>
               <div class="flex flex-col items-end gap-2 flex-shrink-0">
                 <span
-                  v-if="item.price != null && shouldShowPrices"
-                  class="text-xl sm:text-2xl font-bold tabular-nums whitespace-nowrap"
+                  v-if="item.price != null && shouldShowPrices && !isEditing('item', item.id, 'price')"
+                  class="group inline-flex items-center gap-1 text-xl sm:text-2xl font-bold tabular-nums whitespace-nowrap"
                   :style="{ color: priceColor }"
                 >
                   ${{ item.price.toLocaleString('es-AR') }}
+                  <button
+                    v-if="editable"
+                    type="button"
+                    class="opacity-0 transition-opacity group-hover:opacity-60"
+                    title="Editar precio"
+                    @click.stop="startEditing('item', item.id, 'price')"
+                  >
+                    <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
                 </span>
+                <input
+                  v-else-if="shouldShowPrices && isEditing('item', item.id, 'price')"
+                  v-model.number="item.price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  class="w-24 rounded border border-slate-300 bg-white/90 px-2 py-1 text-sm text-slate-900"
+                  @blur="stopEditing"
+                  @keydown.enter.prevent="stopEditing"
+                />
+                <button
+                  v-if="editable && isPreview"
+                  type="button"
+                  class="absolute right-2 top-2 p-0.5 opacity-0 transition-opacity group-hover/item:opacity-100"
+                  :style="deleteIconStyle"
+                  title="Eliminar ítem"
+                  @click.stop="openDeleteItemConfirm(item)"
+                >
+                  <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16" />
+                  </svg>
+                </button>
                 <span
                   v-if="item.isAvailable === false"
                   class="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800"
@@ -329,6 +494,27 @@
           No hay ítems en esta categoría
         </div>
       </main>
+
+      <div
+        v-if="showDeleteConfirm"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4"
+        @click.self="closeDeleteConfirm"
+      >
+        <div class="w-full max-w-md rounded-xl border bg-white p-5 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
+          <h3 class="text-base font-semibold text-slate-900 dark:text-slate-100">
+            {{ deleteTargetType === 'section' ? '¿Eliminar sección?' : '¿Eliminar ítem?' }}
+          </h3>
+          <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
+            Se eliminará
+            <span class="font-medium">"{{ deleteTargetName }}"</span>
+            {{ deleteTargetType === 'section' ? ' y sus ítems.' : '.' }}
+          </p>
+          <div class="mt-4 flex items-center justify-end gap-2">
+            <button type="button" class="rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-700 bg-white hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700" @click="closeDeleteConfirm">Cancelar</button>
+            <button type="button" class="rounded-md border border-red-600 bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700" @click="confirmDelete">Sí, eliminar</button>
+          </div>
+        </div>
+      </div>
       
       <!-- Footer -->
       <footer class="mt-auto border-t pt-8" :style="{ borderColor: `${textColor}20` }" role="contentinfo">
@@ -407,7 +593,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, toRef } from 'vue'
 import { getContrastTextColor } from '~/composables/useColorUtils'
 import { getFontById } from '~/composables/useFonts'
 import { normalizeBusinessSections, filterSectionsWithItems } from '~/composables/useMenuNormalizer'
@@ -457,6 +643,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isPreview: {
+    type: Boolean,
+    default: false,
+  },
+  editable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 defineEmits(['toggle-favorite', 'share-whatsapp', 'share-facebook', 'copy-link', 'export-pdf'])
@@ -465,12 +659,25 @@ const searchQuery = ref('')
 const activeTab = ref(null)
 const showShareMenu = ref(false)
 const showHoursModal = ref(false)
+const editingKey = ref(null)
+const showDeleteConfirm = ref(false)
+const deleteTargetType = ref('')
+const deleteTargetId = ref('')
+const deleteTargetName = ref('')
+const deleteTargetSectionId = ref('')
+
+const businessRef = toRef(props, 'business')
+const { addSection, deleteSection, addItem, deleteItem } = useMenuSectionEditor(businessRef)
 
 // Obtener secciones del menú usando el normalizador
 const sections = computed(() => {
   if (!props.business) return []
-  
-  // Normalizar y filtrar secciones con items válidos
+
+  // En modo editable trabajamos sobre la referencia real del business
+  if (props.editable && props.isPreview && Array.isArray(props.business.sections)) {
+    return props.business.sections.filter((s) => Array.isArray(s?.items))
+  }
+
   const normalizedSections = normalizeBusinessSections(props.business)
   return filterSectionsWithItems(normalizedSections)
 })
@@ -525,6 +732,70 @@ const rootStyle = computed(() => ({
   color: props.textColor,
   '--price-color': props.priceColor
 }))
+const deleteIconStyle = computed(() => {
+  const contrastOnBg = getContrastTextColor(props.backgroundColor || '#ffffff')
+  const iconColor = contrastOnBg === '#ffffff' ? '#fecaca' : '#b91c1c'
+  const lightHalo = 'rgba(255,255,255,0.75)'
+  const darkHalo = 'rgba(15,23,42,0.65)'
+  return {
+    color: iconColor,
+    filter: `drop-shadow(0 0 1px ${lightHalo}) drop-shadow(0 1px 1px ${darkHalo})`,
+  }
+})
+
+const isEditing = (type, id, field) => editingKey.value === `${type}:${id}:${field}`
+const startEditing = (type, id, field) => { editingKey.value = `${type}:${id}:${field}` }
+const stopEditing = () => { editingKey.value = null }
+const addItemToActiveSection = () => {
+  const sectionsList = Array.isArray(props.business?.sections) ? props.business.sections : []
+  const sectionIndex = sectionsList.findIndex((s) => s?.id === activeSection.value?.id)
+  if (sectionIndex >= 0) addItem(sectionIndex)
+}
+
+const openDeleteSectionConfirm = (section) => {
+  if (showDeleteConfirm.value) return
+  deleteTargetType.value = 'section'
+  deleteTargetId.value = section?.id || ''
+  deleteTargetName.value = section?.name || 'Sección'
+  showDeleteConfirm.value = true
+}
+
+const openDeleteItemConfirm = (item) => {
+  if (showDeleteConfirm.value) return
+  deleteTargetType.value = 'item'
+  deleteTargetId.value = item?.id || ''
+  deleteTargetSectionId.value = activeSection.value?.id || ''
+  deleteTargetName.value = item?.name || 'Ítem'
+  showDeleteConfirm.value = true
+}
+
+const closeDeleteConfirm = () => {
+  showDeleteConfirm.value = false
+  deleteTargetType.value = ''
+  deleteTargetId.value = ''
+  deleteTargetSectionId.value = ''
+  deleteTargetName.value = ''
+}
+
+const confirmDelete = () => {
+  const sectionsList = Array.isArray(props.business?.sections) ? props.business.sections : []
+  if (deleteTargetType.value === 'section') {
+    const sectionIndex = sectionsList.findIndex((s) => s?.id === deleteTargetId.value)
+    if (sectionIndex >= 0) deleteSection(sectionIndex)
+    if (activeTab.value === deleteTargetId.value) {
+      const fallback = sectionsList.find((s) => s?.id !== deleteTargetId.value)
+      activeTab.value = fallback?.id || null
+    }
+  } else if (deleteTargetType.value === 'item') {
+    const sectionIndex = sectionsList.findIndex((s) => s?.id === deleteTargetSectionId.value)
+    if (sectionIndex >= 0) {
+      const items = Array.isArray(sectionsList[sectionIndex]?.items) ? sectionsList[sectionIndex].items : []
+      const itemIndex = items.findIndex((it) => it?.id === deleteTargetId.value)
+      if (itemIndex >= 0) deleteItem(sectionIndex, itemIndex)
+    }
+  }
+  closeDeleteConfirm()
+}
 </script>
 
 <style scoped>

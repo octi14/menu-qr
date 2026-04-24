@@ -37,6 +37,7 @@ test('menú público muestra datos cuando la API responde', async ({ page }) => 
   await page.goto('/e2e-rest/menu')
   await expect(page.getByRole('heading', { name: 'Resto E2E' })).toBeVisible({ timeout: 20000 })
   await expect(page.getByText('Pizza')).toBeVisible()
+  await expect(page.getByText('Vista previa')).not.toBeVisible()
 })
 
 test('slug inexistente muestra mensaje de no encontrado', async ({ page }) => {

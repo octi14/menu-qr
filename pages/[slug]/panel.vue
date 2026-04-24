@@ -73,62 +73,55 @@
         </div>
       </div>
 
-      <div v-if="!business" class="text-center py-12">
-        <p class="text-slate-600 dark:text-slate-400">Cargando comercio...</p>
+      <div v-if="!business" class="py-8">
+        <AppLoadingScreen title="Cargando comercio…" subtitle="Obteniendo la configuración y el menú" />
       </div>
 
-      <div v-else class="grid min-w-0 gap-8 lg:grid-cols-3">
-        <!-- Columna principal - Menú -->
-        <div class="min-w-0 space-y-6 lg:col-span-2">
-          <!-- Información del comercio -->
-          <div class="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 sm:p-6">
-            <h2 class="text-xl font-semibold mb-4">Información del comercio</h2>
-            <div class="space-y-4">
-              <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Nombre
-                </label>
-                <input
-                  v-model="localBusiness.name"
-                  type="text"
-                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Descripción
-                </label>
-                <textarea
-                  v-model="localBusiness.description"
-                  rows="2"
-                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors resize-none"
-                />
-              </div>
-              <!-- Logo del comercio para el mapa (solo para planes Pro y Enterprise) -->
-              <div v-if="userPlan && (userPlan.id === 'professional' || userPlan.id === 'enterprise' || userRole === 'admin')">
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Logo para el mapa
-                </label>
-                <div class="space-y-3">
-                  <input
-                    v-model="localBusiness.logoUrl"
-                    type="url"
-                    placeholder="https://ejemplo.com/logo.png"
-                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                  />
-                  <p class="text-xs text-slate-500 dark:text-slate-400">
-                    URL de la imagen del logo que aparecerá como miniatura en el mapa (ej: la M de McDonald's). Disponible para planes Pro y Enterprise.
-                  </p>
-                  <div v-if="localBusiness.logoUrl" class="flex justify-center p-4 bg-slate-50 dark:bg-slate-900 rounded-lg">
-                    <img
-                      :src="localBusiness.logoUrl"
-                      :alt="localBusiness.name"
-                      class="h-20 object-contain"
-                      @error="localBusiness.logoUrl = ''"
-                    />
-                  </div>
-                </div>
-              </div>
+      <div v-else class="min-w-0 space-y-6">
+        <div class="flex flex-wrap gap-1 border-b border-slate-200 dark:border-slate-800">
+          <button
+            type="button"
+            class="px-4 py-2.5 text-sm font-medium transition-colors -mb-px"
+            :class="
+              panelTab === 'design'
+                ? 'border-b-2 border-emerald-500 text-emerald-700 dark:text-emerald-400'
+                : 'border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
+            "
+            @click="setPanelTab('design')"
+          >
+            Diseñar menú
+          </button>
+          <button
+            type="button"
+            class="px-4 py-2.5 text-sm font-medium transition-colors -mb-px"
+            :class="
+              panelTab === 'commerce'
+                ? 'border-b-2 border-emerald-500 text-emerald-700 dark:text-emerald-400'
+                : 'border-b-2 border-transparent text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
+            "
+            @click="setPanelTab('commerce')"
+          >
+            Comercio y ubicación
+          </button>
+        </div>
+
+        <div
+          v-show="panelTab === 'design'"
+          class="flex min-w-0 flex-col gap-6 lg:flex-row lg:items-start lg:gap-6 xl:gap-8"
+        >
+          <!-- Sidebar: controles (poco ancho, scroll propio) -->
+          <aside
+            class="order-2 w-full min-w-0 max-w-full space-y-4 sm:space-y-5 lg:order-1 lg:max-h-[calc(100dvh-7.5rem)] lg:max-w-[19.5rem] lg:shrink-0 lg:space-y-4 lg:overflow-y-auto lg:overflow-x-hidden lg:pr-1 xl:max-w-[21rem] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-600"
+          >
+          <div class="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/50 p-4 sm:p-5">
+            <div class="mb-3 flex items-center justify-between gap-2">
+              <h2 class="text-base font-semibold tracking-tight">Apariencia</h2>
+              <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">en vivo</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
+              Editás acá y lo ves al instante en la preview.
+            </p>
+            <div class="space-y-3.5">
               <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Color de fondo
@@ -151,39 +144,41 @@
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Tipografía
                 </label>
-                <select
-                  v-model="localBusiness.fontFamily"
-                  class="w-full max-w-full min-w-0 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                >
-                  <option
-                    v-for="font in AVAILABLE_FONTS"
-                    :key="font.id"
-                    :value="font.id"
-                    :style="{ fontFamily: font.family }"
+                <div class="relative">
+                  <button
+                    type="button"
+                    class="inline-flex w-full items-center justify-between rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-left text-sm text-slate-900 dark:text-slate-50 outline-none transition-colors hover:border-emerald-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                    @click="showFontPicker = !showFontPicker"
                   >
-                    {{ font.name }} - {{ font.description }}
-                  </option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Rubro
-                </label>
-                <select
-                  v-model="localBusiness.category"
-                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                >
-                  <option
-                    v-for="category in BUSINESS_CATEGORIES"
-                    :key="category.id"
-                    :value="category.id"
+                    <span
+                      class="truncate"
+                      :style="{ fontFamily: AVAILABLE_FONTS.find(f => f.id === localBusiness.fontFamily)?.family || 'inherit' }"
+                    >
+                      {{ AVAILABLE_FONTS.find(f => f.id === localBusiness.fontFamily)?.name || 'Tipografía' }}
+                    </span>
+                    <svg class="h-4 w-4 opacity-70 transition-transform" :class="{ 'rotate-180': showFontPicker }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div
+                    v-if="showFontPicker"
+                    class="absolute z-20 mt-2 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-2 shadow-xl"
                   >
-                    {{ category.icon }} {{ category.name }}
-                  </option>
-                </select>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  El ícono del mapa se mostrará según el rubro seleccionado
-                </p>
+                    <div class="grid grid-cols-2 gap-1.5">
+                      <button
+                        v-for="font in AVAILABLE_FONTS"
+                        :key="font.id"
+                        type="button"
+                        class="rounded-md px-2 py-1.5 text-left text-xs transition-colors"
+                        :class="localBusiness.fontFamily === font.id ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'"
+                        :style="{ fontFamily: font.family }"
+                        @click="localBusiness.fontFamily = font.id; showFontPicker = false"
+                      >
+                        {{ font.name }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
               <!-- Imagen de header (solo para planes Pro y Enterprise) -->
               <div v-if="userPlan && (userPlan.id === 'professional' || userPlan.id === 'enterprise' || userRole === 'admin')">
@@ -197,23 +192,8 @@
                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors text-sm"
                 />
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  URL de la imagen que aparecerá en la parte superior del menú. Disponible para planes Pro y Enterprise.
+                  Banner superior (planes Pro/Enterprise).
                 </p>
-                <div v-if="localBusiness.headerImageUrl" class="mt-3 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700 relative">
-                  <img
-                    :src="localBusiness.headerImageUrl"
-                    alt="Vista previa del header"
-                    class="w-full h-32 object-cover"
-                    @error="localBusiness.headerImageUrl = ''"
-                  />
-                  <!-- Overlay de preview si está activado -->
-                  <div
-                    v-if="localBusiness.headerImageOverlay"
-                    class="absolute inset-0 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm"
-                  >
-                    <span class="text-white font-bold text-lg drop-shadow-lg">{{ localBusiness.name || 'Nombre del comercio' }}</span>
-                  </div>
-                </div>
                 <div v-if="localBusiness.headerImageUrl" class="mt-3 space-y-2">
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input
@@ -239,39 +219,36 @@
                     El nombre y descripción aparecerán como overlay sobre la imagen
                   </p>
                 </div>
-                <div>
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input
-                      v-model="localBusiness.showPrices"
-                      type="checkbox"
-                      class="rounded border-slate-300 dark:border-slate-700 text-emerald-500 focus:ring-emerald-500"
-                    />
-                    <span class="text-sm text-slate-700 dark:text-slate-300">
-                      Mostrar precios en el menú
-                    </span>
-                  </label>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-6">
-                    Si está desactivado, los precios se ocultarán en el menú público. <strong>Nota:</strong> Los precios siempre se mostrarán cuando el menú se acceda desde un código QR.
-                  </p>
-                </div>
+              </div>
+              <div>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    v-model="localBusiness.showPrices"
+                    type="checkbox"
+                    class="rounded border-slate-300 dark:border-slate-700 text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <span class="text-sm text-slate-700 dark:text-slate-300">
+                    Mostrar precios en el menú
+                  </span>
+                </label>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-6">
+                  Oculta precios en el menú público.
+                </p>
               </div>
             </div>
           </div>
 
           <!-- Templates predefinidos (solo para planes Pro y Enterprise) -->
-          <div v-if="userPlan && (userPlan.id === 'professional' || userPlan.id === 'enterprise' || userRole === 'admin')" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
+          <div v-if="userPlan && (userPlan.id === 'professional' || userPlan.id === 'enterprise' || userRole === 'admin')" class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/50 p-4 sm:p-5">
             <TemplateSelector v-model="localBusiness" />
           </div>
 
           <!-- Selector de Layout de Menú -->
-          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <h2 class="text-xl font-semibold mb-4">Diseño del Menú</h2>
-            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-              Elegí cómo querés que se vea tu menú público
-            </p>
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/50 p-4 sm:p-5">
+            <h2 class="text-base font-semibold tracking-tight mb-3">Layout público</h2>
             <div v-if="userPlan && userPlan.id === 'basic' && userRole !== 'admin'" class="space-y-4">
               <!-- Solo layout vertical para plan básico -->
-              <div class="p-6 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20">
+              <div class="p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20">
                 <div class="flex items-start gap-4">
                   <div class="flex-1 flex items-center justify-center h-24">
                     <!-- Preview de layout vertical -->
@@ -285,24 +262,26 @@
                     </div>
                   </div>
                   <div class="flex-1">
-                    <div class="font-bold text-base mb-1">Vertical/Clásico</div>
-                    <div class="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                      Secciones colapsables, diseño minimalista
-                    </div>
+                    <div class="font-bold text-sm mb-1">Vertical/Clásico</div>
                     <p class="text-xs text-slate-500 dark:text-slate-400">
-                      Los layouts avanzados están disponibles en planes Pro y Enterprise.
+                      Layouts avanzados: plan Pro/Enterprise.
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!--
+              En sidebar estrecho (lg), 2 columnas deja tarjetas ridículas; en lg fila compacta
+              (miniatura + texto). Ancho completo: 2 columnas en sm no lg.
+            -->
+            <div v-else class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-1 lg:gap-2.5">
               <!-- Vertical/Clásico -->
               <label
-                class="relative flex flex-col p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg"
+                class="group relative flex cursor-pointer flex-col rounded-xl border-2 p-4 transition-all hover:shadow-md sm:p-5 lg:flex-row lg:items-center lg:gap-3.5 lg:py-3 lg:pl-3.5 lg:pr-4"
+                @click="localBusiness.menuLayout = 'vertical'"
                 :class="
                   (localBusiness.menuLayout || 'vertical') === 'vertical'
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-md'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-sm'
                     : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
                 "
               >
@@ -312,29 +291,35 @@
                   value="vertical"
                   class="sr-only"
                 />
-                <div class="flex-1 flex items-center justify-center mb-4 h-32">
-                  <!-- Preview de layout vertical -->
-                  <div class="w-full max-w-xs space-y-2">
-                    <div class="h-3 bg-slate-300 dark:bg-slate-600 rounded w-3/4"></div>
-                    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
-                    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
-                    <div class="h-3 bg-slate-300 dark:bg-slate-600 rounded w-3/4 mt-3"></div>
-                    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
-                    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-5/6"></div>
+                <div
+                  class="mb-3 flex h-28 flex-shrink-0 items-center justify-center sm:mb-4 sm:h-32 lg:mb-0 lg:h-20 lg:w-24 overflow-hidden rounded-lg border border-slate-200/80 bg-slate-50/90 dark:border-slate-600 dark:bg-slate-800/50"
+                >
+                  <div
+                    class="w-full max-w-xs origin-center scale-90 space-y-2 px-2 sm:px-0 lg:scale-[0.62] lg:px-1"
+                  >
+                    <div class="h-2.5 rounded bg-slate-300 dark:bg-slate-600 w-3/4 sm:h-3"></div>
+                    <div class="h-2 rounded bg-slate-200 dark:bg-slate-700 w-full sm:h-2"></div>
+                    <div class="h-2 rounded bg-slate-200 dark:bg-slate-700 w-5/6 sm:h-2"></div>
+                    <div class="h-2.5 rounded bg-slate-300 dark:bg-slate-600 w-3/4 mt-2.5 sm:h-3 sm:mt-3"></div>
+                    <div class="h-2 rounded bg-slate-200 dark:bg-slate-700 w-full sm:h-2"></div>
+                    <div class="h-2 rounded bg-slate-200 dark:bg-slate-700 w-5/6 sm:h-2"></div>
                   </div>
                 </div>
-                <div class="font-bold text-base mb-2 text-center">Vertical/Clásico</div>
-                <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-                  Secciones colapsables, diseño minimalista
+                <div class="min-w-0 text-center sm:text-center lg:flex-1 lg:pr-0 lg:text-left">
+                  <div class="text-sm font-bold leading-tight sm:text-base">Vertical/Clásico</div>
+                  <p class="mt-1.5 text-xs leading-snug text-slate-500 dark:text-slate-400 sm:mt-2 sm:text-sm">
+                    Clásico y limpio
+                  </p>
                 </div>
               </label>
-              
+
               <!-- Tabs/Lista -->
               <label
-                class="relative flex flex-col p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg"
+                class="group relative flex cursor-pointer flex-col rounded-xl border-2 p-4 transition-all hover:shadow-md sm:p-5 lg:flex-row lg:items-center lg:gap-3.5 lg:py-3 lg:pl-3.5 lg:pr-4"
+                @click="localBusiness.menuLayout = 'tabs'"
                 :class="
                   localBusiness.menuLayout === 'tabs'
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-md'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-sm'
                     : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
                 "
               >
@@ -344,42 +329,48 @@
                   value="tabs"
                   class="sr-only"
                 />
-                <div class="flex-1 flex items-center justify-center mb-4 h-32">
-                  <!-- Preview de layout tabs -->
-                  <div class="w-full max-w-xs space-y-3">
-                    <div class="flex gap-2">
-                      <div class="h-6 bg-emerald-500 rounded w-16"></div>
-                      <div class="h-6 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
-                      <div class="h-6 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
+                <div
+                  class="mb-3 flex h-28 flex-shrink-0 items-center justify-center sm:mb-4 sm:h-32 lg:mb-0 lg:h-20 lg:w-24 overflow-hidden rounded-lg border border-slate-200/80 bg-slate-50/90 dark:border-slate-600 dark:bg-slate-800/50"
+                >
+                  <div
+                    class="w-full max-w-xs origin-center scale-90 space-y-2.5 sm:px-0 lg:scale-[0.58] lg:px-0.5"
+                  >
+                    <div class="flex gap-1.5 sm:gap-2">
+                      <div class="h-5 w-12 rounded bg-emerald-500 sm:h-6 sm:w-16"></div>
+                      <div class="h-5 w-12 rounded bg-slate-200 dark:bg-slate-700 sm:h-6 sm:w-16"></div>
+                      <div class="h-5 w-12 rounded bg-slate-200 dark:bg-slate-700 sm:h-6 sm:w-16"></div>
                     </div>
-                    <div class="flex gap-3 items-center">
-                      <div class="w-12 h-12 bg-slate-300 dark:bg-slate-600 rounded"></div>
-                      <div class="flex-1 space-y-1">
-                        <div class="h-2 bg-slate-300 dark:bg-slate-600 rounded w-3/4"></div>
-                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                      <div class="h-8 w-8 flex-shrink-0 rounded bg-slate-300 dark:bg-slate-600 sm:h-12 sm:w-12"></div>
+                      <div class="min-w-0 flex-1 space-y-1">
+                        <div class="h-1.5 w-3/4 rounded bg-slate-300 dark:bg-slate-600 sm:h-2"></div>
+                        <div class="h-1.5 w-full rounded bg-slate-200 dark:bg-slate-700 sm:h-2"></div>
                       </div>
                     </div>
-                    <div class="flex gap-3 items-center">
-                      <div class="w-12 h-12 bg-slate-300 dark:bg-slate-600 rounded"></div>
-                      <div class="flex-1 space-y-1">
-                        <div class="h-2 bg-slate-300 dark:bg-slate-600 rounded w-3/4"></div>
-                        <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                    <div class="flex items-center gap-2 sm:gap-3">
+                      <div class="h-8 w-8 flex-shrink-0 rounded bg-slate-300 dark:bg-slate-600 sm:h-12 sm:w-12"></div>
+                      <div class="min-w-0 flex-1 space-y-1">
+                        <div class="h-1.5 w-3/4 rounded bg-slate-300 dark:bg-slate-600 sm:h-2"></div>
+                        <div class="h-1.5 w-full rounded bg-slate-200 dark:bg-slate-700 sm:h-2"></div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="font-bold text-base mb-2 text-center">Tabs/Lista</div>
-                <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-                  Tabs por categoría, lista con imágenes
+                <div class="min-w-0 text-center sm:text-center lg:flex-1 lg:pr-0 lg:text-left">
+                  <div class="text-sm font-bold leading-tight sm:text-base">Tabs/Lista</div>
+                  <p class="mt-1.5 text-xs leading-snug text-slate-500 dark:text-slate-400 sm:mt-2 sm:text-sm">
+                    Navegación por pestañas
+                  </p>
                 </div>
               </label>
-              
+
               <!-- Grid/Visual -->
               <label
-                class="relative flex flex-col p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg"
+                class="group relative flex cursor-pointer flex-col rounded-xl border-2 p-4 transition-all hover:shadow-md sm:p-5 lg:flex-row lg:items-center lg:gap-3.5 lg:py-3 lg:pl-3.5 lg:pr-4"
+                @click="localBusiness.menuLayout = 'grid'"
                 :class="
                   localBusiness.menuLayout === 'grid'
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-md'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-sm'
                     : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
                 "
               >
@@ -389,31 +380,37 @@
                   value="grid"
                   class="sr-only"
                 />
-                <div class="flex-1 flex items-center justify-center mb-4 h-32">
-                  <!-- Preview de layout grid -->
-                  <div class="w-full max-w-xs">
-                    <div class="grid grid-cols-3 gap-2">
-                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
-                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
-                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
-                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
-                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
-                      <div class="aspect-square bg-slate-300 dark:bg-slate-600 rounded"></div>
+                <div
+                  class="mb-3 flex h-28 flex-shrink-0 items-center justify-center sm:mb-4 sm:h-32 lg:mb-0 lg:h-20 lg:w-24 overflow-hidden rounded-lg border border-slate-200/80 bg-slate-50/90 p-1.5 dark:border-slate-600 dark:bg-slate-800/50"
+                >
+                  <div
+                    class="w-full max-w-xs origin-center scale-95 sm:px-0 lg:scale-90"
+                  >
+                    <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
+                      <div class="aspect-square rounded bg-slate-300 dark:bg-slate-600"></div>
+                      <div class="aspect-square rounded bg-slate-300 dark:bg-slate-600"></div>
+                      <div class="aspect-square rounded bg-slate-300 dark:bg-slate-600"></div>
+                      <div class="aspect-square rounded bg-slate-300 dark:bg-slate-600"></div>
+                      <div class="aspect-square rounded bg-slate-300 dark:bg-slate-600"></div>
+                      <div class="aspect-square rounded bg-slate-300 dark:bg-slate-600"></div>
                     </div>
                   </div>
                 </div>
-                <div class="font-bold text-base mb-2 text-center">Grid/Visual</div>
-                <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-                  Grid de ítems con imágenes grandes
+                <div class="min-w-0 text-center sm:text-center lg:flex-1 lg:pr-0 lg:text-left">
+                  <div class="text-sm font-bold leading-tight sm:text-base">Grid/Visual</div>
+                  <p class="mt-1.5 text-xs leading-snug text-slate-500 dark:text-slate-400 sm:mt-2 sm:text-sm">
+                    Enfoque visual
+                  </p>
                 </div>
               </label>
-              
+
               <!-- Categorías/Cards -->
               <label
-                class="relative flex flex-col p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg"
+                class="group relative flex cursor-pointer flex-col rounded-xl border-2 p-4 transition-all hover:shadow-md sm:p-5 lg:flex-row lg:items-center lg:gap-3.5 lg:py-3 lg:pl-3.5 lg:pr-4"
+                @click="localBusiness.menuLayout = 'categories'"
                 :class="
                   localBusiness.menuLayout === 'categories'
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-md'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-sm'
                     : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
                 "
               >
@@ -423,233 +420,173 @@
                   value="categories"
                   class="sr-only"
                 />
-                <div class="flex-1 flex items-center justify-center mb-4 h-32">
-                  <!-- Preview de layout categorías -->
-                  <div class="w-full max-w-xs space-y-2">
-                    <div class="border-2 border-slate-300 dark:border-slate-600 rounded-lg p-2">
-                      <div class="h-16 bg-slate-300 dark:bg-slate-600 rounded mb-2"></div>
-                      <div class="h-3 bg-slate-400 dark:bg-slate-500 rounded w-2/3 mb-1"></div>
-                      <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                <div
+                  class="mb-3 flex h-28 flex-shrink-0 items-center justify-center sm:mb-4 sm:h-32 lg:mb-0 lg:h-20 lg:w-24 overflow-hidden rounded-lg border border-slate-200/80 bg-slate-50/90 dark:border-slate-600 dark:bg-slate-800/50"
+                >
+                  <div
+                    class="w-full max-w-xs origin-top scale-90 space-y-1.5 sm:px-0 lg:origin-center lg:scale-75"
+                  >
+                    <div
+                      class="rounded border border-slate-300 p-1 dark:border-slate-600"
+                    >
+                      <div class="h-5 rounded bg-slate-300 dark:bg-slate-600 sm:h-8"></div>
+                      <div class="mt-1.5 h-1.5 w-2/3 rounded bg-slate-400 dark:bg-slate-500 sm:h-2.5 sm:mt-2"></div>
                     </div>
-                    <div class="border-2 border-slate-300 dark:border-slate-600 rounded-lg p-2">
-                      <div class="h-16 bg-slate-300 dark:bg-slate-600 rounded mb-2"></div>
-                      <div class="h-3 bg-slate-400 dark:bg-slate-500 rounded w-2/3 mb-1"></div>
-                      <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-full"></div>
+                    <div
+                      class="rounded border border-slate-300 p-1 dark:border-slate-600"
+                    >
+                      <div class="h-5 rounded bg-slate-300 dark:bg-slate-600 sm:h-8"></div>
+                      <div class="mt-1.5 h-1.5 w-2/3 rounded bg-slate-400 dark:bg-slate-500 sm:h-2.5 sm:mt-2"></div>
                     </div>
                   </div>
                 </div>
-                <div class="font-bold text-base mb-2 text-center">Categorías/Cards</div>
-                <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-                  Categorías en cards con "Ver menú"
+                <div class="min-w-0 text-center sm:text-center lg:flex-1 lg:pr-0 lg:text-left">
+                  <div class="text-sm font-bold leading-tight sm:text-base">Categorías/Cards</div>
+                  <p class="mt-1.5 text-xs leading-snug text-slate-500 dark:text-slate-400 sm:mt-2 sm:text-sm">
+                    Cards por categoría
+                  </p>
+                </div>
+              </label>
+
+              <!-- Dos columnas -->
+              <label
+                class="group relative flex cursor-pointer flex-col rounded-xl border-2 p-4 transition-all hover:shadow-md sm:p-5 lg:flex-row lg:items-center lg:gap-3.5 lg:py-3 lg:pl-3.5 lg:pr-4"
+                @click="localBusiness.menuLayout = 'two-columns'"
+                :class="
+                  localBusiness.menuLayout === 'two-columns'
+                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-sm'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 bg-white dark:bg-slate-900'
+                "
+              >
+                <input
+                  v-model="localBusiness.menuLayout"
+                  type="radio"
+                  value="two-columns"
+                  class="sr-only"
+                />
+                <div
+                  class="mb-3 flex h-28 flex-shrink-0 items-center justify-center sm:mb-4 sm:h-32 lg:mb-0 lg:h-20 lg:w-24 overflow-hidden rounded-lg border border-slate-200/80 bg-slate-50/90 dark:border-slate-600 dark:bg-slate-800/50"
+                >
+                  <div class="grid w-full max-w-xs grid-cols-2 gap-1.5 px-2 lg:scale-90">
+                    <div class="space-y-1 rounded border border-slate-300 p-1 dark:border-slate-600">
+                      <div class="h-1.5 w-3/4 rounded bg-slate-400 dark:bg-slate-500"></div>
+                      <div class="h-1.5 w-full rounded bg-slate-300 dark:bg-slate-600"></div>
+                      <div class="h-1.5 w-5/6 rounded bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                    <div class="space-y-1 rounded border border-slate-300 p-1 dark:border-slate-600">
+                      <div class="h-1.5 w-3/4 rounded bg-slate-400 dark:bg-slate-500"></div>
+                      <div class="h-1.5 w-full rounded bg-slate-300 dark:bg-slate-600"></div>
+                      <div class="h-1.5 w-5/6 rounded bg-slate-300 dark:bg-slate-600"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="min-w-0 text-center sm:text-center lg:flex-1 lg:pr-0 lg:text-left">
+                  <div class="text-sm font-bold leading-tight sm:text-base">Dos columnas</div>
+                  <p class="mt-1.5 text-xs leading-snug text-slate-500 dark:text-slate-400 sm:mt-2 sm:text-sm">
+                    Secciones visibles de a dos
+                  </p>
                 </div>
               </label>
             </div>
           </div>
+          </aside>
 
-          <!-- Secciones del menú -->
-          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-semibold">Secciones del menú</h2>
-              <button
-                @click="addSection"
-                class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 transition-colors"
-              >
-                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Nueva sección
-              </button>
+          <div
+            class="order-1 flex min-w-0 w-full flex-1 flex-col gap-3 lg:order-2 lg:min-h-0"
+          >
+            <div class="flex flex-col gap-1.5 sm:gap-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Vista previa en vivo</p>
+                <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">edición directa</span>
+              </div>
             </div>
-
-            <div class="space-y-6">
-              <div
-                v-for="(section, sectionIndex) in localBusiness.sections"
-                :key="section.id"
-                :draggable="true"
-                @dragstart="handleDragStart(sectionIndex, $event)"
-                @dragover.prevent="handleDragOver(sectionIndex, $event)"
-                @drop="handleDrop(sectionIndex, $event)"
-                @dragenter="handleDragEnter(sectionIndex, $event)"
-                @dragleave="handleDragLeave(sectionIndex, $event)"
-                @dragend="handleDragEnd($event)"
-                :class="[
-                  'rounded-lg border p-4 space-y-4 transition-all cursor-move',
-                  draggedSectionIndex === sectionIndex
-                    ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20 shadow-lg scale-105'
-                    : dragOverIndex === sectionIndex
-                    ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/20'
-                    : 'border-slate-200 dark:border-slate-800'
-                ]"
-              >
-                <!-- Header de sección con icono de arrastre -->
-                <div class="flex items-start justify-between gap-4">
-                  <div class="flex items-center gap-2 flex-1">
-                    <div 
-                      class="text-slate-400 dark:text-slate-500 cursor-grab active:cursor-grabbing flex-shrink-0"
-                      @mousedown.stop
-                    >
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
-                      </svg>
-                    </div>
-                    <button
-                      @click="toggleSectionCollapse(section.id)"
-                      class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors flex-shrink-0 p-1"
-                      @mousedown.stop
-                      title="Colapsar/Expandir sección"
-                    >
-                      <svg 
-                        class="h-5 w-5 transition-transform duration-200"
-                        :class="{ 'rotate-180': !isSectionCollapsed(section.id) }"
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    <div class="flex-1 space-y-3">
-                      <input
-                        v-model="section.name"
-                        type="text"
-                        placeholder="Nombre de la sección"
-                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors font-semibold"
-                        @mousedown.stop
-                      />
-                      <textarea
-                        v-model="section.description"
-                        rows="2"
-                        placeholder="Descripción (opcional)"
-                        class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors resize-none text-sm"
-                        @mousedown.stop
-                      />
-                    </div>
-                  </div>
-                  <button
-                    @click="deleteSection(sectionIndex)"
-                    class="rounded-lg border border-red-300 dark:border-red-700 px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                    @mousedown.stop
-                  >
-                    Eliminar
-                  </button>
+            <div
+              class="flex min-h-0 w-full flex-1 items-start justify-center rounded-2xl border border-slate-200/70 bg-slate-50/80 p-3 sm:p-4 dark:border-slate-800/80 dark:bg-slate-900/25"
+            >
+            <ClientOnly>
+              <MenuLivePreview
+                v-if="localBusiness"
+                variant="panel"
+                :business="localBusiness"
+                :is-busy="isSaving"
+                busy-label="Guardando cambios…"
+                :editable="true"
+              />
+              <template #fallback>
+                <div
+                  class="flex min-h-[12rem] items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-900/30"
+                >
+                  <p class="text-sm text-slate-500">Cargando vista previa…</p>
                 </div>
+              </template>
+            </ClientOnly>
+            </div>
+          </div>
+        </div>
 
-                <!-- Items de la sección -->
-                <div v-show="!isSectionCollapsed(section.id)" class="space-y-3" @mousedown.stop>
-                  <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium text-slate-700 dark:text-slate-300">Ítems</h3>
-                    <button
-                      @click="addItem(sectionIndex)"
-                      class="inline-flex items-center gap-1 rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
-                    >
-                      <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                      </svg>
-                      Agregar ítem
-                    </button>
-                  </div>
-
-                  <div
-                    v-for="(item, itemIndex) in section.items"
-                    :key="item.id"
-                    class="rounded-lg border border-slate-200 dark:border-slate-800 p-4 space-y-3"
-                  >
-                    <div class="flex items-start justify-between gap-4">
-                      <div class="flex-1 space-y-3">
-                        <input
-                          v-model="item.name"
-                          type="text"
-                          placeholder="Nombre del ítem"
-                          class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                        />
-                        <textarea
-                          v-model="item.description"
-                          rows="2"
-                          placeholder="Descripción (opcional)"
-                          class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors resize-none text-sm"
-                        />
-                        <div class="grid grid-cols-2 gap-3">
-                          <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
-                              Precio
-                            </label>
-                            <input
-                              v-model.number="item.price"
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              placeholder="0.00"
-                              class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                            />
-                          </div>
-                          <div>
-                            <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
-                              URL de imagen
-                            </label>
-                            <input
-                              v-model="item.imageUrl"
-                              type="url"
-                              placeholder="https://..."
-                              class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors text-sm"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
-                            Tags (separados por comas)
-                          </label>
-                          <input
-                            v-model="item.tagsString"
-                            type="text"
-                            placeholder="Vegano, Sin gluten, Popular"
-                            class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors text-sm"
-                            @blur="updateItemTags(sectionIndex, itemIndex)"
-                          />
-                        </div>
-                        <div class="flex items-center gap-2">
-                          <input
-                            :id="`available-${sectionIndex}-${itemIndex}`"
-                            v-model="item.isAvailable"
-                            type="checkbox"
-                            class="rounded border-slate-300 dark:border-slate-700 text-emerald-500 focus:ring-emerald-500"
-                          />
-                          <label
-                            :for="`available-${sectionIndex}-${itemIndex}`"
-                            class="text-sm text-slate-700 dark:text-slate-300"
-                          >
-                            Disponible
-                          </label>
-                        </div>
-                      </div>
-                      <button
-                        @click="deleteItem(sectionIndex, itemIndex)"
-                        class="rounded-lg border border-red-300 dark:border-red-700 px-2 py-1 text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-
-                  <div v-if="section.items.length === 0" class="text-center py-4 text-sm text-slate-500 dark:text-slate-400">
-                    No hay ítems en esta sección
+        <div v-show="panelTab === 'commerce'" class="grid min-w-0 gap-8 lg:grid-cols-3">
+        <div class="min-w-0 space-y-6 lg:col-span-2">
+          <div class="min-w-0 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-4 sm:p-6">
+            <h2 class="text-xl font-semibold mb-4">Datos del comercio</h2>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre</label>
+                <input
+                  v-model="localBusiness.name"
+                  type="text"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Descripción</label>
+                <textarea
+                  v-model="localBusiness.description"
+                  rows="2"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors resize-none"
+                />
+              </div>
+              <div v-if="userPlan && (userPlan.id === 'professional' || userPlan.id === 'enterprise' || userRole === 'admin')">
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Logo para el mapa</label>
+                <div class="space-y-3">
+                  <input
+                    v-model="localBusiness.logoUrl"
+                    type="url"
+                    placeholder="https://ejemplo.com/logo.png"
+                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
+                  />
+                  <p class="text-xs text-slate-500 dark:text-slate-400">
+                    URL de la imagen del logo que aparecerá como miniatura en el mapa (ej: la M de McDonald's). Disponible para planes Pro y Enterprise.
+                  </p>
+                  <div v-if="localBusiness.logoUrl" class="flex justify-center p-4 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                    <img
+                      :src="localBusiness.logoUrl"
+                      :alt="localBusiness.name"
+                      class="h-20 object-contain"
+                      @error="localBusiness.logoUrl = ''"
+                    />
                   </div>
                 </div>
               </div>
-
-              <div v-if="localBusiness.sections.length === 0" class="text-center py-8 text-slate-500 dark:text-slate-400">
-                <p class="mb-4">No hay secciones en el menú</p>
-                <button
-                  @click="addSection"
-                  class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-600 transition-colors"
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Rubro</label>
+                <select
+                  v-model="localBusiness.category"
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
                 >
-                  Crear primera sección
-                </button>
+                  <option
+                    v-for="category in BUSINESS_CATEGORIES"
+                    :key="category.id"
+                    :value="category.id"
+                  >
+                    {{ category.icon }} {{ category.name }}
+                  </option>
+                </select>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">El ícono del mapa se mostrará según el rubro seleccionado</p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Sidebar -->
         <div class="min-w-0 space-y-6">
           <!-- Eliminar comercio -->
           <div class="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-6 mb-6">
@@ -1000,6 +937,7 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -1024,10 +962,10 @@ const error = ref('')
 const success = ref('')
 const isSaving = ref(false)
 const hasChanges = ref(false)
+/** Evita que el watch profundo de localBusiness borre el mensaje de éxito al sincronizar desde el servidor. */
+const suppressLocalBusinessSync = ref(false)
+const successClearTimer = ref(null)
 
-// Drag and drop para secciones
-const draggedSectionIndex = ref(null)
-const dragOverIndex = ref(null)
 const userPlan = ref(null)
 const userRole = ref(null)
 const coordinatesExtracted = ref(false)
@@ -1038,7 +976,23 @@ const showSuggestions = ref(false)
 const searchTimeout = ref(null)
 const showDeleteConfirm = ref(false)
 const isDeleting = ref(false)
-const collapsedSections = ref(new Set())
+const showFontPicker = ref(false)
+
+const panelTab = ref('design')
+const setPanelTab = (tab) => {
+  if (tab !== 'design' && tab !== 'commerce') return
+  panelTab.value = tab
+  router.replace({ query: { ...route.query, tab } })
+}
+watch(
+  () => route.query.tab,
+  (t) => {
+    if (t === 'design' || t === 'commerce') {
+      panelTab.value = t
+    }
+  },
+  { immediate: true },
+)
 
 const menuUrl = computed(() => {
   if (process.client) {
@@ -1197,186 +1151,20 @@ const cloneBusiness = (biz) => {
 
 // Detectar cambios
 watch(localBusiness, () => {
+  if (suppressLocalBusinessSync.value) return
   hasChanges.value = true
   success.value = ''
 }, { deep: true })
-
-const addSection = () => {
-  if (!localBusiness.value) return
-  
-  const newSection = {
-    id: `sec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    name: '',
-    description: '',
-    items: [],
-  }
-  
-  localBusiness.value.sections.push(newSection)
-}
-
-const deleteSection = (index) => {
-  if (!localBusiness.value) return
-  if (confirm('¿Estás seguro de que querés eliminar esta sección y todos sus ítems?')) {
-    const section = localBusiness.value.sections[index]
-    // Remover de las secciones colapsadas si estaba colapsada
-    if (section?.id) {
-      collapsedSections.value.delete(section.id)
-    }
-    localBusiness.value.sections.splice(index, 1)
-  }
-}
-
-const toggleSectionCollapse = (sectionId) => {
-  if (collapsedSections.value.has(sectionId)) {
-    collapsedSections.value.delete(sectionId)
-  } else {
-    collapsedSections.value.add(sectionId)
-  }
-}
-
-const isSectionCollapsed = (sectionId) => {
-  return collapsedSections.value.has(sectionId)
-}
-
-
-const addItem = (sectionIndex) => {
-  if (!localBusiness.value) return
-  if (!localBusiness.value.sections || !localBusiness.value.sections[sectionIndex]) return
-  
-  // Asegurar que la sección tenga un array de items
-  if (!Array.isArray(localBusiness.value.sections[sectionIndex].items)) {
-    localBusiness.value.sections[sectionIndex].items = []
-  }
-  
-  const newItem = {
-    id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-    name: '',
-    description: '',
-    price: null,
-    imageUrl: '',
-    tags: [],
-    tagsString: '',
-    isAvailable: true,
-  }
-  
-  localBusiness.value.sections[sectionIndex].items.push(newItem)
-}
-
-const deleteItem = (sectionIndex, itemIndex) => {
-  if (!localBusiness.value) return
-  if (confirm('¿Estás seguro de que querés eliminar este ítem?')) {
-    localBusiness.value.sections[sectionIndex].items.splice(itemIndex, 1)
-  }
-}
-
-const updateItemTags = (sectionIndex, itemIndex) => {
-  if (!localBusiness.value) return
-  
-  const item = localBusiness.value.sections[sectionIndex].items[itemIndex]
-  if (item.tagsString) {
-    item.tags = item.tagsString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-  } else {
-    item.tags = []
-  }
-}
-
-// Funciones de drag and drop para secciones
-const handleDragStart = (index, event) => {
-  draggedSectionIndex.value = index
-  event.dataTransfer.effectAllowed = 'move'
-  event.dataTransfer.setData('text/html', event.target)
-  // Agregar clase al elemento que se está arrastrando
-  if (event.target) {
-    event.target.style.opacity = '0.5'
-  }
-}
-
-const handleDragOver = (index, event) => {
-  event.preventDefault()
-  event.dataTransfer.dropEffect = 'move'
-  
-  if (draggedSectionIndex.value !== null && draggedSectionIndex.value !== index) {
-    dragOverIndex.value = index
-  }
-}
-
-const handleDragEnter = (index, event) => {
-  if (draggedSectionIndex.value !== null && draggedSectionIndex.value !== index) {
-    dragOverIndex.value = index
-  }
-}
-
-const handleDragLeave = (index, event) => {
-  // Solo limpiar si realmente salimos del elemento (no de un hijo)
-  const rect = event.currentTarget.getBoundingClientRect()
-  const x = event.clientX
-  const y = event.clientY
-  
-  if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-    if (dragOverIndex.value === index) {
-      dragOverIndex.value = null
-    }
-  }
-}
-
-const handleDrop = (index, event) => {
-  event.preventDefault()
-  event.stopPropagation()
-  
-  if (draggedSectionIndex.value === null || draggedSectionIndex.value === index) {
-    draggedSectionIndex.value = null
-    dragOverIndex.value = null
-    // Restaurar opacidad
-    if (event.target) {
-      event.target.style.opacity = '1'
-    }
-    return
-  }
-  
-  if (!localBusiness.value) {
-    draggedSectionIndex.value = null
-    dragOverIndex.value = null
-    return
-  }
-  
-  // Reordenar secciones
-  const sections = localBusiness.value.sections
-  const draggedSection = sections[draggedSectionIndex.value]
-  
-  // Remover la sección de su posición original
-  sections.splice(draggedSectionIndex.value, 1)
-  
-  // Insertar en la nueva posición
-  const newIndex = draggedSectionIndex.value < index ? index - 1 : index
-  sections.splice(newIndex, 0, draggedSection)
-  
-  // Limpiar estados
-  draggedSectionIndex.value = null
-  dragOverIndex.value = null
-  
-  // Restaurar opacidad
-  if (event.target) {
-    event.target.style.opacity = '1'
-  }
-  
-  // Marcar como cambiado
-  hasChanges.value = true
-}
-
-// Limpiar estados de drag al finalizar
-const handleDragEnd = (event) => {
-  draggedSectionIndex.value = null
-  dragOverIndex.value = null
-  if (event.target) {
-    event.target.style.opacity = '1'
-  }
-}
 
 const handleSave = async () => {
   if (!localBusiness.value) return
   
   error.value = ''
   success.value = ''
+  if (successClearTimer.value) {
+    clearTimeout(successClearTimer.value)
+    successClearTimer.value = null
+  }
   isSaving.value = true
   
   try {
@@ -1521,33 +1309,32 @@ const handleSave = async () => {
     // Si llegamos aquí, el guardado fue exitoso
     success.value = '¡Cambios guardados correctamente!'
     hasChanges.value = false
-      
-      // Limpiar mensaje de éxito después de 3 segundos
-      setTimeout(() => {
-        success.value = ''
-      }, 3000)
-      
-      // Recargar el business actualizado
-      let updatedBusiness = null
-      try {
-        updatedBusiness = await fetchBusinessBySlug(slug)
-      } catch (e) {
-        console.error('Error reloading business after save:', e)
-        error.value = 'No se pudo recargar el comercio. Revisá tu conexión.'
-      }
+
+    successClearTimer.value = setTimeout(() => {
+      success.value = ''
+      successClearTimer.value = null
+    }, 6000)
+
+    // Recargar el business actualizado
+    let updatedBusiness = null
+    try {
+      updatedBusiness = await fetchBusinessBySlug(slug)
+    } catch (e) {
+      console.error('Error reloading business after save:', e)
+      error.value = 'No se pudo recargar el comercio. Revisá tu conexión.'
+    }
+
+    suppressLocalBusinessSync.value = true
+    try {
       if (updatedBusiness) {
-        // Normalizar el business recuperado
         const normalizedUpdated = normalizeBusiness(updatedBusiness)
         business.value = normalizedUpdated
         localBusiness.value = cloneBusiness(normalizedUpdated)
-        
-        // Forzar actualización reactiva
         localBusiness.value = { ...localBusiness.value }
-        
+
         console.log('handleSave: Business reloaded, sections count:', localBusiness.value.sections?.length || 0)
       }
-      
-      // Aplicar restricciones del plan después de cargar
+
       if (userPlan.value && userPlan.value.id === 'basic' && userRole.value !== 'admin') {
         if (localBusiness.value.menuLayout && localBusiness.value.menuLayout !== 'vertical') {
           localBusiness.value.menuLayout = 'vertical'
@@ -1562,6 +1349,10 @@ const handleSave = async () => {
           localBusiness.value.logoUrl = ''
         }
       }
+    } finally {
+      await nextTick()
+      suppressLocalBusinessSync.value = false
+    }
   } catch (err) {
     console.error('Error saving business:', err)
     error.value = err.data?.message || err.message || 'Error al guardar los cambios. Por favor, intentá nuevamente.'
@@ -1813,30 +1604,34 @@ onMounted(async () => {
       router.push('/select-business')
       return
     }
-    business.value = fetchedBusiness
-    localBusiness.value = cloneBusiness(fetchedBusiness)
-    
-    // Forzar inicialización reactiva de sections si no existen
-    if (!localBusiness.value.sections || !Array.isArray(localBusiness.value.sections)) {
-      localBusiness.value.sections = []
-    }
-    
-    await loadUserPlan()
-    
-    // Aplicar restricciones del plan después de cargar
-    if (userPlan.value && userPlan.value.id === 'basic' && userRole.value !== 'admin') {
-      if (localBusiness.value.menuLayout && localBusiness.value.menuLayout !== 'vertical') {
-        localBusiness.value.menuLayout = 'vertical'
+    suppressLocalBusinessSync.value = true
+    try {
+      business.value = fetchedBusiness
+      localBusiness.value = cloneBusiness(fetchedBusiness)
+
+      if (!localBusiness.value.sections || !Array.isArray(localBusiness.value.sections)) {
+        localBusiness.value.sections = []
       }
-      if (localBusiness.value.headerImageUrl) {
-        localBusiness.value.headerImageUrl = ''
+
+      await loadUserPlan()
+
+      if (userPlan.value && userPlan.value.id === 'basic' && userRole.value !== 'admin') {
+        if (localBusiness.value.menuLayout && localBusiness.value.menuLayout !== 'vertical') {
+          localBusiness.value.menuLayout = 'vertical'
+        }
+        if (localBusiness.value.headerImageUrl) {
+          localBusiness.value.headerImageUrl = ''
+        }
+        if (localBusiness.value.headerImageOverlay) {
+          localBusiness.value.headerImageOverlay = false
+        }
+        if (localBusiness.value.logoUrl) {
+          localBusiness.value.logoUrl = ''
+        }
       }
-      if (localBusiness.value.headerImageOverlay) {
-        localBusiness.value.headerImageOverlay = false
-      }
-      if (localBusiness.value.logoUrl) {
-        localBusiness.value.logoUrl = ''
-      }
+    } finally {
+      await nextTick()
+      suppressLocalBusinessSync.value = false
     }
   } catch (err) {
     console.error('Error loading business:', err)
