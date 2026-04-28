@@ -44,20 +44,11 @@
             </svg>
           </button>
 
-          <template v-if="activeDeliveryPlatforms && activeDeliveryPlatforms.length > 0 && !isPreview">
-            <a
-              v-for="platform in activeDeliveryPlatforms"
-              :key="platform.id"
-              :href="platform.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center rounded-lg p-1.5 transition-all hover:scale-110"
-              :title="`Pedir por ${platform.name}`"
-            >
-              <img v-if="platform.logo" :src="platform.logo" :alt="platform.name" loading="lazy" class="h-5 w-5 object-contain" />
-              <span v-else class="px-2 text-xs font-medium">{{ platform.name }}</span>
-            </a>
-          </template>
+          <MenuDeliveryAppsBar
+            :platforms="activeDeliveryPlatforms"
+            :text-color="textColor"
+            :is-preview="isPreview"
+          />
 
           <div v-if="!isPreview" class="relative">
             <button
@@ -91,6 +82,7 @@
           {{ business.description }}
         </p>
       </div>
+      <MenuSocialLinksBar :business="business" :text-color="textColor" />
 
       <div v-if="editable && isPreview" class="flex items-center justify-end">
         <button

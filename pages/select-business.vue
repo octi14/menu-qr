@@ -3,9 +3,6 @@
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div class="mb-8">
         <h1 class="text-3xl font-bold mb-2">Mis comercios</h1>
-        <p class="text-slate-600 dark:text-slate-400">
-          Administrá tus menús digitales desde un solo lugar
-        </p>
       </div>
 
       <AppLoadingScreen

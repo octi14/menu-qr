@@ -118,9 +118,6 @@
               <h2 class="text-base font-semibold tracking-tight">Apariencia</h2>
               <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">en vivo</span>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">
-              Editás acá y lo ves al instante en la preview.
-            </p>
             <div class="space-y-3.5">
               <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
@@ -245,7 +242,7 @@
 
           <!-- Selector de Layout de Menú -->
           <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/50 p-4 sm:p-5">
-            <h2 class="text-base font-semibold tracking-tight mb-3">Layout público</h2>
+            <h2 class="text-base font-semibold tracking-tight mb-3">Disposición de menú</h2>
             <div v-if="userPlan && userPlan.id === 'basic' && userRole !== 'admin'" class="space-y-4">
               <!-- Solo layout vertical para plan básico -->
               <div class="p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20">
@@ -497,7 +494,6 @@
             <div class="flex flex-col gap-1.5 sm:gap-2">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Vista previa en vivo</p>
-                <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">edición directa</span>
               </div>
             </div>
             <div
@@ -582,6 +578,130 @@
                   </option>
                 </select>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">El ícono del mapa se mostrará según el rubro seleccionado</p>
+              </div>
+            </div>
+          </div>
+          <!-- Horarios de atención -->
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
+            <h2 class="text-xl font-semibold mb-4">Horarios de atención</h2>
+            <div class="space-y-3">
+              <div v-for="day in ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']" :key="day" class="flex items-center gap-3">
+                <label class="w-24 text-xs font-medium text-slate-700 dark:text-slate-300 capitalize">
+                  {{ day }}
+                </label>
+                <div class="flex-1 flex items-center gap-2">
+                  <input
+                    v-model="localBusiness.openingHours[day].open"
+                    type="time"
+                    class="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
+                  />
+                  <span class="text-xs text-slate-500 dark:text-slate-400">-</span>
+                  <input
+                    v-model="localBusiness.openingHours[day].close"
+                    type="time"
+                    class="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
+                  />
+                  <label class="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
+                    <input
+                      v-model="localBusiness.openingHours[day].closed"
+                      type="checkbox"
+                      class="rounded border-slate-300 dark:border-slate-700"
+                    />
+                    Cerrado
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+                    <!-- Ubicación -->
+                    <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
+            <h2 class="text-xl font-semibold mb-4">Ubicación</h2>
+            <div class="space-y-4">
+              <div class="relative">
+                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Dirección
+                </label>
+                <div class="flex gap-2">
+                  <div class="flex-1 relative">
+                    <input
+                      v-model="localBusiness.address"
+                      type="text"
+                      placeholder="Ej: Av. Mitre 1234, Berazategui, Buenos Aires"
+                      class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
+                      @input="searchAddresses"
+                      @focus="showSuggestions = true"
+                      @blur="handleAddressBlur"
+                      autocomplete="off"
+                    />
+                    <!-- Sugerencias de direcciones -->
+                    <div
+                      v-if="showSuggestions && addressSuggestions.length > 0"
+                      class="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+                    >
+                      <button
+                        v-for="(suggestion, index) in addressSuggestions"
+                        :key="index"
+                        type="button"
+                        @click="selectAddress(suggestion)"
+                        class="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0"
+                      >
+                        <div class="text-xs font-medium text-slate-900 dark:text-slate-50">
+                          {{ suggestion.displayName }}
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                  <button
+                    @click="geocodeAddress"
+                    type="button"
+                    :disabled="!localBusiness.address || !localBusiness.address.trim() || isLoadingGeocode"
+                    class="px-3 py-2 rounded-lg border border-emerald-500 bg-emerald-500 text-white text-xs font-medium hover:bg-emerald-600 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Buscar coordenadas de la dirección"
+                  >
+                    <span v-if="isLoadingGeocode" class="flex items-center gap-1">
+                      <svg class="animate-spin h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Buscando...
+                    </span>
+                    <span v-else>Buscar</span>
+                  </button>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  Escribí la dirección completa (calle, número, ciudad, provincia)
+                </p>
+                <p v-if="geocodeSuccess" class="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                  ✓ Coordenadas encontradas automáticamente
+                </p>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  URL de Google Maps (opcional)
+                </label>
+                <input
+                  v-model="localBusiness.googleMapsUrl"
+                  type="url"
+                  placeholder="https://maps.google.com/..."
+                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
+                />
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  Opcional: Pegá el link de compartir de Google Maps
+                </p>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Seleccionar ubicación en el mapa
+                </label>
+                <LocationPicker
+                  v-model:latitude="localBusiness.latitude"
+                  v-model:longitude="localBusiness.longitude"
+                  :initial-center="localBusiness.latitude && localBusiness.longitude ? [localBusiness.latitude, localBusiness.longitude] : [-34.6037, -58.3816]"
+                  :initial-zoom="localBusiness.latitude && localBusiness.longitude ? 15 : 13"
+                  @address-found="handleAddressFromMap"
+                />
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                  Hacé clic en el mapa para seleccionar la ubicación. También podés arrastrar el marcador.
+                </p>
               </div>
             </div>
           </div>
@@ -672,40 +792,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Horarios de atención -->
-          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <h2 class="text-xl font-semibold mb-4">Horarios de atención</h2>
-            <div class="space-y-3">
-              <div v-for="day in ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']" :key="day" class="flex items-center gap-3">
-                <label class="w-24 text-xs font-medium text-slate-700 dark:text-slate-300 capitalize">
-                  {{ day }}
-                </label>
-                <div class="flex-1 flex items-center gap-2">
-                  <input
-                    v-model="localBusiness.openingHours[day].open"
-                    type="time"
-                    class="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                  />
-                  <span class="text-xs text-slate-500 dark:text-slate-400">-</span>
-                  <input
-                    v-model="localBusiness.openingHours[day].close"
-                    type="time"
-                    class="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                  />
-                  <label class="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-400">
-                    <input
-                      v-model="localBusiness.openingHours[day].closed"
-                      type="checkbox"
-                      class="rounded border-slate-300 dark:border-slate-700"
-                    />
-                    Cerrado
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
 
           <!-- Redes sociales y ubicación -->
           <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
@@ -837,99 +923,6 @@
                   placeholder="https://tiktok.com/@..."
                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
                 />
-              </div>
-            </div>
-          </div>
-
-          <!-- Ubicación -->
-          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6">
-            <h2 class="text-xl font-semibold mb-4">Ubicación</h2>
-            <div class="space-y-4">
-              <div class="relative">
-                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Dirección
-                </label>
-                <div class="flex gap-2">
-                  <div class="flex-1 relative">
-                    <input
-                      v-model="localBusiness.address"
-                      type="text"
-                      placeholder="Ej: Av. Mitre 1234, Berazategui, Buenos Aires"
-                      class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                      @input="searchAddresses"
-                      @focus="showSuggestions = true"
-                      @blur="handleAddressBlur"
-                      autocomplete="off"
-                    />
-                    <!-- Sugerencias de direcciones -->
-                    <div
-                      v-if="showSuggestions && addressSuggestions.length > 0"
-                      class="absolute z-50 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg max-h-60 overflow-y-auto"
-                    >
-                      <button
-                        v-for="(suggestion, index) in addressSuggestions"
-                        :key="index"
-                        type="button"
-                        @click="selectAddress(suggestion)"
-                        class="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0"
-                      >
-                        <div class="text-xs font-medium text-slate-900 dark:text-slate-50">
-                          {{ suggestion.displayName }}
-                        </div>
-                      </button>
-                    </div>
-                  </div>
-                  <button
-                    @click="geocodeAddress"
-                    type="button"
-                    :disabled="!localBusiness.address || !localBusiness.address.trim() || isLoadingGeocode"
-                    class="px-3 py-2 rounded-lg border border-emerald-500 bg-emerald-500 text-white text-xs font-medium hover:bg-emerald-600 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-                    title="Buscar coordenadas de la dirección"
-                  >
-                    <span v-if="isLoadingGeocode" class="flex items-center gap-1">
-                      <svg class="animate-spin h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Buscando...
-                    </span>
-                    <span v-else>Buscar</span>
-                  </button>
-                </div>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                  Escribí la dirección completa (calle, número, ciudad, provincia)
-                </p>
-                <p v-if="geocodeSuccess" class="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
-                  ✓ Coordenadas encontradas automáticamente
-                </p>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  URL de Google Maps (opcional)
-                </label>
-                <input
-                  v-model="localBusiness.googleMapsUrl"
-                  type="url"
-                  placeholder="https://maps.google.com/..."
-                  class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
-                />
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                  Opcional: Pegá el link de compartir de Google Maps
-                </p>
-              </div>
-              <div>
-                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Seleccionar ubicación en el mapa
-                </label>
-                <LocationPicker
-                  v-model:latitude="localBusiness.latitude"
-                  v-model:longitude="localBusiness.longitude"
-                  :initial-center="localBusiness.latitude && localBusiness.longitude ? [localBusiness.latitude, localBusiness.longitude] : [-34.6037, -58.3816]"
-                  :initial-zoom="localBusiness.latitude && localBusiness.longitude ? 15 : 13"
-                  @address-found="handleAddressFromMap"
-                />
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                  Hacé clic en el mapa para seleccionar la ubicación. También podés arrastrar el marcador.
-                </p>
               </div>
             </div>
           </div>

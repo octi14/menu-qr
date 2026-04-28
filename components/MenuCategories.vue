@@ -71,43 +71,11 @@
           </svg>
         </button>
         
-        <!-- Plataformas de pedidos -->
-        <template v-if="activeDeliveryPlatforms && activeDeliveryPlatforms.length > 0 && !isPreview">
-          <a
-            v-for="platform in activeDeliveryPlatforms"
-            :key="platform.id"
-            :href="platform.url"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="rounded-lg p-1.5 transition-all hover:scale-110 flex items-center justify-center"
-            :title="`Pedir por ${platform.name}`"
-          >
-            <img 
-              v-if="platform.logo"
-              :src="platform.logo" 
-              :alt="platform.name"
-              loading="lazy" 
-              class="h-5 w-5 object-contain"
-            />
-            <span v-else class="text-xs font-medium px-2">{{ platform.name }}</span>
-          </a>
-        </template>
-        <template v-else-if="isPreview && activeDeliveryPlatforms && activeDeliveryPlatforms.length > 0">
-          <div
-            v-for="platform in activeDeliveryPlatforms"
-            :key="`p-${platform.id}`"
-            class="rounded-lg p-1.5 flex items-center justify-center opacity-70"
-          >
-            <img 
-              v-if="platform.logo"
-              :src="platform.logo" 
-              :alt="platform.name"
-              loading="lazy" 
-              class="h-5 w-5 object-contain"
-            />
-            <span v-else class="text-xs font-medium px-2">{{ platform.name }}</span>
-          </div>
-        </template>
+        <MenuDeliveryAppsBar
+          :platforms="activeDeliveryPlatforms"
+          :text-color="textColor"
+          :is-preview="isPreview"
+        />
         
         <div v-if="!isPreview" class="relative">
           <button
@@ -188,19 +156,7 @@
           </svg>
           <span>{{ isOpenNow ? 'Abierto ahora' : 'Cerrado' }}</span>
         </div>
-        <a
-          v-if="business.googleMapsUrl"
-          :href="business.googleMapsUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg border" 
-          :style="{ borderColor: `${textColor}30`, backgroundColor: `${textColor}08` }"
-        >
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-          </svg>
-          <span>Ver en Maps</span>
-        </a>
+        <MenuSocialLinksBar :business="business" :text-color="textColor" />
       </div>
 
       <!-- Sección "Menus" con categorías en cards -->

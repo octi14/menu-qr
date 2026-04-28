@@ -4,9 +4,6 @@
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl sm:text-4xl font-bold mb-2 tracking-tight">Direcciones guardadas</h1>
-        <p class="text-slate-600 dark:text-slate-400 text-sm sm:text-base">
-          Acceso rápido a comercios cercanos
-        </p>
       </div>
 
       <!-- Formulario para agregar nueva dirección -->
@@ -35,7 +32,7 @@
                 <input
                   v-model="newAddress.address"
                   type="text"
-                  placeholder="Ej: Av. Mitre 1234, Berazategui, Buenos Aires"
+                  placeholder="Ej: Av. Mitre 1234, Buenos Aires"
                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-50 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-colors"
                   @input="searchAddresses"
                   @focus="showSuggestions = true"
